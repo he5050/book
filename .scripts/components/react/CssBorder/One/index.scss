@@ -1,0 +1,62 @@
+.around-one {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 320px;
+  height: 220px;
+  margin: 16px auto;
+  border-radius: 10px;
+  animation: aroundOneMove 2s linear infinite;
+  background: #13f41c;
+  background: -moz-linear-gradient(-100deg, #13f41c 0%, #33acf1 100%);
+  background: linear-gradient(-100deg, #13f41c 0%, #33acf1 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#13f41c', endColorstr='#33acf1', GradientType=1);
+
+  .card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9fce0;
+    width: 300px;
+    height: 200px;
+    border-radius: 10px;
+  }
+}
+
+
+
+@keyframes aroundOneMove {
+  0% {
+    background: linear-gradient(0deg, #13f41c 0%, #33acf1 100%);
+  }
+
+  12.5% {
+    background: linear-gradient(45deg, #13f41c 0%, #33acf1 100%);
+  }
+
+  25% {
+    background: linear-gradient(90deg, #13f41c 0%, #33acf1 100%);
+  }
+
+  37.5% {
+    background: linear-gradient(135deg, #13f41c 0%, #33acf1 100%);
+  }
+
+  50% {
+    background: linear-gradient(180deg, #13f41c 0%, #33acf1 100%);
+  }
+
+  62.5% {
+    background: linear-gradient(225deg, #13f41c 0%, #33acf1 100%);
+  }
+
+  75% {
+    background: linear-gradient(270deg, #13f41c 0%, #33acf1 100%);
+
+  }
+
+  100% {
+    background: linear-gradient(360deg, #13f41c 0%, #33acf1 100%);
+  }
+}
