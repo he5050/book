@@ -1,0 +1,29 @@
+{
+	"version": "0.2",
+	"ignorePaths": [],
+	"dictionaryDefinitions": [],
+	"dictionaries": [],
+	"words": [
+		"Alova",
+		"animejs",
+		"anticon",
+		"Attributify",
+		"chanxueyanxietong",
+		"fabujishuxuqiu",
+		"fabukeyanchengguo",
+		"fabulianhecaigouxuqiu",
+		"fabuqiyegonggao",
+		"gongyinglianxietong",
+		"haiwaishichangtuozhan",
+		"Iwendazhushou",
+		"jiancerenzheng",
+		"kolorist",
+		"luruchannengxinxi",
+		"paixu",
+		"simplebar",
+		"tijiaorenzhengshenqing",
+		"xiaoxi"
+	],
+	"ignoreWords": [],
+	"import": []
+}
