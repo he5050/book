@@ -5,7 +5,7 @@ tk:
   teekHome: false
 
 hero:
-  name: LanLan
+  name: 点滴
   text: 点点滴滴的记录
   tagline: ✨记录日常学习过程中的笔记 ✨
   actions:
