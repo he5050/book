@@ -1,0 +1,38 @@
+.typed-box {
+  background-color: #000;
+  padding: 16px;
+  color: #fff;
+
+  .typed-content {
+    margin: auto;
+    color: white;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    /* 响应式字体 */
+    font-family: "楷体", cursive;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(255, 64, 129, 0.6);
+  }
+
+  .typed-content::after {
+    content: "|";
+    margin-left: 2px;
+    animation: typedBLink 0.7s infinite;
+  }
+
+  .cursor {
+    margin-left: 2px;
+    animation: typedBLink 0.7s infinite;
+  }
+}
+
+@keyframes typedBLink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}

@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: 笔记
-      link: /notes/css
+      link: /notes/gradient-border
     - theme: alt
       text: 工具
       link: /react/config
