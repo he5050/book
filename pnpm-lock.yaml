@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      react-sticky-box:
+        specifier: ^2.0.5
+        version: 2.0.5(react@19.1.0)
       vitepress:
         specifier: ^1.6.3
         version: 1.6.3(@algolia/client-search@5.25.0)(@types/node@22.15.29)(@types/react@19.1.6)(postcss@8.5.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.89.1)(search-insights@2.17.3)(sortablejs@1.14.0)
@@ -1199,6 +1202,11 @@ packages:
     peerDependenciesMeta:
       react-dom:
         optional: true
+
+  react-sticky-box@2.0.5:
+    resolution: {integrity: sha512-JEIuN7Q3razU1NNS0vddC12GXCUkj7T4aCpC9ZSTjgBddFsBdTcN1RhYXFLjCE/KDOQqX2Ix308BcdrqtSJbkQ==}
+    peerDependencies:
+      react: '>=16.8.0'
 
   react@19.1.0:
     resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
@@ -2595,6 +2603,10 @@ snapshots:
       set-cookie-parser: 2.7.1
     optionalDependencies:
       react-dom: 19.1.0(react@19.1.0)
+
+  react-sticky-box@2.0.5(react@19.1.0):
+    dependencies:
+      react: 19.1.0
 
   react@19.1.0: {}
 

@@ -14,7 +14,7 @@ hero:
       link: /notes/gradient-border
     - theme: alt
       text: 工具
-      link: /react/config
+      link: /tools/resource
   image:
     src: /teek-logo-large.png
     alt: Teek
