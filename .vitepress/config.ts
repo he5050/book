@@ -105,8 +105,13 @@ export default defineConfig({
 			{ text: '首页', link: '/' },
 			{
 				text: '笔记',
-				link: '/notes/css',
+				link: '/notes/typed',
 				activeMatch: '/01.笔记/'
+			},
+			{
+				text: '工具',
+				link: '/tools/resource',
+				activeMatch: '/03.工具/'
 			}
 		],
 		socialLinks: [{ icon: 'github', link: 'https://github.com/he5050/book' }],
