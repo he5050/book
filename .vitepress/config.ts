@@ -1,3 +1,4 @@
+import react from '@vitejs/plugin-react'; // 添加 React 插件
 import path from 'path';
 import unocss from 'unocss/vite';
 import { defineConfig } from 'vitepress';
@@ -78,7 +79,7 @@ export default defineConfig({
 		}
 	},
 	vite: {
-		plugins: [unocss(unoConfig)],
+		plugins: [react(), unocss(unoConfig)], // 注入 react 插件
 		css: {
 			preprocessorOptions: {
 				// scss: {
