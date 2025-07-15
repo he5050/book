@@ -107,7 +107,7 @@ export default function MdWatermark(props: WatermarkProps) {
 		align = 'center', // 默认对齐方式
 		repeat = 'repeat', // 默认重复模式
 		offset = { x: 0, y: 0 }, // 默认无偏移
-		zIndex = -1, // 默认层级在内容下方
+		zIndex = 1, // 默认层级在内容下方
 		responsiveOptions = {
 			baseWidth: 1920, // 默认基准宽度为1920px
 			responsive: true // 默认启用响应式
@@ -163,7 +163,8 @@ export default function MdWatermark(props: WatermarkProps) {
 			return 1;
 		}
 
-		return containerSize.width / responsiveOptions.baseWidth;
+		const baseWidth = responsiveOptions.baseWidth || containerSize.width;
+		return containerSize.width / baseWidth;
 	}, [responsiveOptions, containerSize.width]);
 
 	// 生成缓存键
@@ -233,8 +234,10 @@ export default function MdWatermark(props: WatermarkProps) {
 
 		// 限制缓存大小，超过100个则删除最旧的
 		if (watermarkCache.size > 100) {
-			const oldestKey = watermarkCache.keys().next().value;
-			watermarkCache.delete(oldestKey);
+			const oldestKey = Array.from(watermarkCache.keys())[0];
+			if (oldestKey !== undefined) {
+				watermarkCache.delete(oldestKey);
+			}
 		}
 	}, []);
 
@@ -761,6 +764,10 @@ export default function MdWatermark(props: WatermarkProps) {
 			watermarkLayer.style.position = 'absolute';
 			watermarkLayer.style.inset = '0';
 			watermarkLayer.style.pointerEvents = 'none';
+			watermarkLayer.style.zIndex = '1';
+			watermarkLayer.style.backgroundSize = 'auto auto';
+			watermarkLayer.style.backgroundRepeat = repeat;
+			watermarkLayer.style.opacity = opacity.toString();
 			containerElement.appendChild(watermarkLayer);
 		}
 
@@ -776,13 +783,13 @@ export default function MdWatermark(props: WatermarkProps) {
 		observerRef.current = new MutationObserver(mutationsList => {
 			for (const mutation of mutationsList) {
 				if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-					// 只需比较优化后的backgroundPosition
+					// 优化：检查关键样式属性是否一致，避免不必要的重绘
 					if (
 						watermarkLayer.style.backgroundImage !== imageStr.current ||
 						watermarkLayer.style.backgroundRepeat !== repeat ||
-						watermarkLayer.style.backgroundPosition !== backgroundPosition ||
-						watermarkLayer.style.zIndex !== zIndex.toString()
+						watermarkLayer.style.opacity !== opacity.toString()
 					) {
+						// 如果关键样式不一致，重新绘制水印
 						drawWatermarkCallback();
 					}
 					break;
@@ -832,7 +839,7 @@ export default function MdWatermark(props: WatermarkProps) {
 			{/* 隐藏的画布用于生成水印 */}
 			<canvas className="hidden" ref={canvasRef} />
 			{/* 水印层 */}
-			<div ref={watermarkLayerRef} />
+			<div className="test" ref={watermarkLayerRef} />
 			{children}
 		</div>
 	);

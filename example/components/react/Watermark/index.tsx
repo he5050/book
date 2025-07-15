@@ -140,7 +140,7 @@ export default function WatermarkDemo() {
 					</>
 				)}
 			</div>
-			<div className="relative min-h-[300px] p-5 border border-gray-200 rounded-lg bg-white">
+			<div className="relative min-h-[300px] p-5 border border-gray-200 rounded-lg bg-white overflow-hidden">
 				<MdWatermark
 					content={content}
 					fontSize={fontSize}
@@ -153,11 +153,12 @@ export default function WatermarkDemo() {
 					animationDuration={animationDuration}
 					animationDelay={animationDelay}
 				>
-					<div className="flex flex-col items-center justify-center h-full text-gray-700 p-5">
+					<div className="flex flex-col items-center justify-center h-full text-gray-700 p-5 relative z-10">
 						<h2 className="mt-0 text-xl font-bold">水印演示区域</h2>
 						<p>调整上方参数以查看水印效果变化</p>
 					</div>
 				</MdWatermark>
+				<div className="absolute inset-0 pointer-events-none" style={{ zIndex: -2 }}></div>
 			</div>
 		</div>
 	);
