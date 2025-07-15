@@ -1,0 +1,100 @@
+.title {
+  color: #333;
+  font-size: 40px;
+  position: relative;
+  line-height: 48px;
+  transition: all 0.3s ease;
+
+  &::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: transparent;
+    background-image: linear-gradient(90deg, red, green);
+    background-clip: text;
+    transition: all 0.3s ease;
+  }
+
+  &:hover::after {
+    clip-path: circle(30px at 50% 50%);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes spotlight {
+  0% {
+    clip-path: circle(20px at 0 50%);
+  }
+
+  25% {
+    clip-path: circle(20px at 25% 50%);
+  }
+
+  50% {
+    clip-path: circle(20px at 50% 50%);
+  }
+
+  75% {
+    clip-path: circle(20px at 75% 50%);
+  }
+
+  100% {
+    clip-path: circle(20px at 100% 50%);
+  }
+}
+
+.title-two {
+  color: #333;
+  font-size: 40px;
+  position: relative;
+  line-height: 48px;
+
+  &::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: transparent;
+    background-image: linear-gradient(90deg, red, green);
+    background-clip: text;
+    animation: spotlight 5s infinite;
+    transition: all 0.5s ease;
+  }
+}
+
+.title-three {
+  color: #333;
+  font-size: 40px;
+  position: relative;
+  line-height: 48px;
+}
+
+
+
+.title-three::after {
+  content: attr(data-title);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: transparent;
+  background-image: linear-gradient(90deg, #f6d186, #b5ead7);
+  background-clip: text;
+  clip-path: circle(20px at 0 50%);
+  animation: spotlight-three 3s infinite;
+  animation-direction: alternate;
+}
+
+@keyframes spotlight-three {
+  0% {
+    clip-path: circle(20px at 0 50%);
+  }
+
+  50% {
+    clip-path: circle(20px at 100% 50%);
+  }
+
+  100% {
+    clip-path: circle(20px at 0 50%);
+  }
+}
