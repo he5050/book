@@ -1,205 +1,163 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import MdWatermark from './MdWatermark';
 
 export default function WatermarkDemo() {
-	const containerRef = useRef<HTMLDivElement>(null);
+	const [content, setContent] = useState('动态水印');
+	const [fontSize, setFontSize] = useState(16);
+	const [rotate, setRotate] = useState(-22);
+	const [opacity, setOpacity] = useState(0.15);
+	const [gap, setGap] = useState<[number, number]>([40, 40]);
+	const [align, setAlign] = useState<'left' | 'right' | 'top' | 'bottom' | 'center'>('center');
+	const [repeat, setRepeat] = useState<'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'>('repeat');
+	const [animation, setAnimation] = useState<'fade' | 'rotate' | 'none'>('none');
+	const [animationDuration, setAnimationDuration] = useState(3000);
+	const [animationDelay, setAnimationDelay] = useState(0);
 
 	return (
-		<div className="min-h-screen bg-gray-100 p-8">
-			<h1 className="text-2xl font-bold mb-6">水印组件示例</h1>
-
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-				{/* 基本文本水印 */}
-				<div className="bg-white rounded-lg shadow-lg p-6 h-64 relative">
-					<h2 className="text-lg font-semibold mb-4">基本文本水印</h2>
-					<MdWatermark content="机密文件" color="rgba(0, 0, 0, 0.1)" fontSize={14} rotate={-15}>
-						<div className="w-full h-full bg-gray-50 rounded-md flex items-center justify-center">
-							<p className="text-gray-500">内容区域</p>
-						</div>
-					</MdWatermark>
+		<div className="w-full max-w-6xl mx-auto p-5">
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6 p-4 bg-gray-100 rounded-lg">
+				<div className="flex flex-col gap-2">
+					<label className="font-medium">水印内容:</label>
+					<input
+						type="text"
+						value={content}
+						onChange={e => setContent(e.target.value)}
+						className="p-2 border border-gray-300 rounded-md"
+					/>
 				</div>
-
-				{/* 多行文本水印 */}
-				<div className="bg-white rounded-lg shadow-lg p-6 h-64 relative">
-					<h2 className="text-lg font-semibold mb-4">多行文本水印</h2>
-					<MdWatermark
-						content={['版权所有', '请勿传播']}
-						lineHeight={1.8}
-						color="rgba(0, 0, 0, 0.12)"
-						fontSize={16}
-						gap={[60, 60]}
+				<div className="flex flex-col gap-2">
+					<label className="font-medium">字体大小:</label>
+					<input
+						type="range"
+						min="10"
+						max="50"
+						value={fontSize}
+						onChange={e => setFontSize(Number(e.target.value))}
+						className="w-full"
+					/>
+					<span>{fontSize}</span>
+				</div>
+				<div className="flex flex-col gap-2">
+					<label className="font-medium">旋转角度:</label>
+					<input
+						type="range"
+						min="-180"
+						max="180"
+						value={rotate}
+						onChange={e => setRotate(Number(e.target.value))}
+						className="w-full"
+					/>
+					<span>{rotate}°</span>
+				</div>
+				<div className="flex flex-col gap-2">
+					<label className="font-medium">透明度:</label>
+					<input
+						type="range"
+						min="0"
+						max="1"
+						step="0.01"
+						value={opacity}
+						onChange={e => setOpacity(Number(e.target.value))}
+						className="w-full"
+					/>
+					<span>{opacity}</span>
+				</div>
+				<div className="flex flex-col gap-2">
+					<label className="font-medium">间距:</label>
+					<input
+						type="range"
+						min="10"
+						max="100"
+						value={gap[0]}
+						onChange={e => setGap([Number(e.target.value), Number(e.target.value)])}
+						className="w-full"
+					/>
+					<span>{gap[0]}</span>
+				</div>
+				<div className="flex flex-col gap-2">
+					<label className="font-medium">对齐方式:</label>
+					<select
+						value={align}
+						onChange={e => setAlign(e.target.value as any)}
+						className="p-2 border border-gray-300 rounded-md"
 					>
-						<div className="w-full h-full bg-gray-50 rounded-md flex items-center justify-center">
-							<p className="text-gray-500">内容区域</p>
-						</div>
-					</MdWatermark>
+						<option value="left">左</option>
+						<option value="right">右</option>
+						<option value="top">上</option>
+						<option value="bottom">下</option>
+						<option value="center">居中</option>
+					</select>
 				</div>
-
-				{/* 图片水印 */}
-				<div className="bg-white rounded-lg shadow-lg p-6 h-64 relative">
-					<h2 className="text-lg font-semibold mb-4">图片水印</h2>
-					<MdWatermark
-						imageUrl="https://picsum.photos/seed/watermark/100/40" // 示例图片
-						imageWidth={120}
-						imageHeight={50}
-						opacity={0.1}
-						rotate={-30}
+				<div className="flex flex-col gap-2">
+					<label className="font-medium">重复模式:</label>
+					<select
+						value={repeat}
+						onChange={e => setRepeat(e.target.value as any)}
+						className="p-2 border border-gray-300 rounded-md"
 					>
-						<div className="w-full h-full bg-gray-50 rounded-md flex items-center justify-center">
-							<p className="text-gray-500">内容区域</p>
-						</div>
-					</MdWatermark>
+						<option value="repeat">重复</option>
+						<option value="repeat-x">横向重复</option>
+						<option value="repeat-y">纵向重复</option>
+						<option value="no-repeat">不重复</option>
+					</select>
 				</div>
-
-				{/* 淡入淡出动画水印 */}
-				<div className="bg-white rounded-lg shadow-lg p-6 h-64 relative">
-					<h2 className="text-lg font-semibold mb-4">淡入淡出动画</h2>
-					<MdWatermark
-						content="重要通知"
-						animation="fade"
-						animationDuration={4000}
-						color="rgba(255, 0, 0, 0.2)"
-						fontSize={18}
+				<div className="flex flex-col gap-2">
+					<label className="font-medium">动画效果:</label>
+					<select
+						value={animation}
+						onChange={e => setAnimation(e.target.value as any)}
+						className="p-2 border border-gray-300 rounded-md"
 					>
-						<div className="w-full h-full bg-gray-50 rounded-md flex items-center justify-center">
-							<p className="text-gray-500">内容区域</p>
-						</div>
-					</MdWatermark>
+						<option value="none">无</option>
+						<option value="fade">淡入淡出</option>
+						<option value="rotate">旋转</option>
+					</select>
 				</div>
-
-				{/* 旋转动画水印 */}
-				<div className="bg-white rounded-lg shadow-lg p-6 h-64 relative">
-					<h2 className="text-lg font-semibold mb-4">旋转动画</h2>
-					<MdWatermark
-						content="系统维护中"
-						animation="rotate"
-						animationDuration={6000}
-						color="rgba(0, 0, 255, 0.15)"
-						fontSize={16}
-					>
-						<div className="w-full h-full bg-gray-50 rounded-md flex items-center justify-center">
-							<p className="text-gray-500">内容区域</p>
+				{animation !== 'none' && (
+					<>
+						<div className="flex flex-col gap-2">
+							<label className="font-medium">动画时长(ms):</label>
+							<input
+								type="number"
+								min="500"
+								max="10000"
+								value={animationDuration}
+								onChange={e => setAnimationDuration(Number(e.target.value))}
+								className="p-2 border border-gray-300 rounded-md"
+							/>
 						</div>
-					</MdWatermark>
-				</div>
-
-				{/* 自定义容器水印 */}
-				<div ref={containerRef} className="bg-white rounded-lg shadow-lg p-6 h-64 relative">
-					<h2 className="text-lg font-semibold mb-4">自定义容器水印</h2>
-					<MdWatermark
-						content="自定义容器"
-						container={containerRef}
-						align="top"
-						offset={{ x: 20, y: 20 }}
-						color="rgba(0, 128, 0, 0.1)"
-					>
-						<div className="w-full h-full bg-gray-50 rounded-md flex items-center justify-center">
-							<p className="text-gray-500">内容区域</p>
+						<div className="flex flex-col gap-2">
+							<label className="font-medium">动画延迟(ms):</label>
+							<input
+								type="number"
+								min="0"
+								max="5000"
+								value={animationDelay}
+								onChange={e => setAnimationDelay(Number(e.target.value))}
+								className="p-2 border border-gray-300 rounded-md"
+							/>
 						</div>
-					</MdWatermark>
-				</div>
-
-				{/* 响应式水印 */}
-				<div className="bg-white rounded-lg shadow-lg p-6 h-64 relative">
-					<h2 className="text-lg font-semibold mb-4">响应式水印</h2>
-					<MdWatermark
-						content="响应式水印"
-						responsiveOptions={{
-							baseWidth: 1200,
-							responsive: true
-						}}
-						color="rgba(128, 0, 128, 0.1)"
-					>
-						<div className="w-full h-full bg-gray-50 rounded-md flex items-center justify-center">
-							<p className="text-gray-500">调整窗口大小查看效果</p>
-						</div>
-					</MdWatermark>
-				</div>
-
-				{/* 所有配置项组合 */}
-				<div className="bg-white rounded-lg shadow-lg p-6 h-64 relative">
-					<h2 className="text-lg font-semibold mb-4">组合配置</h2>
-					<MdWatermark
-						content={['高度自定义', '水印组件']}
-						lineHeight={1.6}
-						color="rgba(0, 0, 0, 0.15)"
-						fontSize={15}
-						rotate={-25}
-						gap={[50, 50]}
-						opacity={0.12}
-						align="right"
-						repeat="repeat-y"
-						animation="fade"
-						animationDuration={5000}
-						animationDelay={1000}
-						optimizePerformance={true}
-					>
-						<div className="w-full h-full bg-gray-50 rounded-md flex items-center justify-center">
-							<p className="text-gray-500">所有配置组合</p>
-						</div>
-					</MdWatermark>
-				</div>
+					</>
+				)}
 			</div>
-
-			<div className="mt-10 bg-white rounded-lg shadow-lg p-6">
-				<h2 className="text-lg font-semibold mb-4">自定义控制示例</h2>
-				<div className="flex flex-col md:flex-row gap-6">
-					<div className="flex-1 bg-gray-50 rounded-lg p-4">
-						<h3 className="font-medium mb-3">控制参数</h3>
-						<div className="space-y-3">
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">文本内容</label>
-								<input
-									type="text"
-									className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-									defaultValue="动态水印"
-								/>
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">字体大小</label>
-								<input type="range" min="10" max="30" defaultValue="16" className="w-full" />
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">透明度</label>
-								<input
-									type="range"
-									min="0"
-									max="1"
-									step="0.05"
-									defaultValue="0.15"
-									className="w-full"
-								/>
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">旋转角度</label>
-								<input type="range" min="-45" max="45" defaultValue="-22" className="w-full" />
-							</div>
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">动画类型</label>
-								<select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-									<option value="none">无动画</option>
-									<option value="fade">淡入淡出</option>
-									<option value="rotate">旋转</option>
-								</select>
-							</div>
-						</div>
+			<div className="relative min-h-[300px] p-5 border border-gray-200 rounded-lg bg-white">
+				<MdWatermark
+					content={content}
+					fontSize={fontSize}
+					rotate={rotate}
+					opacity={opacity}
+					gap={gap}
+					align={align}
+					repeat={repeat}
+					animation={animation}
+					animationDuration={animationDuration}
+					animationDelay={animationDelay}
+				>
+					<div className="flex flex-col items-center justify-center h-full text-gray-700 p-5">
+						<h2 className="mt-0 text-xl font-bold">水印演示区域</h2>
+						<p>调整上方参数以查看水印效果变化</p>
 					</div>
-					<div className="flex-1 bg-gray-50 rounded-lg p-4 relative h-64">
-						<h3 className="font-medium mb-3">实时预览</h3>
-						{/* 这里应该有一个使用上面控制参数的MdWatermark组件 */}
-						<MdWatermark
-							content="动态水印"
-							fontSize={16}
-							opacity={0.15}
-							rotate={-22}
-							animation="none"
-						>
-							<div className="w-full h-full bg-white rounded-md border border-gray-200 flex items-center justify-center">
-								<p className="text-gray-500">实时预览区域</p>
-							</div>
-						</MdWatermark>
-					</div>
-				</div>
+				</MdWatermark>
 			</div>
 		</div>
 	);
