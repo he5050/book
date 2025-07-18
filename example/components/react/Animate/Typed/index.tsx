@@ -1,56 +1,54 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Typed from 'typed.js';
 import './index.scss';
+
 const TypedDemo: React.FC = () => {
-	const typedRef = React.useRef<HTMLDivElement>(null);
+	const typedRef = React.useRef<HTMLSpanElement>(null);
+	const manualTypedRef = React.useRef<HTMLDivElement>(null);
+
+	// 1. 手动实现的打字效果
 	useEffect(() => {
-		typedFun();
-	}, []);
-	const typedFun = () => {
-		const text = ['这里是一个打字效果'] as string[];
-		let lineIndex = 0;
-		let charIndex = 0;
-		const textDiv = document.getElementById('typed-demo-1');
+		const textDiv = manualTypedRef.current;
 		if (!textDiv) {
-			console.error('Text container element not found');
 			return;
 		}
 
-		let currentTimeout: number | null = null;
+		const text = ['这里是一个打字效果'] as string[];
+		let lineIndex = 0;
+		let charIndex = 0;
+
+		let timeoutId: number;
 		const typeSpeed = 150; // 打字速度（毫秒）
 
-		function typeText() {
-			// 使用局部变量确保类型安全
-			const localTextDiv = textDiv;
-			if (lineIndex < text.length && localTextDiv) {
+		const typeText = () => {
+			if (lineIndex < text.length) {
 				if (charIndex < text[lineIndex].length) {
-					localTextDiv.textContent += text[lineIndex][charIndex++];
-					currentTimeout = window.setTimeout(typeText, typeSpeed);
+					textDiv.textContent += text[lineIndex][charIndex++];
+					timeoutId = window.setTimeout(typeText, typeSpeed);
 				} else {
-					if (lineIndex === text.length - 1) {
-						return;
+					// 一行结束，准备换行（如果还有下一行）
+					lineIndex++;
+					charIndex = 0;
+					if (lineIndex < text.length) {
+						textDiv.textContent += '\n';
+						timeoutId = window.setTimeout(typeText, typeSpeed);
 					}
-					currentTimeout = window.setTimeout(() => {
-						localTextDiv.textContent += '\n';
-						lineIndex++;
-						charIndex = 0;
-						currentTimeout = window.setTimeout(typeText, typeSpeed);
-					}, typeSpeed / 2);
 				}
 			}
-		}
+		};
 
 		// 启动打字效果
-		currentTimeout = window.setTimeout(typeText, typeSpeed);
+		timeoutId = window.setTimeout(typeText, typeSpeed);
 
 		// 返回清理函数
 		return () => {
-			if (currentTimeout !== null) {
-				window.clearTimeout(currentTimeout);
-			}
+			window.clearTimeout(timeoutId);
 		};
-	};
+	}, []);
+
+	// 2. 使用 typed.js 库的打字效果
 	useEffect(() => {
+		if (!typedRef.current) return;
 		const typed = new Typed(typedRef.current, {
 			strings: ['<i>First</i> sentence.', '&amp; a second sentence.'],
 			typeSpeed: 50,
@@ -68,9 +66,9 @@ const TypedDemo: React.FC = () => {
 	return (
 		<div className="h-full overflow-hidden typed-box">
 			<div className=" lh-6  mb-3 text-4">1.打字效果</div>
-			<div className="typed-content" id="typed-demo-1"></div>
+			<div className="typed-content" ref={manualTypedRef} style={{ whiteSpace: 'pre-wrap' }}></div>
 			<div className=" lh-6  mb-3 text-4">2.typed.js</div>
-			<span id="typed-demo-2" className="text-4" ref={typedRef}></span>
+			<span className="text-4" ref={typedRef}></span>
 		</div>
 	);
 };
