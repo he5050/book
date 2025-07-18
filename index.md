@@ -58,6 +58,7 @@ features:
 import { onMounted } from "vue";
 import { useData } from "vitepress";
 
+
 const { frontmatter } = useData();
 onMounted(() => {
   const heroTextDom = document.querySelector<HTMLElement>(".VPHero .text");
