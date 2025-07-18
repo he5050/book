@@ -5,6 +5,7 @@ import { defineConfig } from 'vitepress';
 import { vitepressDemoPlugin } from 'vitepress-demo-plugin';
 import { defineTeekConfig } from 'vitepress-theme-teek/config';
 import unoConfig from './uno.config';
+import { codeInspectorPlugin } from 'code-inspector-plugin';
 // Teek 主题配置
 const teekConfig = defineTeekConfig({
 	author: { name: 'he5050', link: 'https://github.com/he5050' },
@@ -79,7 +80,9 @@ export default defineConfig({
 		}
 	},
 	vite: {
-		plugins: [react(), unocss(unoConfig)], // 注入 react 插件
+		plugins: [react(), unocss(unoConfig), codeInspectorPlugin({
+			bundler: 'vite',
+		  }),], // 注入 react 插件
 		css: {
 			preprocessorOptions: {
 				// scss: {
