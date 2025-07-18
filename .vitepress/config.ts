@@ -16,7 +16,8 @@ const teekConfig = defineTeekConfig({
 		copyright: {
 			createYear: 2024,
 			suffix: 'LanLan'
-		}
+		},
+		customHtml: `<span id="runtime"></span>`
 	},
 	codeBlock: {
 		copiedDone: TkMessage => TkMessage.success('复制成功！')
