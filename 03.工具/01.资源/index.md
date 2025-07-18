@@ -60,11 +60,18 @@ particles.js 是一个轻量级的 JavaScript 库，用于创建粒子效果，�
 ![image.png](http://tva1.sinaimg.cn/large/69abf49bly1i3hxqmnuyij20zu15stjb.jpg)
 :::
 
-### 1.[animejs](https://animejs.com/documentation/timer/timer-playback-settings/reversed/)
+### 2.[animejs](https://animejs.com/documentation/timer/timer-playback-settings/reversed/)
 
 ::: info
 animejs 是一个轻量级的 JavaScript 库实现页面上的动画效果。
 ![image.png](http://tva1.sinaimg.cn/large/69abf49bly1i3hyvkoswtj21xi19ch1f.jpg)
+:::
+
+### 3.[gsap](https://gsap.com/)
+
+::: info
+GSAP（GreenSock Animation Platform）是一款强大的 JavaScript 动画库，被广泛应用于网页、APP、SVG、Canvas 等场景的动画开发。它以高性能、灵活性和兼容性著称
+![image.png](http://tva1.sinaimg.cn/large/69abf49bly1i3i0vpsxyfj22di1cm4fr.jpg)
 :::
 
 

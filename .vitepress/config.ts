@@ -113,6 +113,11 @@ export default defineConfig({
 				text: '工具',
 				link: '/tools/resource',
 				activeMatch: '/03.工具/'
+			},
+			{
+				text: '小朋友专用',
+				link: '/wawa/resource',
+				activeMatch: '/09.字贴/'
 			}
 		],
 		socialLinks: [{ icon: 'github', link: 'https://github.com/he5050/book' }],
