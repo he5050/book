@@ -1,157 +1,242 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, FC } from 'react';
 import './index.scss';
 
- const ClockWarp = () => {
-	const clockRef = useRef<HTMLDivElement>(null);
+/**
+ * 时钟元素位置计算参数接口
+ */
+interface PositionParams {
+  phase: number; // 相位，范围0-1，表示在圆周上的位置
+  radius: number; // 半径，元素距离中心的距离
+}
 
-	useEffect(() => {
-		init();
+/**
+ * 时钟组件 - 显示一个模拟时钟，带有小时、分钟和秒针
+ * 
+ * 该组件使用原生DOM操作和requestAnimationFrame来创建和动画化时钟元素
+ * 组件会在窗口大小改变时重新初始化，并在卸载时清理所有资源
+ */
+const ClockWarp: FC = () => {
+  // 引用时钟容器DOM元素
+  const clockRef = useRef<HTMLDivElement>(null);
+  
+  // 存储动画帧ID，用于在组件卸载或重新初始化时取消动画
+  const animationFrameId = useRef<number | null>(null);
 
-		// 添加resize事件监听
-		window.addEventListener('resize', init);
+  /**
+   * 初始化时钟
+   * 清除之前的动态元素和动画，然后重新创建时钟
+   */
+  const initClock = (): void => {
+    const clockElement = clockRef.current;
 
-		// 清理函数
-		return () => {
-			window.removeEventListener('resize', init);
-			
-			// 取消动画帧，防止内存泄漏
-			if (animationFrameId.current !== null) {
-				cancelAnimationFrame(animationFrameId.current);
-				animationFrameId.current = null;
-			}
-		};
-	}, []);
+    if (clockElement) {
+      // 清除之前的动态元素，避免重复创建
+      const dynamicElement = clockElement.querySelector('.dynamic');
+      if (dynamicElement) {
+        dynamicElement.innerHTML = '';
+      }
+      
+      // 如果存在之前的动画，取消它
+      if (animationFrameId.current !== null) {
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = null;
+      }
+      
+      // 初始化时钟
+      createUtilityClock(clockElement);
+    }
+  };
 
-	// 使用useRef来存储动画帧ID，以便在组件卸载时取消动画
-	const animationFrameId = useRef<number | null>(null);
-	
-	const init = () => {
-		const clock = clockRef.current;
+  useEffect(() => {
+    // 初始化时钟
+    initClock();
 
-		if (clock) {
-			// 清除之前的动态元素，避免重复创建
-			const dynamic = clock.querySelector('.dynamic');
-			if (dynamic) {
-				dynamic.innerHTML = '';
-			}
-			
-			// 如果存在之前的动画，取消它
-			if (animationFrameId.current !== null) {
-				cancelAnimationFrame(animationFrameId.current);
-				animationFrameId.current = null;
-			}
-			
-			utilityClock(clock);
-		}
-	};
-	function utilityClock(container: HTMLDivElement) {
-		// 使用可选链和类型断言，确保在元素不存在时不会导致错误
-		let dynamic = container.querySelector('.dynamic') as HTMLDivElement | null;
-		let hourElement = container.querySelector('.hour') as HTMLDivElement | null;
-		let minuteElement = container.querySelector('.minute') as HTMLDivElement | null;
-		let secondElement = container.querySelector('.second') as HTMLDivElement | null;
-		
-		// 如果任何必要的元素不存在，则提前返回
-		if (!dynamic || !hourElement || !minuteElement || !secondElement) {
-			console.error('Clock elements not found');
-			return;
-		}
-		
-		let minute = function(n: number): void {
-			// 不应该有return语句，因为返回类型是void
-			n % 5 == 0 ? minuteText(n) : minuteLine(n);
-		};
-		
-		let minuteText = function(n: number): void {
-			let element = document.createElement('div');
-			element.className = 'minute-text';
-			element.innerHTML = (n < 10 ? '0' : '') + n;
-			position(element, n / 60, 135);
-			dynamic.appendChild(element);
-		};
-		
-		let minuteLine = function(n: number): void {
-			let anchors = document.createElement('div');
-			anchors.className = 'anchors';
-			let element = document.createElement('div');
-			element.className = 'element minute-line';
-			rotate(anchors, n);
-			anchors.appendChild(element);
-			dynamic.appendChild(anchors);
-		};
-		
-		let hour = function(n: number): void {
-			let element = document.createElement('div');
-			element.className = 'hour-text hour-' + n;
-			element.innerHTML = n.toString();
-			position(element, n / 12, 105);
-			dynamic.appendChild(element);
-		};
-		
-		let position = function(element: HTMLElement, phase: number, r: number): void {
-			let theta = phase * 2 * Math.PI;
-			element.style.top = (-r * Math.cos(theta)).toFixed(1) + 'px';
-			element.style.left = (r * Math.sin(theta)).toFixed(1) + 'px';
-		};
-		
-		let rotate = function(element: HTMLElement, second: number): void {
-			element.style.transform = element.style.webkitTransform = 'rotate(' + second * 6 + 'deg)';
-		};
-		let animate = function () {
-			// 检查元素是否存在，防止在元素不存在时尝试操作它们
-			if (!secondElement || !minuteElement || !hourElement) {
-				return;
-			}
-			
-			let now = new Date();
-			let time =
-				now.getHours() * 3600 +
-				now.getMinutes() * 60 +
-				now.getSeconds() * 1 +
-				now.getMilliseconds() / 1000;
-			
-			rotate(secondElement, time);
-			rotate(minuteElement, time / 60);
-			rotate(hourElement, time / 60 / 12);
-			
-			// 存储动画帧ID，以便在组件卸载时取消
-			animationFrameId.current = requestAnimationFrame(animate);
-		};
-		// 在创建分钟和小时标记之前再次检查dynamic元素是否存在
-		// 虽然我们在函数开头已经检查过，但为了代码的一致性和安全性，这里再次检查
-		if (dynamic) {
-			for (let i = 1; i <= 60; i++) minute(i);
-			for (let i = 1; i <= 12; i++) hour(i);
-		}
-		
-		animate();
-	}
-	return (
-		<div className="clock-warp">
-			<div className="fill">
-				<div className="reference"></div>
-				<div className="clock" id="utility-clock" ref={clockRef}>
-					<div className="centre">
-						<div className="dynamic"></div>
-						<div className="expand round circle-1"></div>
-						<div className="anchors hour">
-							<div className="element thin-hand"></div>
-							<div className="element fat-hand"></div>
-						</div>
-						<div className="anchors minute">
-							<div className="element thin-hand"></div>
-							<div className="element fat-hand minute-hand"></div>
-						</div>
-						<div className="anchors second">
-							<div className="element second-hand"></div>
-						</div>
-						<div className="expand round circle-2"></div>
-						<div className="expand round circle-3"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+    // 添加resize事件监听，在窗口大小改变时重新初始化时钟
+    window.addEventListener('resize', initClock);
+
+    // 清理函数 - 移除事件监听器并取消动画
+    return () => {
+      window.removeEventListener('resize', initClock);
+      
+      // 取消动画帧，防止内存泄漏
+      if (animationFrameId.current !== null) {
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = null;
+      }
+    };
+  }, []);
+  /**
+   * 创建并初始化时钟
+   * @param container 时钟容器DOM元素
+   */
+  function createUtilityClock(container: HTMLDivElement): void {
+    // 获取时钟的关键元素
+    const dynamic = container.querySelector('.dynamic') as HTMLDivElement | null;
+    const hourElement = container.querySelector('.hour') as HTMLDivElement | null;
+    const minuteElement = container.querySelector('.minute') as HTMLDivElement | null;
+    const secondElement = container.querySelector('.second') as HTMLDivElement | null;
+    
+    // 如果任何必要的元素不存在，则提前返回
+    if (!dynamic || !hourElement || !minuteElement || !secondElement) {
+      console.error('Clock elements not found');
+      return;
+    }
+    
+    /**
+     * 创建分钟标记
+     * @param minuteNumber 分钟数（1-60）
+     */
+    const createMinuteMark = function(minuteNumber: number): void {
+      // 每5分钟创建文本标记，其他分钟创建线条标记
+      minuteNumber % 5 === 0 
+        ? createMinuteTextMark(minuteNumber) 
+        : createMinuteLineMark(minuteNumber);
+    };
+    
+    /**
+     * 创建分钟文本标记（每5分钟一个）
+     * @param minuteNumber 分钟数
+     */
+    const createMinuteTextMark = function(minuteNumber: number): void {
+      const element = document.createElement('div');
+      element.className = 'minute-text';
+      // 确保分钟数显示为两位数
+      element.innerHTML = (minuteNumber < 10 ? '0' : '') + minuteNumber;
+      // 定位元素
+      positionElement(element, { phase: minuteNumber / 60, radius: 135 });
+      dynamic.appendChild(element);
+    };
+    
+    /**
+     * 创建分钟线条标记
+     * @param minuteNumber 分钟数
+     */
+    const createMinuteLineMark = function(minuteNumber: number): void {
+      const anchors = document.createElement('div');
+      anchors.className = 'anchors';
+      
+      const element = document.createElement('div');
+      element.className = 'element minute-line';
+      
+      rotateElement(anchors, minuteNumber);
+      anchors.appendChild(element);
+      dynamic.appendChild(anchors);
+    };
+    
+    /**
+     * 创建小时标记
+     * @param hourNumber 小时数（1-12）
+     */
+    const createHourMark = function(hourNumber: number): void {
+      const element = document.createElement('div');
+      element.className = 'hour-text hour-' + hourNumber;
+      element.innerHTML = hourNumber.toString();
+      // 定位元素
+      positionElement(element, { phase: hourNumber / 12, radius: 105 });
+      dynamic.appendChild(element);
+    };
+    
+    /**
+     * 根据相位和半径定位元素
+     * @param element 要定位的DOM元素
+     * @param params 位置参数（相位和半径）
+     */
+    const positionElement = function(element: HTMLElement, params: PositionParams): void {
+      const theta = params.phase * 2 * Math.PI;
+      // 计算元素的top和left位置
+      element.style.top = (-params.radius * Math.cos(theta)).toFixed(1) + 'px';
+      element.style.left = (params.radius * Math.sin(theta)).toFixed(1) + 'px';
+    };
+    
+    /**
+     * 旋转元素
+     * @param element 要旋转的DOM元素
+     * @param degrees 旋转角度（以度为单位）
+     */
+    const rotateElement = function(element: HTMLElement, degrees: number): void {
+      // 设置CSS transform属性来旋转元素
+      const rotation = `rotate(${degrees * 6}deg)`;
+      element.style.transform = rotation;
+      element.style.webkitTransform = rotation; // 兼容旧版WebKit浏览器
+    };
+    /**
+     * 动画函数 - 更新时钟指针位置
+     */
+    const animateClock = function(): void {
+      // 检查元素是否存在
+      if (!secondElement || !minuteElement || !hourElement) {
+        return;
+      }
+      
+      // 获取当前时间
+      const now = new Date();
+      
+      // 计算时间（转换为秒）
+      const time =
+        now.getHours() * 3600 +
+        now.getMinutes() * 60 +
+        now.getSeconds() +
+        now.getMilliseconds() / 1000;
+      
+      // 旋转时钟指针
+      rotateElement(secondElement, time);
+      rotateElement(minuteElement, time / 60);
+      rotateElement(hourElement, time / 60 / 12);
+      
+      // 请求下一帧动画并存储ID
+      animationFrameId.current = requestAnimationFrame(animateClock);
+    };
+    
+    // 创建时钟标记
+    if (dynamic) {
+      // 创建60个分钟标记
+      for (let i = 1; i <= 60; i++) {
+        createMinuteMark(i);
+      }
+      
+      // 创建12个小时标记
+      for (let i = 1; i <= 12; i++) {
+        createHourMark(i);
+      }
+    }
+    
+    // 开始时钟动画
+    animateClock();
+  }
+  // 渲染时钟组件
+  return (
+    <div className="clock-warp">
+      <div className="fill">
+        <div className="reference"></div>
+        {/* 时钟主体 */}
+        <div className="clock" id="utility-clock" ref={clockRef}>
+          <div className="centre">
+            {/* 动态生成的时钟标记将被插入到这个div中 */}
+            <div className="dynamic"></div>
+            {/* 时钟装饰元素 */}
+            <div className="expand round circle-1"></div>
+            {/* 时针 */}
+            <div className="anchors hour">
+              <div className="element thin-hand"></div>
+              <div className="element fat-hand"></div>
+            </div>
+            {/* 分针 */}
+            <div className="anchors minute">
+              <div className="element thin-hand"></div>
+              <div className="element fat-hand minute-hand"></div>
+            </div>
+            {/* 秒针 */}
+            <div className="anchors second">
+              <div className="element second-hand"></div>
+            </div>
+            {/* 时钟装饰元素 */}
+            <div className="expand round circle-2"></div>
+            <div className="expand round circle-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ClockWarp;
