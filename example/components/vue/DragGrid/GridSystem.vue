@@ -48,6 +48,7 @@
                           userSelect: 'none',
                           WebkitUserSelect: 'none'
                         }"
+                        :key="`${getCellItem(cell.position)?.id}-${props.color}-${props.shape}`"
                         draggable="true"
                         @dragstart="handleItemDragStart($event, getCellItem(cell.position))"
                       >
@@ -86,16 +87,18 @@
     // 初始网格行数
     initialRows?: number;
     // 当前选择的颜色
-    color?: string;
+    color: string;
     // 当前选择的形状
-    shape?: string;
+    shape: string;
   }
 
   // 定义props，设置默认值
   const props = withDefaults(defineProps<Props>(), {
     initialCellSize: 50,
     initialColumns: 5,
-    initialRows: 5
+    initialRows: 5,
+    color: 'lightblue',
+    shape: 'square'
   });
 
   /**
@@ -417,7 +420,7 @@
   // 获取元素样式
   const getItemStyle = (item: GridItem): Record<string, string> => {
     const baseStyle = {
-      background: item.color, // 始终使用元素自身的颜色
+      background: item.color + ' !important', // 强制使用元素自身的颜色
       borderRadius: "0 !important",
       clipPath: "none !important"
     };

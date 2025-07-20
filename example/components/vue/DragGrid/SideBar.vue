@@ -10,7 +10,7 @@
           :class="{ selected: currentColor === color.value }"
           :style="{ background: color.value }"
           :data-color="color.value"
-          @click="$emit('color-change', color.value)"
+          @click="handleColorChange(color.value)"
         ></div>
       </div>
   
@@ -19,31 +19,31 @@
           class="shape-option shape-square"
           :class="{ selected: currentShape === 'square' }"
           data-shape="square"
-          @click="$emit('shape-change', 'square')"
+          @click="handleShapeChange('square')"
         ></div>
         <div
           class="shape-option shape-circle"
           :class="{ selected: currentShape === 'circle' }"
           data-shape="circle"
-          @click="$emit('shape-change', 'circle')"
+          @click="handleShapeChange('circle')"
         ></div>
         <div
           class="shape-option shape-triangle"
           :class="{ selected: currentShape === 'triangle' }"
           data-shape="triangle"
-          @click="$emit('shape-change', 'triangle')"
+          @click="handleShapeChange('triangle')"
         ></div>
         <div
           class="shape-option shape-hexagon"
           :class="{ selected: currentShape === 'hexagon' }"
           data-shape="hexagon"
-          @click="$emit('shape-change', 'hexagon')"
+          @click="handleShapeChange('hexagon')"
         ></div>
         <div
           class="shape-option shape-star"
           :class="{ selected: currentShape === 'star' }"
           data-shape="star"
-          @click="$emit('shape-change', 'star')"
+          @click="handleShapeChange('star')"
         ></div>
       </div>
   
@@ -125,15 +125,10 @@
   <script setup lang="ts">
   import { ref } from "vue";
   
+  const currentColor = ref("lightblue");
+  const currentShape = ref("square");
+
   const props = defineProps({
-    currentColor: {
-      type: String,
-      default: "lightblue",
-    },
-    currentShape: {
-      type: String,
-      default: "square",
-    },
     itemCount: {
       type: Number,
       default: 0,
@@ -167,6 +162,16 @@
       "toggle-auto-save",
       "update-grid-params"
     ]);
+
+  const handleColorChange = (color: string) => {
+    currentColor.value = color;
+    emit("color-change", color);
+  };
+
+  const handleShapeChange = (shape: string) => {
+    currentShape.value = shape;
+    emit("shape-change", shape);
+  };
   
   const colors = ref([
     { value: "lightblue" },
