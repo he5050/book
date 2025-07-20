@@ -19,7 +19,10 @@ export function useGridLayout(
   items: GridItem[], 
   cells: GridCell[], 
   nextItemNumber: Ref<number>, 
-  pulseItems: Ref<number[]>
+  pulseItems: Ref<number[]>,
+  showAlert: (message: string, title?: string) => Promise<void>,
+  showPrompt: (message: string, defaultValue?: string, placeholder?: string, title?: string) => Promise<string | null>,
+  showConfirm: (message: string, title?: string) => Promise<boolean>
 ) {
   const savedLayouts = ref<SavedLayout[]>([]);
   
@@ -45,7 +48,7 @@ export function useGridLayout(
   loadSavedLayouts();
   
   // 保存布局到本地存储
-  const saveLayout = () => {
+  const saveLayout = async () => {
     try {
       const layoutItems = items.map((item) => ({
         position: item.position,
@@ -55,12 +58,12 @@ export function useGridLayout(
       }));
       
       if (layoutItems.length === 0) {
-        alert("没有元素可以保存!");
+        await showAlert("没有元素可以保存!");
         return;
       }
       
       // 提示用户输入布局名称
-      const layoutName = prompt("请输入布局名称:", `布局 ${new Date().toLocaleString()}`);
+      const layoutName = await showPrompt("请输入布局名称:", `布局 ${new Date().toLocaleString()}`);
       if (!layoutName) return; // 用户取消
       
       const layoutId = `layout_${Date.now()}`;
@@ -83,20 +86,20 @@ export function useGridLayout(
       // 更新当前布局ID到URL
       updateUrlWithLayoutId(layoutId);
       
-      alert(`布局 "${layoutName}" 已保存!`);
+      await showAlert(`布局 "${layoutName}" 已保存!`);
     } catch (error) {
       console.error("保存布局失败:", error);
-      alert("保存布局失败，请稍后再试!");
+      await showAlert("保存布局失败，请稍后再试!");
     }
   };
   
   // 从本地存储加载布局
-  const loadLayout = () => {
+  const loadLayout = async () => {
     try {
       const layouts = loadSavedLayouts();
       
       if (layouts.length === 0) {
-        alert("没有找到保存的布局!");
+        await showAlert("没有找到保存的布局!");
         return;
       }
       
@@ -105,31 +108,31 @@ export function useGridLayout(
         `${index + 1}. ${layout.name} (${new Date(layout.timestamp).toLocaleString()})`
       ).join("\\n");
       
-      const selection = prompt(`请选择要加载的布局编号:\\n${layoutOptions}`, "1");
+      const selection = await showPrompt(`请选择要加载的布局编号:\\n${layoutOptions}`, "1");
       if (!selection) return; // 用户取消
       
       const index = parseInt(selection) - 1;
       if (isNaN(index) || index < 0 || index >= layouts.length) {
-        alert("无效的选择!");
+        await showAlert("无效的选择!");
         return;
       }
       
       const selectedLayout = layouts[index];
-      loadLayoutById(selectedLayout.id);
+      await loadLayoutById(selectedLayout.id);
     } catch (error) {
       console.error("加载布局失败:", error);
-      alert("加载布局失败，可能是数据格式不正确!");
+      await showAlert("加载布局失败，可能是数据格式不正确!");
     }
   };
   
   // 通过ID加载布局
-  const loadLayoutById = (layoutId: string) => {
+  const loadLayoutById = async (layoutId: string) => {
     try {
       const layouts = loadSavedLayouts();
       const layout = layouts.find(l => l.id === layoutId);
       
       if (!layout) {
-        alert(`找不到ID为 ${layoutId} 的布局!`);
+        await showAlert(`找不到ID为 ${layoutId} 的布局!`);
         return;
       }
       
@@ -178,10 +181,10 @@ export function useGridLayout(
         pulseItems.value = [];
       }, 500);
       
-      alert(`布局 "${layout.name}" 已加载!`);
+      await showAlert(`布局 "${layout.name}" 已加载!`);
     } catch (error) {
       console.error("加载布局失败:", error);
-      alert("加载布局失败，可能是数据格式不正确!");
+      await showAlert("加载布局失败，可能是数据格式不正确!");
     }
   };
   
@@ -193,12 +196,12 @@ export function useGridLayout(
   };
   
   // 删除布局
-  const deleteLayout = () => {
+  const deleteLayout = async () => {
     try {
       const layouts = loadSavedLayouts();
       
       if (layouts.length === 0) {
-        alert("没有找到保存的布局!");
+        await showAlert("没有找到保存的布局!");
         return;
       }
       
@@ -207,26 +210,26 @@ export function useGridLayout(
         `${index + 1}. ${layout.name} (${new Date(layout.timestamp).toLocaleString()})`
       ).join("\\n");
       
-      const selection = prompt(`请选择要删除的布局编号:\\n${layoutOptions}`, "1");
+      const selection = await showPrompt(`请选择要删除的布局编号:\\n${layoutOptions}`, "1");
       if (!selection) return; // 用户取消
       
       const index = parseInt(selection) - 1;
       if (isNaN(index) || index < 0 || index >= layouts.length) {
-        alert("无效的选择!");
+        await showAlert("无效的选择!");
         return;
       }
       
       const selectedLayout = layouts[index];
       
-      if (confirm(`确定要删除布局 "${selectedLayout.name}" 吗?`)) {
+      if (await showConfirm(`确定要删除布局 "${selectedLayout.name}" 吗?`)) {
         layouts.splice(index, 1);
         localStorage.setItem("gridLayouts", JSON.stringify(layouts));
         savedLayouts.value = layouts;
-        alert("布局已删除!");
+        await showAlert("布局已删除!");
       }
     } catch (error) {
       console.error("删除布局失败:", error);
-      alert("删除布局失败!");
+      await showAlert("删除布局失败!");
     }
   };
   

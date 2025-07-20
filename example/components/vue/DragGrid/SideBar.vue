@@ -27,6 +27,24 @@
           data-shape="circle"
           @click="$emit('shape-change', 'circle')"
         ></div>
+        <div
+          class="shape-option shape-triangle"
+          :class="{ selected: currentShape === 'triangle' }"
+          data-shape="triangle"
+          @click="$emit('shape-change', 'triangle')"
+        ></div>
+        <div
+          class="shape-option shape-hexagon"
+          :class="{ selected: currentShape === 'hexagon' }"
+          data-shape="hexagon"
+          @click="$emit('shape-change', 'hexagon')"
+        ></div>
+        <div
+          class="shape-option shape-star"
+          :class="{ selected: currentShape === 'star' }"
+          data-shape="star"
+          @click="$emit('shape-change', 'star')"
+        ></div>
       </div>
   
       <div
@@ -35,6 +53,9 @@
         :style="{
           background: currentColor,
           borderRadius: currentShape === 'circle' ? '50%' : '0',
+          clipPath: currentShape === 'triangle' ? 'polygon(50% 0%, 0% 100%, 100% 100%)' : 
+                  currentShape === 'hexagon' ? 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' :
+                  currentShape === 'star' ? 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' : 'none'
         }"
         @dragstart="handleDragStart"
       ></div>
@@ -49,11 +70,54 @@
         <button class="control-btn" @click="$emit('sort')">按数字排序</button>
       </div>
   
+      <div class="grid-params">
+        <h4>网格参数设置</h4>
+        <div class="param-input">
+          <label for="columns">列数:</label>
+          <input 
+            type="number" 
+            id="columns" 
+            v-model="gridParams.columns" 
+            min="3" 
+            max="12"
+          />
+        </div>
+        <div class="param-input">
+          <label for="rows">行数:</label>
+          <input 
+            type="number" 
+            id="rows" 
+            v-model="gridParams.rows" 
+            min="3" 
+            max="12"
+          />
+        </div>
+        <div class="param-input">
+          <label for="cellSize">单元格大小(px):</label>
+          <input 
+            type="number" 
+            id="cellSize" 
+            v-model="gridParams.cellSize" 
+            min="50" 
+            max="150" 
+            step="10"
+          />
+        </div>
+        <button class="control-btn" @click="updateGridParams">更新网格</button>
+      </div>
+
       <div class="save-load">
         <button class="control-btn" @click="$emit('save')">保存布局</button>
         <button class="control-btn" @click="$emit('load')">加载布局</button>
         <button class="control-btn" @click="$emit('delete-layout')">删除布局</button>
         <button class="control-btn" @click="$emit('share')">分享布局</button>
+        <button 
+          class="control-btn" 
+          :class="{ 'active-btn': autoSaveEnabled }" 
+          @click="$emit('toggle-auto-save')"
+        >
+          {{ autoSaveEnabled ? '禁用自动保存' : '启用自动保存' }}
+        </button>
       </div>
     </div>
   </template>
@@ -74,19 +138,35 @@
       type: Number,
       default: 0,
     },
+    /**
+     * 是否启用自动保存
+     */
+    autoSaveEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * 自动保存间隔（毫秒）
+     */
+    autoSaveInterval: {
+      type: Number,
+      default: 60000, // 默认1分钟
+    }
   });
-  
+
   const emit = defineEmits([
-    "color-change",
-    "shape-change",
-    "clear-grid",
-    "randomize",
-    "sort",
-    "save",
-    "load",
-    "delete-layout",
-    "share"
-  ]);
+      "color-change",
+      "shape-change",
+      "clear-grid",
+      "randomize",
+      "sort",
+      "save",
+      "load",
+      "delete-layout",
+      "share",
+      "toggle-auto-save",
+      "update-grid-params"
+    ]);
   
   const colors = ref([
     { value: "lightblue" },
@@ -98,11 +178,32 @@
     { value: "#20B2AA" },
     { value: "#FF69B4" },
   ]);
+
+  // 网格参数设置
+  const gridParams = ref({
+    columns: 9,
+    rows: 9,
+    cellSize: 10
+  });
+
+  // 更新网格参数
+  const updateGridParams = () => {
+    emit("update-grid-params", 
+      gridParams.value.columns, 
+      gridParams.value.rows, 
+      gridParams.value.cellSize
+    );
+  };
   
   const handleDragStart = (event: DragEvent) => {
     // 设置拖动效果为复制
     if (event.dataTransfer) {
       event.dataTransfer.effectAllowed = "copy";
+      // 设置拖拽数据，包括颜色和形状
+      event.dataTransfer.setData("text/plain", JSON.stringify({
+        color: props.currentColor,
+        shape: props.currentShape
+      }));
     }
   };
   </script>
@@ -158,11 +259,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #ADD8E6; /* 浅蓝色背景 */
   }
-  
+
   .shape-option.selected {
     border-color: #000;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: #0066CC; /* 深蓝色背景 */
   }
   
   .shape-square {
@@ -171,6 +273,18 @@
   
   .shape-circle {
     border-radius: 50%;
+  }
+
+  .shape-triangle {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+
+  .shape-hexagon {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
+
+  .shape-star {
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   }
   
   .draggable-item {
@@ -181,7 +295,6 @@
     border: 2px solid #666;
     box-sizing: border-box;
     transition: transform 0.2s;
-    border-radius: 5px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -220,10 +333,50 @@
   .save-load {
     margin-top: 20px;
   }
-  
+
   .save-load button {
     width: 100%;
     margin-bottom: 10px;
+  }
+
+  /* 网格参数设置样式 */
+  .grid-params {
+    margin-top: 20px;
+    padding: 10px;
+    background: #e8e8e8;
+    border-radius: 6px;
+  }
+
+  .grid-params h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .param-input {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .param-input label {
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+
+  .param-input input {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .active-btn {
+    background: #2ecc71;
+  }
+
+  .active-btn:hover {
+    background: #27ae60;
   }
   </style>
   
