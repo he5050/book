@@ -1,7 +1,11 @@
 <template>
 	<div class="drag-grid-app">
 		<!-- 侧边栏组件 -->
-		<SideBar @update-grid-params="handleGridParamsUpdate" />
+		<SideBar 
+			@update-grid-params="handleGridParamsUpdate"
+			@color-change="(color) => currentColor = color"
+			@shape-change="(shape) => currentShape = shape"
+		/>
 		
 		<!-- 主网格系统组件 -->
 		<GridSystem 
@@ -9,6 +13,8 @@
 			:initial-cell-size="props.cellSize"
 			:initial-columns="props.columns"
 			:initial-rows="props.rows"
+			:color="currentColor"
+			:shape="currentShape"
 		/>
 	</div>
 </template>
@@ -28,13 +34,29 @@
 // 导入组件
 import GridSystem from './GridSystem.vue';
 import SideBar from './SideBar.vue';
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
+
+// 当前选择的颜色和形状
+const currentColor = ref('lightblue');
+const currentShape = ref('square');
 
 // 创建对GridSystem组件的引用
 const gridSystemRef = ref(null);
 
 // 处理网格参数更新
-const handleGridParamsUpdate = (columns: number, rows: number, cellSize: number) => {
+const handleGridParamsUpdate = (
+  columns: number, 
+  rows: number, 
+  cellSize: number,
+  color?: string,
+  shape?: string
+) => {
+  if (color) {
+    currentColor.value = color;
+  }
+  if (shape) {
+    currentShape.value = shape;
+  }
   if (gridSystemRef.value) {
     // 调用GridSystem组件的handleGridParamsUpdate方法
     gridSystemRef.value.handleGridParamsUpdate(columns, rows, cellSize);
@@ -63,9 +85,9 @@ interface Props {
 
 // 定义props，设置默认值
 const props = withDefaults(defineProps<Props>(), {
-  cellSize: 100,
-  columns: 7,
-  rows: 6,
+  cellSize: 50,
+  columns: 5,
+  rows: 5,
   config: () => ({
     enableAutoSave: false,
     autoSaveInterval: 60000, // 1分钟
@@ -121,17 +143,6 @@ a:hover {
 	color: var(--primary-hover-color);
 }
 
-/* 基础布局 */
-body {
-	margin: 0;
-	display: flex;
-	place-items: center;
-	min-width: 320px;
-	min-height: 100vh;
-	color: var(--text-color);
-	background-color: var(--background-color);
-	transition: color 0.3s, background-color 0.3s;
-}
 
 /* 标题样式 */
 h1 {
@@ -172,27 +183,9 @@ button:focus-visible {
 	max-width: 1200px;
 	margin: 0 auto;
 	padding: 1rem;
+	display:flex;
+	align-items: start;
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-	.drag-grid-app {
-		padding: 0.5rem;
-	}
-	
-	:root {
-		--grid-cell-size: 80px; /* 小屏幕上减小网格单元格尺寸 */
-	}
-}
 
-@media (max-width: 480px) {
-	:root {
-		--grid-cell-size: 60px; /* 更小屏幕上进一步减小网格单元格尺寸 */
-	}
-	
-	button {
-		padding: 0.4em 0.8em; /* 更小的按钮 */
-		font-size: 0.9em;
-	}
-}
 </style>

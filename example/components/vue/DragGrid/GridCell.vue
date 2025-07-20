@@ -5,6 +5,10 @@
         'can-drop': canDrop,
         highlight: highlight,
       }"
+      :style="{
+        width: `${size}px`,
+        height: `${size}px`
+      }"
       :data-position="position"
       @dragover="$emit('dragover', $event)"
       @dragleave="$emit('dragleave', $event)"
@@ -15,7 +19,7 @@
   </template>
   
   <script setup lang="ts">
-  defineProps({
+  const props = defineProps({
     position: {
       type: String,
       required: true,
@@ -28,15 +32,18 @@
       type: Boolean,
       default: false,
     },
+    size: {
+      type: Number,
+      default: 50, // 默认大小为50px
+    },
   });
-  
+
   defineEmits(["dragover", "dragleave", "drop"]);
   </script>
   
   <style scoped>
   .grid-cell {
-    width: 100px;
-    height: 100px;
+    /* 移除固定的宽度和高度，使用:style绑定来动态设置 */
     border: 1px solid #eee;
     position: relative;
     box-sizing: border-box;

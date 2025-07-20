@@ -13,25 +13,6 @@
         @confirm="handleDialogConfirm"
         @cancel="handleDialogCancel"
       />
-      
-      <SideBar
-              :current-color="currentColor"
-              :current-shape="currentShape"
-              :item-count="items.length"
-              :auto-save-enabled="autoSaveEnabled"
-              :auto-save-interval="autoSaveInterval"
-              @color-change="setCurrentColor"
-              @shape-change="setCurrentShape"
-              @clear-grid="clearGrid"
-              @randomize="randomizeItems"
-              @sort="sortItems"
-              @save="saveLayout"
-              @load="loadLayout"
-              @delete-layout="deleteLayout"
-              @share="shareLayout"
-              @toggle-auto-save="toggleAutoSave"
-              @update-grid-params="handleGridParamsUpdate"
-            />
       <div class="grid" ref="gridRef" :style="gridStyle">
         <GridCell
           v-for="(cell, index) in cells"
@@ -39,18 +20,37 @@
           :position="cell.position"
           :can-drop="canDropCells.includes(cell.position)"
           :highlight="highlightCell === cell.position"
+          :size="cellSize"
           @dragover="handleDragOver($event, cell.position)"
           @dragleave="handleDragLeave($event, cell.position)"
           @drop="handleDrop($event, cell.position)"
         >
-          <div
-            v-if="getCellItem(cell.position)"
-            class="dropped-item"
-            :class="{ pulse: pulseItems.includes(getCellItem(cell.position).id) }"
-            :style="getItemStyle(getCellItem(cell.position))"
-            draggable="true"
-            @dragstart="handleItemDragStart($event, getCellItem(cell.position))"
-          >
+                      <div
+                        v-if="getCellItem(cell.position)"
+                        class="dropped-item"
+                        :class="{ pulse: pulseItems.includes(getCellItem(cell.position).id) }"
+                        :style="{
+                          ...getItemStyle(getCellItem(cell.position)),
+                          width: 'calc(100% - 2px)',
+                          height: 'calc(100% - 2px)',
+                          position: 'absolute',
+                          top: '0',
+                          left: '0',
+                          cursor: 'move',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          fontSize: '24px',
+                          color: '#333',
+                          fontWeight: 'bold',
+                          transition: 'transform 0.3s, box-shadow 0.3s, opacity 0.2s',
+                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+                          userSelect: 'none',
+                          WebkitUserSelect: 'none'
+                        }"
+                        draggable="true"
+                        @dragstart="handleItemDragStart($event, getCellItem(cell.position))"
+                      >
             {{ getCellItem(cell.position).number }}
             <div class="delete-btn" @click.stop="deleteItem(getCellItem(cell.position).id)">×</div>
           </div>
@@ -71,7 +71,6 @@
    * - 支持可配置的网格尺寸和单元格大小
    */
   import { ref, reactive, onMounted, onBeforeUnmount, computed, watch } from "vue";
-  import SideBar from "./SideBar.vue";
   import GridCell from "./GridCell.vue";
   import DialogBox from "./DialogBox.vue";
   import { useDragDrop } from "./useDragDrop";
@@ -86,13 +85,17 @@
     initialColumns?: number;
     // 初始网格行数
     initialRows?: number;
+    // 当前选择的颜色
+    color?: string;
+    // 当前选择的形状
+    shape?: string;
   }
 
   // 定义props，设置默认值
   const props = withDefaults(defineProps<Props>(), {
-    initialCellSize: 100,
-    initialColumns: 7,
-    initialRows: 6
+    initialCellSize: 50,
+    initialColumns: 5,
+    initialRows: 5
   });
 
   /**
@@ -288,18 +291,17 @@
     return {
       gridTemplateColumns: `repeat(${columns.value}, ${cellSize.value}px)`,
       gridTemplateRows: `repeat(${rows.value}, ${cellSize.value}px)`,
-      gap: '20px',
-      width: `${gridWidth}px`,
-      height: `${gridHeight}px`
     };
   });
   
   /**
    * 组件状态
    */
-  // 当前选择的颜色和形状
-  const currentColor = ref<string>("lightblue");
-  const currentShape = ref<string>("square");
+  // 自动保存相关状态
+  const autoSaveEnabled = ref<boolean>(false);
+  const autoSaveInterval = ref<number>(60000);
+  const autoSaveTimerId = ref<number | null>(null);
+  
   // 下一个元素的编号
   const nextItemNumber = ref<number>(1);
   // 网格中的所有元素
@@ -316,12 +318,6 @@
   const draggedItemId = ref<number | null>(null);
   // 网格DOM引用
   const gridRef = ref<HTMLElement | null>(null);
-  // 自动保存定时器ID
-  const autoSaveTimerId = ref<number | null>(null);
-  // 自动保存是否启用
-  const autoSaveEnabled = ref<boolean>(false);
-  // 自动保存间隔（毫秒）
-  const autoSaveInterval = ref<number>(60000); // 默认1分钟
 
   /**
    * 从hooks获取功能
@@ -407,6 +403,10 @@
         }
       }, interval);
     }
+    
+    // 保存设置到本地存储
+    localStorage.setItem('dragGrid_autoSave', String(enable));
+    localStorage.setItem('dragGrid_autoSaveInterval', String(interval));
   };
   
   // 计算属性
@@ -417,7 +417,7 @@
   // 获取元素样式
   const getItemStyle = (item: GridItem): Record<string, string> => {
     const baseStyle = {
-      background: item.color,
+      background: item.color, // 始终使用元素自身的颜色
       borderRadius: "0 !important",
       clipPath: "none !important"
     };
@@ -437,14 +437,6 @@
   };
   
   // 方法
-  const setCurrentColor = (color: string) => {
-    currentColor.value = color;
-  };
-  
-  const setCurrentShape = (shape: string) => {
-    currentShape.value = shape;
-  };
-  
   const handleDragOver = (event: DragEvent, position: string) => {
     event.preventDefault();
     if (!canDropCells.value.includes(position)) {
@@ -497,27 +489,13 @@
         }
       }
   
-      // 尝试从拖拽数据中获取颜色和形状
-      let color = currentColor.value;
-      let shape = currentShape.value;
-      
-      try {
-        if (event.dataTransfer && event.dataTransfer.getData("text/plain")) {
-          const dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
-          if (dragData.color) color = dragData.color;
-          if (dragData.shape) shape = dragData.shape;
-        }
-      } catch (e) {
-        console.error("解析拖拽数据失败:", e);
-      }
-  
-      // 创建新元素
+      // 创建新元素，强制使用当前选择的颜色和形状
       const newItem: GridItem = {
         id: Date.now(),
         position: position,
         number: nextItemNumber.value++,
-        color: color,
-        shape: shape,
+        color: props.color, // 强制使用props.color
+        shape: props.shape, // 强制使用props.shape
       };
   
       items.push(newItem);
@@ -727,16 +705,11 @@
         return;
       }
     
-      // 保存设置到本地存储
-      localStorage.setItem('dragGrid_autoSave', 'true');
-      localStorage.setItem('dragGrid_autoSaveInterval', String(interval));
-    
-      // 启用自动保存
+      // 启用自动保存（本地存储逻辑现在在enableAutoSave中处理）
       enableAutoSave(true, interval);
       alert(`自动保存已启用，间隔: ${interval / 1000}秒`);
     } else {
-      // 禁用自动保存
-      localStorage.setItem('dragGrid_autoSave', 'false');
+      // 禁用自动保存（本地存储逻辑现在在enableAutoSave中处理）
       enableAutoSave(false);
       alert("自动保存已禁用");
     }
@@ -830,22 +803,23 @@
   <style scoped>
   .container {
     display: flex;
-    gap: 20px;
-    padding: 20px;
-    max-width: 1200px;
+    gap: 8px;
+    padding: 8px;
     margin: 0 auto;
     flex-wrap: wrap;
+    flex:1;
+    justify-content: center;
   }
   
   .grid {
     display: grid;
-    grid-template-columns: repeat(7, 100px);
-    grid-template-rows: repeat(6, 100px);
-    gap: 20px;
+    /* 移除固定的网格模板设置，使用gridStyle计算属性中的动态设置 */
+    /* grid-template-columns和grid-template-rows将由gridStyle计算属性提供 */
+    /* gap也将由gridStyle计算属性提供 */
     border: 1px solid #ccc;
     border-radius: 8px;
     box-sizing: border-box;
-    padding: 20px;
+    padding: 8px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
@@ -933,35 +907,6 @@
     z-index: 20;
   }
   
-  /* 响应式设计 */
-  @media (max-width: 1200px) {
-    .container {
-      justify-content: center;
-    }
-    
-    .grid {
-      grid-template-columns: repeat(5, 100px);
-      grid-template-rows: repeat(8, 100px);
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .container {
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .grid {
-      grid-template-columns: repeat(4, 80px);
-      grid-template-rows: repeat(10, 80px);
-      gap: 10px;
-    }
-    
-    .dropped-item {
-      width: 78px;
-      height: 78px;
-      font-size: 20px;
-    }
-  }
+ 
   </style>
   

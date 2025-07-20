@@ -181,9 +181,9 @@
 
   // 网格参数设置
   const gridParams = ref({
-    columns: 9,
-    rows: 9,
-    cellSize: 10
+    columns: 5,
+    rows: 5,
+    cellSize: 50
   });
 
   // 更新网格参数
