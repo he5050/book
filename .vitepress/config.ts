@@ -65,13 +65,8 @@ export default defineConfig({
 		],
 
 		['meta', { name: 'keywords', content: '个人笔记' }],
-
-		['script', { charset: 'UTF-8', id: 'LA_COLLECT', src: '//sdk.51.la/js-sdk-pro.min.js' }], // 51.la
-		[
-			'script',
-			{},
-			`typeof LA !== 'undefined' && LA.init({id:"3MOLEx0hwNV1sURw",ck:"3MOLEx0hwNV1sURw",autoTrack:true,hashMode:true,screenRecord:true})`
-		] // 51.la
+		['script', { charset: 'UTF-8', id: 'sohu', src: '//pv.sohu.com/cityjson?ie=utf-8' }], 
+		['script', { charset: 'UTF-8', id: 'qq', src: '//vv.video.qq.com/checktime?otype=json' }], 
 	],
 	markdown: {
 		config(md) {
