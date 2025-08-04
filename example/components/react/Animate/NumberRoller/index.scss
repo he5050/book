@@ -1,0 +1,40 @@
+.counter-container {
+    display: flex;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .digit-container {
+    width: 40px;
+    height: 60px;
+    overflow: hidden;
+    position: relative;
+    margin: 0 2px;
+  }
+  
+  .digit-list {
+    position: absolute;
+    transform: translateY(0);
+    transition: transform 2s ease-in-out;
+  }
+  
+  .digit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    height: 60px;
+    font-weight: bold;
+  }
+  
+  .prefix, .suffix {
+    font-size: 24px;
+    margin: 0 10px;
+    align-self: center;
+  }
+  
+  #counter {
+    display: flex;
+  }

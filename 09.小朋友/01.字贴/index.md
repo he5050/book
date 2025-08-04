@@ -19,3 +19,9 @@ z2h 提供了多种字贴打印
 ![image.png](http://tva1.sinaimg.cn/large/69abf49bly1i3i1a673goj21k21datr9.jpg)
 :::
 
+
+### 2.[dayin](https://www.dayin.page/math/add_sub)
+::: info
+dayin 提供小学数据打印
+![image.png](http://tva1.sinaimg.cn/large/69abf49bly1i3lx8hxduzj21xk15kn8w.jpg)
+:::
