@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PerformanceObserver Test</title>
+</head>
+<body>
+    <h1>PerformanceObserver 测试页面</h1>
+    <p>这个页面用于测试 PerformanceObserver 是否正常工作。</p>
+    
+    <script>
+        // 检查浏览器支持
+        if (typeof PerformanceObserver !== 'undefined') {
+            console.log('✅ 浏览器支持 PerformanceObserver');
+            
+            // 测试导航性能
+            const navObserver = new PerformanceObserver((entryList) => {
+                const entries = entryList.getEntriesByType('navigation');
+                console.log('导航性能数据:', entries);
+            });
+            navObserver.observe({ entryTypes: ['navigation'], buffered: true });
+            
+            // 测试渲染性能
+            const paintObserver = new PerformanceObserver((entryList) => {
+                const entries = entryList.getEntriesByType('paint');
+                console.log('渲染性能数据:', entries);
+            });
+            paintObserver.observe({ entryTypes: ['paint'], buffered: true });
+            
+        } else {
+            console.log('❌ 浏览器不支持 PerformanceObserver');
+        }
+    </script>
+</body>
+</html>
