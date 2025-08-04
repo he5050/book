@@ -7,7 +7,7 @@
 					<div v-if="today.city" class="weather-info">
 						<div class="weather-main">
 							<span class="weather-city">{{ today.city }}</span>
-							<span class="weather-temp">{{ today.tem }}°C</span>
+							<!-- <span class="weather-temp">{{ today.tem_day }}°C</span> -->
 							<div class="weather-desc">
 								<img
 									class="weather-icon-img"

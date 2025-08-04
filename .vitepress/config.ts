@@ -105,17 +105,17 @@ export default defineConfig({
 			{ text: '首页', link: '/' },
 			{
 				text: '笔记',
-				link: '/notes/typed',
+				link: '/notes',
 				activeMatch: '/01.笔记/'
 			},
 			{
 				text: '工具',
-				link: '/tools/resource',
+				link: '/tools',
 				activeMatch: '/03.工具/'
 			},
 			{
 				text: '小朋友专用',
-				link: '/wawa/resource',
+				link: '/wawa',
 				activeMatch: '/09.字贴/'
 			}
 		],
