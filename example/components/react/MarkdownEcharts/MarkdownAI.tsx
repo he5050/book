@@ -10,130 +10,158 @@ import { materialLight, materialOceanic } from 'react-syntax-highlighter/dist/es
 import * as echarts from 'echarts';
 import 'github-markdown-css';
 
+// 根据类型和数据生成 ECharts 配置
+const generateOptionByTypeAndData = (type: string, data: any): echarts.EChartsOption => {
+	switch (type) {
+		case 'line':
+			return {
+				title: { text: data.title || '折线图', left: 'center' },
+				tooltip: { trigger: 'axis' },
+				xAxis: { type: 'category', data: data.xData || [] },
+				yAxis: { type: 'value' },
+				series: [
+					{
+						type: 'line',
+						data: data.yData || [],
+						smooth: true,
+						itemStyle: { color: data.color || '#5470c6' }
+					}
+				]
+			};
+		case 'bar':
+			return {
+				title: { text: data.title || '柱状图', left: 'center' },
+				tooltip: { trigger: 'axis' },
+				xAxis: { type: 'category', data: data.xData || [] },
+				yAxis: { type: 'value' },
+				series: [
+					{
+						type: 'bar',
+						data: data.yData || [],
+						itemStyle: { color: data.color || '#91cc75' }
+					}
+				]
+			};
+		case 'pie':
+			return {
+				title: { text: data.title || '饼图', left: 'center' },
+				tooltip: { trigger: 'item', formatter: '{a} <br/>{b}: {c} ({d}%)' },
+				series: [
+					{
+						name: data.name || '数据',
+						type: 'pie',
+						radius: '50%',
+						data: data.data || [],
+						emphasis: {
+							itemStyle: {
+								shadowBlur: 10,
+								shadowOffsetX: 0,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						}
+					}
+				]
+			};
+		default:
+			return {};
+	}
+};
+
+// 获取默认配置
+const getDefaultOption = (
+	id: string,
+	defaultChartOptions?: {
+		line?: echarts.EChartsOption;
+		bar?: echarts.EChartsOption;
+		pie?: echarts.EChartsOption;
+	}
+): echarts.EChartsOption => {
+	// 优先使用外部传入的默认配置
+	if (defaultChartOptions) {
+		if ((id.includes('line') || id.includes('1')) && defaultChartOptions.line) {
+			return defaultChartOptions.line;
+		}
+		if ((id.includes('bar') || id.includes('2')) && defaultChartOptions.bar) {
+			return defaultChartOptions.bar;
+		}
+		if ((id.includes('pie') || id.includes('3')) && defaultChartOptions.pie) {
+			return defaultChartOptions.pie;
+		}
+	}
+
+	// 返回空的占位图表
+	return getEmptyChartOption(id);
+};
+
+// ECharts 配置类型定义
+interface ChartConfig {
+	id: string;
+	type?: 'line' | 'bar' | 'pie' | 'custom';
+	option?: echarts.EChartsOption;
+	data?: any;
+}
+
 interface MarkdownAIProps {
 	content: string;
 	className?: string;
+	// 新增：ECharts 配置
+	chartConfigs?: ChartConfig[];
+	// 新增：默认图表配置
+	defaultChartOptions?: {
+		line?: echarts.EChartsOption;
+		bar?: echarts.EChartsOption;
+		pie?: echarts.EChartsOption;
+	};
 }
 
 // ECharts 容器组件
-const EChartsContainer: React.FC<{ id: string; style?: React.CSSProperties }> = ({ id, style }) => {
+const EChartsContainer: React.FC<{
+	id: string;
+	style?: React.CSSProperties;
+	chartConfigs?: ChartConfig[];
+	defaultChartOptions?: {
+		line?: echarts.EChartsOption;
+		bar?: echarts.EChartsOption;
+		pie?: echarts.EChartsOption;
+	};
+}> = ({ id, style, chartConfigs, defaultChartOptions }) => {
 	const chartRef = useRef<echarts.ECharts | null>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const chartContainer = document.getElementById(id);
-		if (chartContainer && !chartRef.current) {
-			// 初始化 ECharts 实例
-			chartRef.current = echarts.init(chartContainer);
+		// 调试信息
+		console.log('EChartsContainer useEffect 触发, ID:', id);
+		console.log('containerRef.current:', containerRef.current);
+		console.log('chartRef.current:', chartRef.current);
 
-			// 根据容器 ID 设置不同的图表配置
+		// 使用 ref 而不是 getElementById，确保能找到元素
+		if (containerRef.current && !chartRef.current) {
+			console.log('开始初始化 ECharts 实例, ID:', id);
+			// 初始化 ECharts 实例
+			chartRef.current = echarts.init(containerRef.current);
+
+			// 查找外部传入的配置
+			const externalConfig = chartConfigs?.find(config => config.id === id);
 			let option: echarts.EChartsOption = {};
 
-			if (id.includes('line') || id.includes('1')) {
-				// 折线图配置
-				option = {
-					title: {
-						text: '折线图示例'
-					},
-					tooltip: {
-						trigger: 'axis'
-					},
-					xAxis: {
-						type: 'category',
-						data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-					},
-					yAxis: {
-						type: 'value'
-					},
-					series: [
-						{
-							data: [820, 932, 901, 934, 1290, 1330, 1320],
-							type: 'line',
-							smooth: true
-						}
-					]
-				};
-			} else if (id.includes('bar') || id.includes('2')) {
-				// 柱状图配置
-				option = {
-					title: {
-						text: '柱状图示例'
-					},
-					tooltip: {
-						trigger: 'axis'
-					},
-					xAxis: {
-						type: 'category',
-						data: ['A', 'B', 'C', 'D', 'E']
-					},
-					yAxis: {
-						type: 'value'
-					},
-					series: [
-						{
-							data: [300, 400, 200, 500, 100],
-							type: 'bar',
-							itemStyle: {
-								color: '#5470c6'
-							}
-						}
-					]
-				};
-			} else if (id.includes('pie') || id.includes('3')) {
-				// 饼图配置
-				option = {
-					title: {
-						text: '饼图示例',
-						left: 'center'
-					},
-					tooltip: {
-						trigger: 'item'
-					},
-					series: [
-						{
-							name: '访问来源',
-							type: 'pie',
-							radius: '50%',
-							data: [
-								{ value: 1048, name: '搜索引擎' },
-								{ value: 735, name: '直接访问' },
-								{ value: 580, name: '邮件营销' },
-								{ value: 484, name: '联盟广告' },
-								{ value: 300, name: '视频广告' }
-							],
-							emphasis: {
-								itemStyle: {
-									shadowBlur: 10,
-									shadowOffsetX: 0,
-									shadowColor: 'rgba(0, 0, 0, 0.5)'
-								}
-							}
-						}
-					]
-				};
+			if (externalConfig) {
+				// 使用外部传入的配置
+				console.log('使用外部配置, ID:', id, 'config:', externalConfig);
+				if (externalConfig.option) {
+					option = externalConfig.option;
+				} else if (externalConfig.type && externalConfig.data) {
+					// 根据类型和数据生成配置
+					option = generateOptionByTypeAndData(externalConfig.type, externalConfig.data);
+				}
 			} else {
-				// 默认配置
-				option = {
-					title: {
-						text: 'ECharts 示例'
-					},
-					xAxis: {
-						type: 'category',
-						data: ['A', 'B', 'C', 'D', 'E']
-					},
-					yAxis: {
-						type: 'value'
-					},
-					series: [
-						{
-							data: [120, 200, 150, 80, 70],
-							type: 'bar'
-						}
-					]
-				};
+				// 使用默认配置或内置配置
+				option = getDefaultOption(id, defaultChartOptions);
 			}
 
 			// 设置图表配置
+			console.log('设置图表配置, ID:', id, 'option:', option);
 			chartRef.current.setOption(option);
+			console.log('图表配置设置完成, ID:', id);
 
 			// 监听窗口大小变化
 			const handleResize = () => {
@@ -141,27 +169,70 @@ const EChartsContainer: React.FC<{ id: string; style?: React.CSSProperties }> = 
 			};
 			window.addEventListener('resize', handleResize);
 
+			// 清理函数
 			return () => {
 				window.removeEventListener('resize', handleResize);
-				chartRef.current?.dispose();
-				chartRef.current = null;
+				if (chartRef.current) {
+					chartRef.current.dispose();
+					chartRef.current = null;
+				}
 			};
 		}
-	}, [id]);
+	}, [id, chartConfigs, defaultChartOptions]);
 
 	return (
 		<div
-			id={id}
+			ref={containerRef}
 			style={{
 				width: '100%',
 				height: '400px',
 				margin: '16px 0',
 				border: '1px solid #e1e5e9',
 				borderRadius: '8px',
+				backgroundColor: '#fff',
 				...style
 			}}
 		/>
 	);
+};
+
+// 空的占位图表配置
+const getEmptyChartOption = (id: string): echarts.EChartsOption => {
+	const chartType =
+		id.includes('line') || id.includes('1')
+			? '折线图'
+			: id.includes('bar') || id.includes('2')
+			? '柱状图'
+			: id.includes('pie') || id.includes('3')
+			? '饼图'
+			: '图表';
+
+	return {
+		title: {
+			text: `${chartType}容器`,
+			subtext: '请通过 chartConfigs 或 defaultChartOptions 传入数据',
+			left: 'center',
+			top: 'middle',
+			textStyle: {
+				color: '#999',
+				fontSize: 16
+			},
+			subtextStyle: {
+				color: '#ccc',
+				fontSize: 12
+			}
+		},
+		graphic: {
+			type: 'text',
+			left: 'center',
+			top: '60%',
+			style: {
+				text: '暂无数据',
+				fontSize: 14,
+				fill: '#ccc'
+			}
+		}
+	};
 };
 
 // 代码块组件 - 基于 base.tsx 的实现
@@ -261,7 +332,12 @@ const replaceReferences = (str: string): string => {
 	});
 };
 
-const MarkdownAI: React.FC<MarkdownAIProps> = ({ content, className = '' }) => {
+const MarkdownAI: React.FC<MarkdownAIProps> = ({
+	content,
+	className = '',
+	chartConfigs,
+	defaultChartOptions
+}) => {
 	// 处理引用标记
 	const processedContent = replaceReferences(content);
 
@@ -413,7 +489,15 @@ const MarkdownAI: React.FC<MarkdownAIProps> = ({ content, className = '' }) => {
 		div: ({ children, id, style, ...props }: any) => {
 			// 检查是否是 ECharts 容器
 			if (id && id.includes('echarts-container')) {
-				return <EChartsContainer id={id} style={style} />;
+				return (
+					<EChartsContainer
+						key={id}
+						id={id}
+						style={style}
+						chartConfigs={chartConfigs}
+						defaultChartOptions={defaultChartOptions}
+					/>
+				);
 			}
 
 			// 普通 div
@@ -446,3 +530,4 @@ const MarkdownAI: React.FC<MarkdownAIProps> = ({ content, className = '' }) => {
 };
 
 export default MarkdownAI;
+export type { ChartConfig, MarkdownAIProps };

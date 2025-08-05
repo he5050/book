@@ -12,7 +12,7 @@
 - ✅ 空白行处理优化
 - ✅ 链接自动在新窗口打开
 - ✅ 自定义样式支持
-- ✅ **ECharts 图表支持**
+- ✅ **ECharts 图表支持** (纯外部数据驱动)
 - ✅ **引用标记处理**
 
 ## 技术栈
@@ -204,6 +204,7 @@ MarkdownAI 组件的核心设计理念是：
 2. HTML 标签支持需要谨慎使用，避免 XSS 攻击
 3. 大量内容渲染时注意性能优化
 4. 代码块主题切换是独立的，每个代码块都有自己的主题状态
+5. **重要**: ECharts 图表需要通过 `chartConfigs` 或 `defaultChartOptions` 传入数据，组件内部不包含任何模拟数据
 
 ## ECharts 图表功能
 
@@ -232,7 +233,51 @@ MarkdownAI 组件的核心设计理念是：
 
 点击引用数字会触发事件，可以用于显示详细信息或跳转到相关内容。
 
-## 依赖包
+## 🔧 故障排除
+
+### 图表不显示的常见问题
+
+1. **未传入图表数据** ⚠️ **最常见问题**
+   ```tsx
+   // 错误：没有传入数据，图表会显示"暂无数据"
+   <MarkdownAI content={content} />
+   
+   // 正确：传入图表配置
+   <MarkdownAI content={content} chartConfigs={chartConfigs} />
+   ```
+
+2. **ECharts 库未正确导入**
+   ```bash
+   npm install echarts
+   ```
+
+3. **容器尺寸问题**
+   ```html
+   <!-- 确保容器有明确的宽高 -->
+   <div id="echarts-container-line-1" style="width: 100%; height: 400px;"></div>
+   ```
+
+4. **容器 ID 格式错误**
+   ```html
+   <!-- 正确格式 -->
+   <div id="echarts-container-line-1"></div>  <!-- 折线图 -->
+   <div id="echarts-container-bar-2"></div>   <!-- 柱状图 -->
+   <div id="echarts-container-pie-3"></div>   <!-- 饼图 -->
+   ```
+
+5. **调试方法**
+   ```javascript
+   // 在浏览器控制台中检查
+   console.log('ECharts 容器:', document.querySelectorAll('[id*="echarts-container"]'));
+   ```
+
+### 调试工具
+
+项目包含以下调试文件：
+- `debug-test.tsx`: 带调试信息的测试页面
+- `chart-test.tsx`: 专门的图表测试页面
+
+## 📦 依赖包
 
 ```json
 {
@@ -247,3 +292,176 @@ MarkdownAI 组件的核心设计理念是：
   "echarts": "^5.0.0"
 }
 ```
+#
+# 🔄 外部数据驱动
+
+### ChartConfig 类型定义
+
+```typescript
+interface ChartConfig {
+  id: string;                    // 图表容器 ID
+  type?: 'line' | 'bar' | 'pie' | 'custom';  // 图表类型
+  option?: echarts.EChartsOption;  // 完整的 ECharts 配置
+  data?: any;                    // 简化的数据格式
+}
+```
+
+### 使用方式
+
+#### 1. 通过 type + data 生成图表
+
+```tsx
+const chartConfigs: ChartConfig[] = [
+  {
+    id: 'echarts-container-sales',
+    type: 'line',
+    data: {
+      title: '销售数据',
+      xData: ['1月', '2月', '3月', '4月'],
+      yData: [1200, 1500, 1800, 1600],
+      color: '#ff6b6b'
+    }
+  }
+];
+```
+
+#### 2. 通过完整 option 配置
+
+```tsx
+const chartConfigs: ChartConfig[] = [
+  {
+    id: 'echarts-container-custom',
+    option: {
+      title: { text: '自定义图表' },
+      xAxis: { type: 'category', data: ['A', 'B', 'C'] },
+      yAxis: { type: 'value' },
+      series: [{ type: 'bar', data: [10, 20, 30] }]
+    }
+  }
+];
+```
+
+#### 3. 默认图表配置
+
+```tsx
+const defaultChartOptions = {
+  line: {
+    title: { text: '默认折线图' },
+    // ... 其他配置
+  },
+  bar: {
+    title: { text: '默认柱状图' },
+    // ... 其他配置
+  },
+  pie: {
+    title: { text: '默认饼图' },
+    // ... 其他配置
+  }
+};
+```
+
+### 优先级
+
+1. **chartConfigs 中的 option** - 最高优先级
+2. **chartConfigs 中的 type + data** - 中等优先级
+3. **defaultChartOptions** - 较低优先级
+4. **内置默认配置** - 最低优先级
+
+### 动态更新数据
+
+```tsx
+const [chartConfigs, setChartConfigs] = useState<ChartConfig[]>([...]);
+
+// 更新数据
+const updateData = () => {
+  const newConfigs = [...chartConfigs];
+  const config = newConfigs.find(c => c.id === 'echarts-container-sales');
+  if (config && config.data) {
+    config.data.yData = [/* 新数据 */];
+    setChartConfigs(newConfigs);
+  }
+};
+```
+
+## 📋 完整 Props 说明
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| content | string | - | Markdown 内容 |
+| className | string | '' | 自定义 CSS 类名 |
+| chartConfigs | ChartConfig[] | - | 外部图表配置数组 |
+| defaultChartOptions | object | - | 默认图表配置对象 |
+
+---
+
+*现在 MarkdownAI 组件支持完全的外部数据驱动，让图表展示更加灵活和强大！*
+## 🔄 重
+要更新
+
+### v2.0 - 纯外部数据驱动
+
+- **移除了所有内置模拟数据** 
+- **图表必须通过 `chartConfigs` 或 `defaultChartOptions` 传入数据**
+- **无数据时显示友好的占位符提示**
+- **更加纯净和灵活的组件设计**
+
+### 迁移指南
+
+如果你之前使用的是包含内置数据的版本，需要进行以下更新：
+
+```tsx
+// 旧版本（自动显示模拟数据）
+<MarkdownAI content={content} />
+
+// 新版本（需要传入数据）
+const chartConfigs = [
+  {
+    id: 'echarts-container-line-1',
+    type: 'line',
+    data: {
+      title: '你的图表标题',
+      xData: ['你的', 'X轴', '数据'],
+      yData: [你的, Y轴, 数据]
+    }
+  }
+];
+
+<MarkdownAI content={content} chartConfigs={chartConfigs} />
+```
+
+### 演示平台
+
+`playground.tsx` 包含了所有演示功能：
+- **完整演示** - 展示所有功能特性
+- **交互测试** - 实时编辑和预览
+- **外部数据** - 外部数据驱动示例
+- **无数据状态** - 无数据时的占位符效果
+- **调试测试** - 图表渲染调试工具
+- **使用说明** - 详细的 API 文档
+
+---
+
+*现在 MarkdownAI 组件是完全纯净的外部数据驱动组件，更适合在实际项目中使用！*## 📁 最新
+文件结构
+
+```
+MarkdownEcharts/
+├── MarkdownAI.tsx        # 主组件（纯外部数据驱动）
+├── base.tsx              # 基础代码块组件（参考实现）
+├── echarts.tsx           # ECharts 集成示例
+├── playground.tsx        # 综合演示平台（包含所有演示功能）
+└── README.md             # 详细文档
+```
+
+### playground.tsx 功能整合
+
+为了简化项目结构，所有演示功能都整合到了 `playground.tsx` 中：
+
+- **完整演示** - 展示所有功能特性的静态演示
+- **交互测试** - 实时编辑和预览 Markdown 内容
+- **外部数据** - 外部数据驱动的图表示例
+- **无数据状态** - 展示无数据时的占位符效果
+- **调试测试** - 图表渲染问题的调试工具
+- **使用说明** - 详细的 API 文档和使用指南
+
+这样的设计让开发者只需要运行一个文件就能体验所有功能，更加便于使用和维护。
