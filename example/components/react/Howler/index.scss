@@ -1,0 +1,530 @@
+.howler-demo {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.85);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+
+  .ant-page-header {
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+
+  .ant-page-header-heading-title {
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .demo-section {
+    margin-bottom: 24px;
+    
+    .ant-card-head {
+      border-bottom: 1px solid #f0f0f0;
+      min-height: 40px;
+      padding: 0 16px;
+    }
+    
+    .ant-card-head-title {
+      font-size: 18px;
+      font-weight: 500;
+      padding: 8px 0;
+    }
+    
+    .ant-card-body {
+      padding: 16px;
+    }
+  }
+
+  // 基础播放器样式
+  .basic-players {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+  }
+
+  .basic-player {
+    .ant-card-body {
+      padding: 16px;
+    }
+
+    .basic-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+
+      .ant-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+      }
+
+      .volume-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+
+        .anticon {
+          color: rgba(0, 0, 0, 0.45);
+        }
+
+        .ant-slider {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  // 音效按钮样式
+  .sound-effects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .sound-effect-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  // 高级播放器样式
+  .advanced-player {
+    .ant-card-body {
+      padding: 16px;
+    }
+  }
+
+  // 音频可视化样式
+  .visualization-container {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    padding: 16px 0;
+
+    .audio-visualizer {
+      border-radius: 4px;
+      background: #f5f5f5;
+      border: 1px solid #d9d9d9;
+      width: 100%;
+      max-width: 600px;
+      height: 150px;
+    }
+  }
+
+  // 高级控制样式
+  .advanced-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+
+    .control-group {
+      margin: 0;
+      
+      .ant-card-body {
+        padding: 16px;
+      }
+
+      .control-label {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        color: rgba(0, 0, 0, 0.85);
+      }
+
+      .volume-container,
+      .fade-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .fade-controls {
+        .ant-btn {
+          flex: 1;
+        }
+      }
+
+      .ant-slider {
+        flex: 1;
+      }
+    }
+  }
+
+  // 3D 空间音频控制样式
+  .spatial-audio-controls {
+    margin: 24px 0;
+    
+    .ant-card-head {
+      border-bottom: 1px solid #f0f0f0;
+      min-height: 40px;
+    }
+    
+    .ant-card-head-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    .ant-card-body {
+      padding: 16px;
+    }
+
+    .spatial-sliders {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .spatial-control {
+      .control-label {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: rgba(0, 0, 0, 0.85);
+      }
+
+      .ant-slider {
+        width: 100%;
+      }
+    }
+  }
+
+  // 音频精灵控制样式
+  .sprite-controls {
+    margin: 24px 0;
+    
+    .ant-card-head {
+      border-bottom: 1px solid #f0f0f0;
+      min-height: 40px;
+    }
+    
+    .ant-card-head-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    .ant-card-body {
+      padding: 16px;
+    }
+
+    .sprite-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  }
+
+  .track-info {
+    text-align: center;
+    margin-bottom: 16px;
+
+    .track-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .track-artist {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.45);
+    }
+
+    .track-sprites {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.45);
+      margin-top: 4px;
+    }
+  }
+
+  .progress-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    .time-display {
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 40px;
+      text-align: center;
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    .progress-bar {
+      flex: 1;
+      position: relative;
+
+      .progress-slider {
+        width: 100%;
+      }
+    }
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .ant-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      font-size: 18px;
+    }
+
+    .ant-btn-circle {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .status-indicator {
+    text-align: center;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.45);
+    margin-top: 16px;
+
+    .status {
+      font-weight: 500;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 8px;
+
+      &.playing {
+        background: #f6ffed;
+        color: #52c41a;
+      }
+
+      &.paused {
+        background: #fffbe6;
+        color: #faad14;
+      }
+
+      &.stopped {
+        background: #fff2f0;
+        color: #ff4d4f;
+      }
+
+      &.loading {
+        background: #e6f7ff;
+        color: #1890ff;
+      }
+    }
+  }
+
+  .playlist {
+    .playlist-item {
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 12px 16px;
+      border-radius: 4px;
+
+      &:hover {
+        background: #f5f5f5;
+      }
+
+      &.active {
+        background: #e6f7ff;
+        border-color: #1890ff;
+
+        .track-title {
+          color: #1890ff;
+          font-weight: 600;
+        }
+      }
+
+      .track-info {
+        .track-title {
+          font-size: 16px;
+          font-weight: 500;
+          margin-bottom: 4px;
+          transition: color 0.3s;
+        }
+
+        .track-artist {
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.45);
+        }
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .howler-demo {
+    margin: 16px;
+    padding: 16px;
+
+    .ant-page-header-heading-title {
+      font-size: 20px;
+    }
+
+    .demo-section {
+      .ant-card-head-title {
+        font-size: 16px;
+      }
+    }
+
+    .basic-players {
+      grid-template-columns: 1fr;
+    }
+
+    .advanced-controls {
+      grid-template-columns: 1fr;
+    }
+
+    .spatial-sliders {
+      grid-template-columns: 1fr;
+    }
+
+    .track-info .track-title {
+      font-size: 18px;
+    }
+
+    .controls {
+      gap: 12px;
+
+      .ant-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
+    }
+
+    .sound-effects {
+      justify-content: center;
+    }
+
+    .sprite-buttons {
+      justify-content: center;
+    }
+
+    .visualization-container {
+      .audio-visualizer {
+        width: 100%;
+        max-width: 100%;
+        height: 120px;
+      }
+    }
+  }
+}
+
+// Ant Design 组件样式覆盖
+.howler-demo {
+  .ant-btn {
+    border-color: #d9d9d9;
+    
+    &:hover {
+      border-color: #1890ff;
+    }
+
+    .anticon {
+      font-size: 16px;
+    }
+  }
+
+  .ant-slider {
+    height: 12px;
+    
+    &::-webkit-slider-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #1890ff;
+      border: solid 2px #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .ant-card {
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .ant-card-bordered {
+    border: 1px solid #f0f0f0;
+  }
+
+  // 图标样式
+  .anticon {
+    color: rgba(0, 0, 0, 0.65);
+    
+    &.anticon-loading {
+      color: #1890ff;
+    }
+  }
+
+  // 标题图标样式
+  h1 .anticon,
+  h2 .anticon {
+    margin-right: 8px;
+    color: #1890ff;
+  }
+
+  // 播放按钮特殊样式
+  .play-btn {
+    .anticon {
+      font-size: 20px;
+    }
+  }
+
+  // 激活状态的按钮
+  .control-btn.active {
+    background-color: #1890ff;
+    border-color: #1890ff;
+    color: #fff;
+
+    .anticon {
+      color: #fff;
+    }
+  }
+
+  // 音效按钮样式
+  .sound-effect-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #f0f0f0;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      background: #e6f7ff;
+      border-color: #1890ff;
+      color: #1890ff;
+
+      .anticon {
+        color: #1890ff;
+      }
+    }
+
+    .anticon {
+      font-size: 14px;
+    }
+  }
+}
