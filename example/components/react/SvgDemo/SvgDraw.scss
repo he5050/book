@@ -1,0 +1,126 @@
+.svg-draw-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 20px;
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      label {
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      button {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        background-color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background-color: #e9e9e9;
+        }
+
+        &.active {
+          background-color: #409eff;
+          color: white;
+          border-color: #409eff;
+        }
+
+        // 为不同笔刷类型添加特殊样式
+        &[data-brush="calligraphy"].active {
+          background-color: #8B4513; // 棕色，模拟墨水
+          border-color: #6b350d;
+        }
+
+        &[data-brush="pencil"].active {
+          background-color: #A9A9A9; // 灰色，模拟铅笔
+          border-color: #808080;
+        }
+
+        &[data-brush="splatter"].active {
+          background-color: #000000; // 黑色，模拟泼墨
+          border-color: #333333;
+        }
+
+        &[data-brush="pen"].active {
+          background-color: #1E90FF; // 蓝色，模拟钢笔
+          border-color: #187bcd;
+        }
+      }
+
+      input[type="color"] {
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      input[type="range"] {
+        width: 100px;
+      }
+    }
+  }
+
+  .canvas-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f8f8f8; // 更淡的背景色
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 500px;
+      background-color: #fffff0; // 米白色背景，更像纸张
+      cursor: crosshair;
+      // 添加更真实的纸张纹理效果
+      background-image:
+        linear-gradient(0deg, transparent 24%, rgba(0, 0, 0, 0.03) 25%, rgba(0, 0, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.03) 75%, rgba(0, 0, 0, 0.03) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, rgba(0, 0, 0, 0.03) 25%, rgba(0, 0, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.03) 75%, rgba(0, 0, 0, 0.03) 76%, transparent 77%, transparent);
+      background-size: 60px 60px;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .svg-draw-container {
+    padding: 10px;
+
+    .controls {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .control-group {
+        width: 100%;
+        justify-content: space-between;
+
+        &:first-child {
+          flex-wrap: wrap;
+        }
+      }
+    }
+
+    .canvas-container {
+      svg {
+        height: 400px;
+      }
+    }
+  }
+}
