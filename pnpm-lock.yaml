@@ -32,6 +32,9 @@ importers:
       howler:
         specifier: ^2.2.4
         version: 2.2.4
+      liquid-glass-react:
+        specifier: ^1.1.1
+        version: 1.1.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-copy-to-clipboard:
         specifier: ^5.1.0
         version: 5.1.0(react@19.1.0)
@@ -1705,6 +1708,12 @@ packages:
   lightgallery@2.8.3:
     resolution: {integrity: sha512-s67Z7KZAhIu/io7qs2yIM+8+hUyDQ1ufRtCQwhFnmHVzRQ8cKlxf53CxS/DpJ0sDGOWHNx5L6Y3PfACQxiH+8A==}
     engines: {node: '>=6.0.0'}
+
+  liquid-glass-react@1.1.1:
+    resolution: {integrity: sha512-pKzaktaMAEztd93wpWcz2Z5Z9qdLJUNJdMX+n00Ca4XsnrLTQ5xJzm/+GQXZUeuFXe/PQ8ziVMZO6531PyaFJw==}
+    peerDependencies:
+      react: '>=19'
+      react-dom: '>=19'
 
   local-pkg@1.1.1:
     resolution: {integrity: sha512-WunYko2W1NcdfAFpuLUoucsgULmgDBRkdxHxWQ7mK0cQqwPiy8E1enjuRBrhLtZkB5iScJ1XIPdhVEFK8aOLSg==}
@@ -4447,6 +4456,11 @@ snapshots:
   leader-line-vue@2.1.1: {}
 
   lightgallery@2.8.3: {}
+
+  liquid-glass-react@1.1.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   local-pkg@1.1.1:
     dependencies:

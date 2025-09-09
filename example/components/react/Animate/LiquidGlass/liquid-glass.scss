@@ -1,0 +1,240 @@
+.lgbox {
+  padding: 16px;
+}
+
+.liquid-glass-demo-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-weight: 600;
+  }
+
+  h2 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    color: #444;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .demo-section {
+    margin-bottom: 40px;
+  }
+
+  .card-demo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    &.interactive {
+      min-height: 400px;
+    }
+  }
+
+  .card-content {
+    text-align: center;
+    color: #333;
+    z-index: 2;
+    position: relative;
+
+    h3 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    h4 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 500;
+    }
+
+    p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 80%;
+      margin: 0 auto;
+    }
+  }
+
+  .button-demo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .button-text {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+  }
+
+  .intensity-demo {
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    min-height: 300px;
+  }
+
+  .glass-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    z-index: 2;
+    position: relative;
+
+    .glass-card {
+      flex: 1;
+      min-width: 250px;
+      margin: 10px;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  .glass-card {
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.subtle {
+      min-height: 180px;
+    }
+
+    &.medium {
+      min-height: 180px;
+    }
+
+    &.strong {
+      min-height: 180px;
+    }
+  }
+
+  .glass-button {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+    z-index: 2;
+    position: relative;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25) !important;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .info-section {
+    margin-top: 50px;
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    h2 {
+      margin-top: 0;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .safe-container {
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .liquid-glass-buttons-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    h2 {
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: #444;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .buttons-demo {
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .size-demo {
+      gap: 30px;
+    }
+
+    .interactive-demo {
+      gap: 40px;
+    }
+  }
+}
