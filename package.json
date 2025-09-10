@@ -24,7 +24,8 @@
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
-    "vitepress": "^1.6.3"
+    "vitepress": "^1.6.3",
+    "vitepress-plugin-legend": "^1.1.0"
   },
   "devDependencies": {
     "@types/howler": "^2.2.12",
