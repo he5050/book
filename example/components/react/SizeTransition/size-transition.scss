@@ -1,0 +1,6 @@
+.size-transition {
+  width: 100%;
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
+  will-change: height; // 启用硬件加速
+}
