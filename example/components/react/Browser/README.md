@@ -1,3 +1,13 @@
+---
+date: 2025-08-25 22:16:47
+title: README
+permalink: /pages/64bd25
+categories:
+  - example
+  - components
+  - react
+  - Browser
+---
 # 浏览器信息统计组件
 
 基于掘金文章《JS获取用户访问网页的浏览器、IP、地址等信息 实现访问统计》实现的React组件库。

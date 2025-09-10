@@ -27,7 +27,12 @@ const teekConfig = defineTeekConfig({
 	},
 	articleShare: { enabled: true },
 	vitePlugins: {
+		autoFrontmatter: true,
+		permalinkOption: {
+			ignoreList: ['.vitepress', 'sh', 'types', 'example', '.git', '.github', '.vscode']
+		},
 		sidebarOption: {
+			ignoreList: ['.vitepress', 'sh', 'types', 'example', '.git', '.github', '.vscode'],
 			initItems: false
 		}
 	},
@@ -65,8 +70,8 @@ export default defineConfig({
 		],
 
 		['meta', { name: 'keywords', content: '个人笔记' }],
-		['script', { charset: 'UTF-8', id: 'sohu', src: '//pv.sohu.com/cityjson?ie=utf-8' }], 
-		['script', { charset: 'UTF-8', id: 'qq', src: '//vv.video.qq.com/checktime?otype=json' }], 
+		['script', { charset: 'UTF-8', id: 'sohu', src: '//pv.sohu.com/cityjson?ie=utf-8' }],
+		['script', { charset: 'UTF-8', id: 'qq', src: '//vv.video.qq.com/checktime?otype=json' }]
 	],
 	markdown: {
 		config(md) {
@@ -76,9 +81,13 @@ export default defineConfig({
 		}
 	},
 	vite: {
-		plugins: [react(), unocss(unoConfig), codeInspectorPlugin({
-			bundler: 'vite',
-		  }),], // 注入 react 插件
+		plugins: [
+			react(),
+			unocss(unoConfig),
+			codeInspectorPlugin({
+				bundler: 'vite'
+			})
+		], // 注入 react 插件
 		css: {
 			preprocessorOptions: {
 				// scss: {

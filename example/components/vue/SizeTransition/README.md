@@ -1,3 +1,13 @@
+---
+date: 2025-09-10 19:26:40
+title: README
+permalink: /pages/7cc0c2
+categories:
+  - example
+  - components
+  - vue
+  - SizeTransition
+---
 # SizeTransition 组件 (Vue 版本)
 
 ## 简介

@@ -1,3 +1,13 @@
+---
+date: 2025-08-05 15:21:48
+title: README
+permalink: /pages/81050d
+categories:
+  - example
+  - components
+  - react
+  - MarkdownEcharts
+---
 # MarkdownAI 组件
 
 基于 React 的 AI 对话 Markdown 渲染组件，**完全基于 base.tsx 的实现**，并扩展了 ECharts 图表和引用标记支持。支持流式渲染、代码高亮、复制功能等特性。

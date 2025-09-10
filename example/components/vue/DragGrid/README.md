@@ -1,3 +1,13 @@
+---
+date: 2025-07-20 14:00:48
+title: README
+permalink: /pages/f8d6b1
+categories:
+  - example
+  - components
+  - vue
+  - DragGrid
+---
 # 拖拽网格系统 (DragGrid)
 
 一个功能丰富的可拖拽网格系统，允许用户创建、编辑和分享自定义布局。
