@@ -57,8 +57,8 @@
     "typed.js": "^2.1.0",
     "unocss": "^66.1.3",
     "viewerjs": "^1.11.7",
-    "vitepress-demo-plugin": "^1.4.5",
-    "vitepress-theme-teek": "^1.3.5",
+    "vitepress-demo-plugin": "^1.4.7",
+    "vitepress-theme-teek": "^1.4.6",
     "vuedraggable": "^4.1.0"
   }
 }
