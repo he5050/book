@@ -135,7 +135,7 @@ graph TB
     A --> E[方法实现]
     A --> F[副作用处理]
     A --> G[渲染返回]
-    
+
     style A fill:#4ecdc4
     style B fill:#45b7d1
     style C fill:#96ceb4
@@ -193,10 +193,12 @@ if (!window.ResizeObserver) {
 ## 常见问题
 
 1. **过渡动画不生效**：
+
    - 检查 CSS transition 属性是否正确设置
    - 确保内容区域有明确的高度变化
 
 2. **方法调用失败**：
+
    - 确保正确传递 ref 引用
    - 检查组件是否已正确挂载
 
