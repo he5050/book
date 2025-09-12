@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
+    "@mermaid-js/mermaid-cli": "^11.9.0",
     "@types/react-copy-to-clipboard": "^5.0.7",
     "@types/react-syntax-highlighter": "^15.5.13",
     "clsx": "^2.1.1",
@@ -46,6 +47,7 @@
     "lightgallery": "^2.8.3",
     "lucide-react": "^0.525.0",
     "masonry-layout": "^4.2.2",
+    "mermaid": "^11.11.0",
     "photoswipe": "^5.4.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -58,6 +60,7 @@
     "unocss": "^66.1.3",
     "viewerjs": "^1.11.7",
     "vitepress-demo-plugin": "^1.4.7",
+    "vitepress-plugin-mermaid": "^2.0.17",
     "vitepress-theme-teek": "^1.4.6",
     "vuedraggable": "^4.1.0"
   }
