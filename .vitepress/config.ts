@@ -24,10 +24,10 @@ const teekConfig = defineTeekConfig({
 	vitePlugins: {
 		autoFrontmatter: true,
 		permalinkOption: {
-			ignoreList: ['.vitepress', 'sh', 'types', 'example', '.git', '.github', '.vscode']
+			ignoreList: ['.vitepress', 'sh', 'types', 'example', '.git', '.github', '.vscode', 'docs']
 		},
 		sidebarOption: {
-			ignoreList: ['.vitepress', 'sh', 'types', 'example', '.git', '.github', '.vscode'],
+			ignoreList: ['.vitepress', 'sh', 'types', 'example', '.git', '.github', '.vscode', 'docs'],
 			initItems: false
 		}
 	},

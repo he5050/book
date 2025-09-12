@@ -8,6 +8,7 @@ categories:
   - react
   - SizeTransition
 ---
+
 # SizeTransition 组件
 
 ## 简介
@@ -15,6 +16,19 @@ categories:
 SizeTransition 是一个用于为不固定高度的 div 添加过渡动画效果的 React 组件。它使用 ResizeObserver API 来监听元素尺寸的变化，从而实现流畅的高度过渡动画。
 
 ## 实现原理
+
+```mermaid
+flowchart TD
+    A[组件初始化] --> B[设置初始状态]
+    B --> C[创建 ResizeObserver]
+    C --> D[监听内容区域尺寸变化]
+    D --> E{状态变化?}
+    E -->|展开| F[计算内容高度]
+    E -->|收起| G[设置最小高度]
+    F --> H[应用 CSS 过渡动画]
+    G --> H
+    H --> I[完成过渡]
+```
 
 1. 使用 ResizeObserver API 监听内容区域的高度变化
 2. 通过状态管理控制元素的显示和隐藏
@@ -82,7 +96,7 @@ function App() {
 }
 ```
 
-## API
+## API 参考
 
 ### Props
 
@@ -101,6 +115,35 @@ function App() {
 | expand()   | 展开内容                |
 | contract() | 收起内容                |
 | toggle()   | 切换内容的展开/收起状态 |
+
+## 实现细节
+
+### 核心逻辑
+
+1. **ResizeObserver 监听**：组件使用 ResizeObserver API 监听内容区域的高度变化
+2. **状态管理**：通过 React 的 useState 钩子管理组件状态
+3. **动画实现**：利用 CSS transition 属性实现平滑的高度过渡效果
+4. **方法暴露**：使用 useImperativeHandle 钩子暴露方法给父组件
+
+### 代码结构
+
+```mermaid
+graph TB
+    A[SizeTransition 组件] --> B[导入依赖]
+    A --> C[定义 Props]
+    A --> D[状态管理]
+    A --> E[方法实现]
+    A --> F[副作用处理]
+    A --> G[渲染返回]
+    
+    style A fill:#4ecdc4
+    style B fill:#45b7d1
+    style C fill:#96ceb4
+    style D fill:#feca57
+    style E fill:#ff9ff3
+    style F fill:#54a0ff
+    style G fill:#5f27cd
+```
 
 ## 注意事项
 
@@ -140,3 +183,23 @@ if (!window.ResizeObserver) {
 	window.ResizeObserver = ResizeObserver;
 }
 ```
+
+## 性能优化建议
+
+1. **避免频繁重排**：确保内容区域不会频繁触发重排操作
+2. **合理设置过渡时间**：建议保持 0.3s 的过渡时间以获得最佳用户体验
+3. **内存管理**：组件销毁时会自动断开 ResizeObserver 连接，避免内存泄漏
+
+## 常见问题
+
+1. **过渡动画不生效**：
+   - 检查 CSS transition 属性是否正确设置
+   - 确保内容区域有明确的高度变化
+
+2. **方法调用失败**：
+   - 确保正确传递 ref 引用
+   - 检查组件是否已正确挂载
+
+3. **高度计算不准确**：
+   - 确保 ResizeObserver 正确监听内容区域
+   - 检查内容是否包含异步加载的元素
