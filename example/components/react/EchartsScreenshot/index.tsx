@@ -1,19 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
+import html2canvas from 'html2canvas';
+import { snapdom } from '@zumer/snapdom';
 import './echarts-screenshot.scss';
-
-// 声明全局类型（在实际项目中应该通过 npm 安装对应的类型定义）
-declare global {
-	interface Window {
-		html2canvas: any;
-		snapdom: any;
-	}
-}
 
 const EchartsScreenshot: React.FC = () => {
 	const chartContainerRef = useRef<HTMLDivElement>(null);
 	const chartDomRef = useRef<HTMLDivElement>(null);
 	const chartInstanceRef = useRef<echarts.ECharts | null>(null);
+	const html2canvasBtnRef = useRef<HTMLButtonElement>(null);
+	const snapdomBtnRef = useRef<HTMLButtonElement>(null);
 
 	// 初始化 echarts 图表
 	useEffect(() => {
@@ -72,16 +68,25 @@ const EchartsScreenshot: React.FC = () => {
 		}
 	}, []);
 
+	// 更新按钮状态
+	const updateButtonState = (
+		btnRef: React.RefObject<HTMLButtonElement>,
+		text: string,
+		disabled: boolean
+	) => {
+		if (btnRef.current) {
+			btnRef.current.textContent = text;
+			btnRef.current.disabled = disabled;
+		}
+	};
+
 	// html2canvas 截图实现
 	const handleHtml2CanvasScreenshot = async () => {
-		if (!chartContainerRef.current || !chartDomRef.current || !chartInstanceRef.current) return;
+		if (!chartContainerRef.current || !chartInstanceRef.current) return;
 
 		try {
-			// 动态加载 html2canvas（在实际项目中可以通过 import 或 script 标签引入）
-			if (!window.html2canvas) {
-				alert('请先引入 html2canvas 库');
-				return;
-			}
+			// 更新按钮状态
+			updateButtonState(html2canvasBtnRef, '截图中...', true);
 
 			// 强制重绘图表
 			chartInstanceRef.current.resize();
@@ -103,12 +108,12 @@ const EchartsScreenshot: React.FC = () => {
 			};
 
 			// 生成截图 canvas
-			const canvas = await window.html2canvas(chartContainerRef.current, html2canvasOptions);
+			const canvas = await html2canvas(chartContainerRef.current, html2canvasOptions);
 
 			// 转换 canvas 为 PNG 图片并触发下载
 			const downloadLink = document.createElement('a');
 			// 文件名格式：图表名称_日期.png（如"用户增长趋势_2024-08-24.png"）
-			const fileName = `用户增长趋势_${new Date().toLocaleDateString().replace(/\//g, '-')}.png`;
+			const fileName = `用户增长趋势_${new Date().toISOString().slice(0, 10)}.png`;
 			downloadLink.download = fileName;
 			// 转为图片URL：0.92为图片质量（0-1，平衡质量与体积）
 			downloadLink.href = canvas.toDataURL('image/png', 0.92);
@@ -118,22 +123,25 @@ const EchartsScreenshot: React.FC = () => {
 
 			// 释放 URL 资源（避免内存泄漏）
 			URL.revokeObjectURL(downloadLink.href);
+
+			// 恢复按钮状态
+			updateButtonState(html2canvasBtnRef, '📷 html2canvas 截图下载', false);
 		} catch (error) {
 			console.error('html2canvas 截图失败：', error);
 			alert('截图失败，请重试！');
+
+			// 恢复按钮状态
+			updateButtonState(html2canvasBtnRef, '📷 html2canvas 截图下载', false);
 		}
 	};
 
 	// snapdom 截图实现
 	const handleSnapdomScreenshot = async () => {
-		if (!chartContainerRef.current || !chartDomRef.current || !chartInstanceRef.current) return;
+		if (!chartContainerRef.current || !chartInstanceRef.current) return;
 
 		try {
-			// 动态加载 snapdom（在实际项目中可以通过 import 或 script 标签引入）
-			if (!window.snapdom) {
-				alert('请先引入 snapdom 库');
-				return;
-			}
+			// 更新按钮状态
+			updateButtonState(snapdomBtnRef, '截图中...', true);
 
 			// 强制重绘图表
 			chartInstanceRef.current.resize();
@@ -176,11 +184,11 @@ const EchartsScreenshot: React.FC = () => {
 			};
 
 			// 生成图片 URL（snapdom 直接返回可下载的 URL）
-			const imageUrl = await window.snapdom(chartContainerRef.current, snapdomOptions);
+			const imageUrl = await snapdom(chartContainerRef.current, snapdomOptions);
 
 			// 触发图片下载
 			const downloadLink = document.createElement('a');
-			const fileName = `用户增长趋势_${new Date().toLocaleDateString().replace(/\//g, '-')}.png`;
+			const fileName = `用户增长趋势_${new Date().toISOString().slice(0, 10)}.png`;
 			downloadLink.download = fileName;
 			downloadLink.href = imageUrl;
 
@@ -188,9 +196,15 @@ const EchartsScreenshot: React.FC = () => {
 
 			// 释放资源
 			URL.revokeObjectURL(imageUrl);
+
+			// 恢复按钮状态
+			updateButtonState(snapdomBtnRef, '📸 snapdom 截图下载', false);
 		} catch (error) {
 			console.error('snapdom 截图失败：', error);
 			alert('截图失败，请重试！');
+
+			// 恢复按钮状态
+			updateButtonState(snapdomBtnRef, '📸 snapdom 截图下载', false);
 		}
 	};
 
@@ -208,13 +222,18 @@ const EchartsScreenshot: React.FC = () => {
 			{/* 操作按钮 */}
 			<div className="echarts-screenshot-buttons">
 				<button
+					ref={html2canvasBtnRef}
 					onClick={handleHtml2CanvasScreenshot}
 					className="echarts-screenshot-btn html2canvas"
 				>
 					📷 html2canvas 截图下载
 				</button>
 
-				<button onClick={handleSnapdomScreenshot} className="echarts-screenshot-btn snapdom">
+				<button
+					ref={snapdomBtnRef}
+					onClick={handleSnapdomScreenshot}
+					className="echarts-screenshot-btn snapdom"
+				>
 					📸 snapdom 截图下载
 				</button>
 			</div>
@@ -223,7 +242,7 @@ const EchartsScreenshot: React.FC = () => {
 			<div className="echarts-instructions">
 				<h3>使用说明：</h3>
 				<ol>
-					<li>确保已在页面中引入 html2canvas 和 snapdom 库</li>
+					<li>确保已在项目中安装 echarts、html2canvas 和 snapdom 依赖</li>
 					<li>点击对应按钮即可下载图表截图</li>
 					<li>html2canvas 兼容性更好（支持 IE11+），snapdom 性能更优</li>
 				</ol>
