@@ -209,6 +209,7 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 				scale: 2, // 高清缩放（与 echarts 适配）
 				allowCORS: true, // 跨域图片支持
 				transparent: false, // 关闭透明（避免图表背景变透明）
+				backgroundColor: '#ffffff', // 设置背景颜色
 				// 核心适配：处理 echarts canvas（SVG 不兼容直接嵌入 canvas）
 				processNode: (node: HTMLElement) => {
 					// 若节点是 echarts 的 canvas，转为 img 标签（SVG 兼容关键步骤）
@@ -261,11 +262,10 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 				screenshotBtn.disabled = true;
 			}
 
-			// 生成图片 URL（snapdom 直接返回可下载的 URL）
-			const result = await snapdom(chartContainerRef.current, snapdomOptions);
-			const imageUrl = result.url;
+			// 使用snapdom的静态toPng方法生成图片
+			const imgElement: any = await snapdom.toPng(chartContainerRef.current, snapdomOptions);
 
-			// 创建或重用下载链接
+			// 创建下载链接
 			if (!downloadLinkRef.current) {
 				downloadLinkRef.current = document.createElement('a');
 			}
@@ -273,13 +273,14 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 
 			const fileName = `用户增长趋势_${new Date().toISOString().slice(0, 10)}.png`;
 			downloadLink.download = fileName;
-			downloadLink.href = imageUrl;
+			downloadLink.href = imgElement.src;
 
 			// 将链接添加到DOM中（如果尚未添加）
 			if (!downloadLink.parentNode) {
 				document.body.appendChild(downloadLink);
 			}
 
+			// 触发点击下载
 			downloadLink.click();
 
 			// 恢复按钮状态
