@@ -10,67 +10,110 @@ const EchartsScreenshot: React.FC = () => {
 	const chartInstanceRef = useRef<echarts.ECharts | null>(null);
 	const html2canvasBtnRef = useRef<HTMLButtonElement>(null);
 	const snapdomBtnRef = useRef<HTMLButtonElement>(null);
+	const downloadLinkRef = useRef<HTMLAnchorElement | null>(null);
 
 	// 初始化 echarts 图表
 	useEffect(() => {
-		if (chartDomRef.current) {
-			// 销毁之前的实例（如果存在）
-			if (chartInstanceRef.current) {
-				chartInstanceRef.current.dispose();
+		let resizeHandler: (() => void) | null = null;
+		let isComponentMounted = true;
+
+		// 确保 DOM 元素存在且组件已挂载
+		if (chartDomRef.current && isComponentMounted) {
+			try {
+				// 销毁之前的实例（如果存在）
+				if (chartInstanceRef.current) {
+					try {
+						chartInstanceRef.current.dispose();
+					} catch (e) {
+						console.warn('ECharts dispose error:', e);
+					}
+				}
+
+				// 确保 DOM 元素仍然存在
+				if (chartDomRef.current) {
+					// 初始化新的 echarts 实例
+					chartInstanceRef.current = echarts.init(chartDomRef.current);
+
+					// 图表配置（折线图+柱状图组合）
+					const option = {
+						tooltip: { trigger: 'axis' },
+						legend: { data: ['新增用户', '活跃用户'], top: 0 },
+						xAxis: {
+							type: 'category',
+							data: ['1月', '2月', '3月', '4月', '5月', '6月']
+						},
+						yAxis: { type: 'value' },
+						series: [
+							{
+								name: '新增用户',
+								type: 'bar',
+								data: [1200, 1900, 2300, 2100, 2500, 3100],
+								itemStyle: { color: '#409eff' }
+							},
+							{
+								name: '活跃用户',
+								type: 'line',
+								data: [800, 1500, 1800, 1600, 2000, 2600],
+								lineStyle: { width: 3, color: '#67c23a' },
+								symbol: 'circle',
+								symbolSize: 8
+							}
+						]
+					};
+
+					chartInstanceRef.current.setOption(option);
+
+					// 窗口 resize 时重绘图表
+					resizeHandler = () => {
+						if (isComponentMounted && chartInstanceRef.current) {
+							chartInstanceRef.current.resize();
+						}
+					};
+
+					window.addEventListener('resize', resizeHandler);
+				}
+			} catch (error) {
+				console.error('ECharts initialization error:', error);
+			}
+		}
+
+		// 清理函数
+		return () => {
+			isComponentMounted = false;
+
+			// 清理 resize 事件监听器
+			if (resizeHandler) {
+				window.removeEventListener('resize', resizeHandler);
 			}
 
-			// 初始化新的 echarts 实例
-			chartInstanceRef.current = echarts.init(chartDomRef.current);
-
-			// 图表配置（折线图+柱状图组合）
-			const option = {
-				tooltip: { trigger: 'axis' },
-				legend: { data: ['新增用户', '活跃用户'], top: 0 },
-				xAxis: {
-					type: 'category',
-					data: ['1月', '2月', '3月', '4月', '5月', '6月']
-				},
-				yAxis: { type: 'value' },
-				series: [
-					{
-						name: '新增用户',
-						type: 'bar',
-						data: [1200, 1900, 2300, 2100, 2500, 3100],
-						itemStyle: { color: '#409eff' }
-					},
-					{
-						name: '活跃用户',
-						type: 'line',
-						data: [800, 1500, 1800, 1600, 2000, 2600],
-						lineStyle: { width: 3, color: '#67c23a' },
-						symbol: 'circle',
-						symbolSize: 8
-					}
-				]
-			};
-
-			chartInstanceRef.current.setOption(option);
-
-			// 窗口 resize 时重绘图表
-			const handleResize = () => {
-				chartInstanceRef.current?.resize();
-			};
-
-			window.addEventListener('resize', handleResize);
-
-			// 清理函数
-			return () => {
-				window.removeEventListener('resize', handleResize);
-				if (chartInstanceRef.current) {
+			// 清理 ECharts 实例
+			if (chartInstanceRef.current) {
+				try {
 					chartInstanceRef.current.dispose();
+				} catch (e) {
+					console.warn('ECharts dispose error:', e);
 				}
-			};
-		}
+				chartInstanceRef.current = null;
+			}
+
+			// 清理可能创建的下载链接
+			if (downloadLinkRef.current) {
+				try {
+					// 如果链接已添加到DOM中，则移除它
+					if (downloadLinkRef.current.parentNode) {
+						downloadLinkRef.current.parentNode.removeChild(downloadLinkRef.current);
+					}
+				} catch (e) {
+					console.warn('Download link cleanup error:', e);
+				}
+				downloadLinkRef.current = null;
+			}
+		};
 	}, []);
 
 	// 更新按钮状态
 	const updateButtonState = (
-		btnRef: React.RefObject<HTMLButtonElement>,
+		btnRef: React.RefObject<HTMLButtonElement | null>,
 		text: string,
 		disabled: boolean
 	) => {
@@ -110,19 +153,25 @@ const EchartsScreenshot: React.FC = () => {
 			// 生成截图 canvas
 			const canvas = await html2canvas(chartContainerRef.current, html2canvasOptions);
 
-			// 转换 canvas 为 PNG 图片并触发下载
-			const downloadLink = document.createElement('a');
+			// 创建或重用下载链接
+			if (!downloadLinkRef.current) {
+				downloadLinkRef.current = document.createElement('a');
+			}
+			const downloadLink = downloadLinkRef.current;
+
 			// 文件名格式：图表名称_日期.png（如"用户增长趋势_2024-08-24.png"）
 			const fileName = `用户增长趋势_${new Date().toISOString().slice(0, 10)}.png`;
 			downloadLink.download = fileName;
 			// 转为图片URL：0.92为图片质量（0-1，平衡质量与体积）
 			downloadLink.href = canvas.toDataURL('image/png', 0.92);
 
+			// 将链接添加到DOM中（如果尚未添加）
+			if (!downloadLink.parentNode) {
+				document.body.appendChild(downloadLink);
+			}
+
 			// 触发点击下载
 			downloadLink.click();
-
-			// 释放 URL 资源（避免内存泄漏）
-			URL.revokeObjectURL(downloadLink.href);
 
 			// 恢复按钮状态
 			updateButtonState(html2canvasBtnRef, '📷 html2canvas 截图下载', false);
@@ -184,18 +233,25 @@ const EchartsScreenshot: React.FC = () => {
 			};
 
 			// 生成图片 URL（snapdom 直接返回可下载的 URL）
-			const imageUrl = await snapdom(chartContainerRef.current, snapdomOptions);
+			const result = await snapdom(chartContainerRef.current, snapdomOptions);
+			const imageUrl = result.url;
 
-			// 触发图片下载
-			const downloadLink = document.createElement('a');
+			// 创建或重用下载链接
+			if (!downloadLinkRef.current) {
+				downloadLinkRef.current = document.createElement('a');
+			}
+			const downloadLink = downloadLinkRef.current;
+
 			const fileName = `用户增长趋势_${new Date().toISOString().slice(0, 10)}.png`;
 			downloadLink.download = fileName;
 			downloadLink.href = imageUrl;
 
-			downloadLink.click();
+			// 将链接添加到DOM中（如果尚未添加）
+			if (!downloadLink.parentNode) {
+				document.body.appendChild(downloadLink);
+			}
 
-			// 释放资源
-			URL.revokeObjectURL(imageUrl);
+			downloadLink.click();
 
 			// 恢复按钮状态
 			updateButtonState(snapdomBtnRef, '📸 snapdom 截图下载', false);
@@ -216,7 +272,7 @@ const EchartsScreenshot: React.FC = () => {
 			<div ref={chartContainerRef} id="chart-container" className="echarts-chart-wrapper">
 				<h3 className="echarts-chart-title">2024年月度用户增长趋势</h3>
 				{/* echarts 画布 */}
-				<div ref={chartDomRef} id="user-chart" className="echarts-chart-container"></div>
+				<div ref={chartDomRef} id="user-chart-one" className="echarts-chart-container"></div>
 			</div>
 
 			{/* 操作按钮 */}

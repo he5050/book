@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import html2canvas from 'html2canvas';
 import { snapdom } from '@zumer/snapdom';
+import './advanced-example.scss';
 
 const AdvancedEchartsScreenshot: React.FC = () => {
-	const [isLoading, setIsLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 	const [chartData, setChartData] = useState({
 		months: ['1月', '2月', '3月', '4月', '5月', '6月'],
 		newUser: [1200, 1900, 2300, 2100, 2500, 3100],
@@ -14,67 +15,105 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 	const chartContainerRef = React.useRef<HTMLDivElement>(null);
 	const chartDomRef = React.useRef<HTMLDivElement>(null);
 	const chartInstanceRef = React.useRef<echarts.ECharts | null>(null);
+	const downloadLinkRef = useRef<HTMLAnchorElement | null>(null);
 
 	// 初始化 echarts 图表
 	useEffect(() => {
-		if (chartDomRef.current) {
-			// 销毁之前的实例（如果存在）
-			if (chartInstanceRef.current) {
-				chartInstanceRef.current.dispose();
+		let resizeHandler: (() => void) | null = null;
+		let isComponentMounted = true;
+
+		// 确保 DOM 元素存在且组件已挂载
+		if (chartDomRef.current && isComponentMounted) {
+			try {
+				// 销毁之前的实例（如果存在）
+				if (chartInstanceRef.current) {
+					try {
+						chartInstanceRef.current.dispose();
+					} catch (e) {
+						console.warn('ECharts dispose error:', e);
+					}
+				}
+				console.log('chartDomRef.current', chartDomRef.current);
+				// 确保 DOM 元素仍然存在
+				if (chartDomRef.current) {
+					// 初始化新的 echarts 实例
+					chartInstanceRef.current = echarts.init(chartDomRef.current);
+
+					// 图表配置（折线图+柱状图组合）
+					const option = {
+						tooltip: { trigger: 'axis' },
+						legend: { data: ['新增用户', '活跃用户'], top: 0 },
+						xAxis: {
+							type: 'category',
+							data: chartData.months
+						},
+						yAxis: { type: 'value' },
+						series: [
+							{
+								name: '新增用户',
+								type: 'bar',
+								data: chartData.newUser,
+								itemStyle: { color: '#409eff' }
+							},
+							{
+								name: '活跃用户',
+								type: 'line',
+								data: chartData.activeUser,
+								lineStyle: { width: 3, color: '#67c23a' },
+								symbol: 'circle',
+								symbolSize: 8
+							}
+						]
+					};
+
+					chartInstanceRef.current.setOption(option);
+
+					// 窗口 resize 时重绘图表
+					resizeHandler = () => {
+						if (isComponentMounted && chartInstanceRef.current) {
+							chartInstanceRef.current.resize();
+						}
+					};
+
+					window.addEventListener('resize', resizeHandler);
+				}
+			} catch (error) {
+				console.error('ECharts initialization error:', error);
+			}
+		}
+
+		// 清理函数
+		return () => {
+			isComponentMounted = false;
+
+			// 清理 resize 事件监听器
+			if (resizeHandler) {
+				window.removeEventListener('resize', resizeHandler);
 			}
 
-			// 初始化新的 echarts 实例
-			chartInstanceRef.current = echarts.init(chartDomRef.current);
-
-			// 图表配置（折线图+柱状图组合）
-			const option = {
-				tooltip: { trigger: 'axis' },
-				legend: { data: ['新增用户', '活跃用户'], top: 0 },
-				xAxis: {
-					type: 'category',
-					data: chartData.months
-				},
-				yAxis: { type: 'value' },
-				series: [
-					{
-						name: '新增用户',
-						type: 'bar',
-						data: chartData.newUser,
-						itemStyle: { color: '#409eff' }
-					},
-					{
-						name: '活跃用户',
-						type: 'line',
-						data: chartData.activeUser,
-						lineStyle: { width: 3, color: '#67c23a' },
-						symbol: 'circle',
-						symbolSize: 8
-					}
-				]
-			};
-
-			chartInstanceRef.current.setOption(option);
-
-			// 窗口 resize 时重绘图表
-			const handleResize = () => {
-				chartInstanceRef.current?.resize();
-			};
-
-			window.addEventListener('resize', handleResize);
-
-			// 模拟异步数据加载
-			setTimeout(() => {
-				setIsLoading(false);
-			}, 1000);
-
-			// 清理函数
-			return () => {
-				window.removeEventListener('resize', handleResize);
-				if (chartInstanceRef.current) {
+			// 清理 ECharts 实例
+			if (chartInstanceRef.current) {
+				try {
 					chartInstanceRef.current.dispose();
+				} catch (e) {
+					console.warn('ECharts dispose error:', e);
 				}
-			};
-		}
+				chartInstanceRef.current = null;
+			}
+
+			// 清理可能创建的下载链接
+			if (downloadLinkRef.current) {
+				try {
+					// 如果链接已添加到DOM中，则移除它
+					if (downloadLinkRef.current.parentNode) {
+						downloadLinkRef.current.parentNode.removeChild(downloadLinkRef.current);
+					}
+				} catch (e) {
+					console.warn('Download link cleanup error:', e);
+				}
+				downloadLinkRef.current = null;
+			}
+		};
 	}, [chartData]);
 
 	// html2canvas 截图实现（优化版）
@@ -107,7 +146,7 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 			};
 
 			// 显示截图中提示
-			const screenshotBtn = document.getElementById('html2canvas-btn');
+			const screenshotBtn = document.getElementById('html2canvas-btn') as HTMLButtonElement | null;
 			if (screenshotBtn) {
 				screenshotBtn.textContent = '截图中...';
 				screenshotBtn.disabled = true;
@@ -116,19 +155,25 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 			// 生成截图 canvas
 			const canvas = await html2canvas(chartContainerRef.current, html2canvasOptions);
 
-			// 转换 canvas 为 PNG 图片并触发下载
-			const downloadLink = document.createElement('a');
+			// 创建或重用下载链接
+			if (!downloadLinkRef.current) {
+				downloadLinkRef.current = document.createElement('a');
+			}
+			const downloadLink = downloadLinkRef.current;
+
 			// 文件名格式：图表名称_日期.png（如"用户增长趋势_2024-08-24.png"）
 			const fileName = `用户增长趋势_${new Date().toISOString().slice(0, 10)}.png`;
 			downloadLink.download = fileName;
 			// 转为图片URL：0.92为图片质量（0-1，平衡质量与体积）
 			downloadLink.href = canvas.toDataURL('image/png', 0.92);
 
+			// 将链接添加到DOM中（如果尚未添加）
+			if (!downloadLink.parentNode) {
+				document.body.appendChild(downloadLink);
+			}
+
 			// 触发点击下载
 			downloadLink.click();
-
-			// 释放 URL 资源（避免内存泄漏）
-			URL.revokeObjectURL(downloadLink.href);
 
 			// 恢复按钮状态
 			if (screenshotBtn) {
@@ -140,7 +185,7 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 			alert('截图失败，请重试！');
 
 			// 恢复按钮状态
-			const screenshotBtn = document.getElementById('html2canvas-btn');
+			const screenshotBtn = document.getElementById('html2canvas-btn') as HTMLButtonElement | null;
 			if (screenshotBtn) {
 				screenshotBtn.textContent = '📷 html2canvas 截图下载';
 				screenshotBtn.disabled = false;
@@ -210,25 +255,32 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 			};
 
 			// 显示截图中提示
-			const screenshotBtn = document.getElementById('snapdom-btn');
+			const screenshotBtn = document.getElementById('snapdom-btn') as HTMLButtonElement | null;
 			if (screenshotBtn) {
 				screenshotBtn.textContent = '截图中...';
 				screenshotBtn.disabled = true;
 			}
 
 			// 生成图片 URL（snapdom 直接返回可下载的 URL）
-			const imageUrl = await snapdom(chartContainerRef.current, snapdomOptions);
+			const result = await snapdom(chartContainerRef.current, snapdomOptions);
+			const imageUrl = result.url;
 
-			// 触发图片下载
-			const downloadLink = document.createElement('a');
+			// 创建或重用下载链接
+			if (!downloadLinkRef.current) {
+				downloadLinkRef.current = document.createElement('a');
+			}
+			const downloadLink = downloadLinkRef.current;
+
 			const fileName = `用户增长趋势_${new Date().toISOString().slice(0, 10)}.png`;
 			downloadLink.download = fileName;
 			downloadLink.href = imageUrl;
 
-			downloadLink.click();
+			// 将链接添加到DOM中（如果尚未添加）
+			if (!downloadLink.parentNode) {
+				document.body.appendChild(downloadLink);
+			}
 
-			// 释放资源
-			URL.revokeObjectURL(imageUrl);
+			downloadLink.click();
 
 			// 恢复按钮状态
 			if (screenshotBtn) {
@@ -240,7 +292,7 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 			alert('截图失败，请重试！');
 
 			// 恢复按钮状态
-			const screenshotBtn = document.getElementById('snapdom-btn');
+			const screenshotBtn = document.getElementById('snapdom-btn') as HTMLButtonElement | null;
 			if (screenshotBtn) {
 				screenshotBtn.textContent = '📸 snapdom 截图下载';
 				screenshotBtn.disabled = false;
