@@ -27,6 +27,9 @@
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
+    "slate": "^0.118.1",
+    "slate-history": "^0.113.1",
+    "slate-react": "^0.117.4",
     "snapdom": "^0.1.2",
     "vitepress": "^1.6.3",
     "vitepress-plugin-legend": "^1.1.0"
