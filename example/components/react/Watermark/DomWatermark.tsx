@@ -3,9 +3,10 @@ import React, { useEffect, useRef } from 'react';
 interface DomWatermarkProps {
 	text: string;
 	children: React.ReactNode;
+	enabled?: boolean; // 添加开关控制属性，默认为false
 }
 
-const DomWatermark: React.FC<DomWatermarkProps> = ({ text, children }) => {
+const DomWatermark: React.FC<DomWatermarkProps> = ({ text, children, enabled = false }) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const observerRef = useRef<MutationObserver | null>(null);
 
@@ -13,6 +14,19 @@ const DomWatermark: React.FC<DomWatermarkProps> = ({ text, children }) => {
 		if (!containerRef.current) return;
 
 		const container = containerRef.current;
+
+		// 如果未启用，则移除水印
+		if (!enabled) {
+			// 清理已存在的水印
+			container.style.backgroundImage = 'none';
+
+			// 断开观察器
+			if (observerRef.current) {
+				observerRef.current.disconnect();
+				observerRef.current = null;
+			}
+			return;
+		}
 
 		// 创建水印
 		const createWatermark = () => {
@@ -65,7 +79,7 @@ const DomWatermark: React.FC<DomWatermarkProps> = ({ text, children }) => {
 				observerRef.current = null;
 			}
 		};
-	}, [text]);
+	}, [text, enabled]); // 添加enabled到依赖数组
 
 	return (
 		<div ref={containerRef} style={{ padding: '20px' }}>

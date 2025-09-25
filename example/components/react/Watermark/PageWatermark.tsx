@@ -1,12 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface PageWatermarkProps {
 	text1: string;
 	text2: string;
+	enabled?: boolean; // 添加开关控制属性，默认为false
 }
 
-const PageWatermark: React.FC<PageWatermarkProps> = ({ text1, text2 }) => {
+const PageWatermark: React.FC<PageWatermarkProps> = ({ text1, text2, enabled = false }) => {
 	useEffect(() => {
+		// 如果未启用，则不创建水印
+		if (!enabled) {
+			// 清理已存在的水印
+			const existingWatermark = document.body.querySelector('.page-watermark');
+			if (existingWatermark) {
+				document.body.removeChild(existingWatermark);
+			}
+			return;
+		}
+
 		// 创建水印
 		const createWatermark = () => {
 			// 1. 创建 Canvas 元素
@@ -84,7 +95,7 @@ const PageWatermark: React.FC<PageWatermarkProps> = ({ text1, text2 }) => {
 			// 断开观察器
 			watermarkInfo?.observer?.disconnect();
 		};
-	}, [text1, text2]);
+	}, [text1, text2, enabled]); // 添加enabled到依赖数组
 
 	return null; // 此组件不渲染任何UI元素
 };

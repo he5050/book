@@ -1,7 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 
-const EchartsWatermark: React.FC = () => {
+interface EchartsWatermarkProps {
+	enabled?: boolean; // 添加开关控制属性，默认为true以保持向后兼容
+}
+
+const EchartsWatermark: React.FC<EchartsWatermarkProps> = ({ enabled = true }) => {
 	const chartRef = useRef<HTMLDivElement>(null);
 	const chartInstanceRef = useRef<echarts.ECharts | null>(null);
 
@@ -10,6 +14,13 @@ const EchartsWatermark: React.FC = () => {
 
 		// 创建水印 Canvas
 		const createWatermarkCanvas = () => {
+			// 如果未启用，则返回透明背景
+			if (!enabled) {
+				const canvas = document.createElement('canvas');
+				canvas.width = canvas.height = 1;
+				return canvas;
+			}
+
 			const canvas = document.createElement('canvas');
 			const ctx = canvas.getContext('2d');
 
@@ -142,7 +153,7 @@ const EchartsWatermark: React.FC = () => {
 				chartInstanceRef.current = null;
 			}
 		};
-	}, []);
+	}, [enabled]); // 添加enabled到依赖数组
 
 	return (
 		<div className="echarts-watermark-demo" style={{ padding: '20px' }}>
@@ -155,6 +166,7 @@ const EchartsWatermark: React.FC = () => {
 					<li style={{ margin: '8px 0' }}>水印已集成到图表背景中，不影响图表交互</li>
 					<li style={{ margin: '8px 0' }}>导出图表图片时，水印会自动包含在内</li>
 					<li style={{ margin: '8px 0' }}>水印透明度较低，不会影响图表内容阅读</li>
+					<li style={{ margin: '8px 0' }}>当前水印状态: {enabled ? '已启用' : '已禁用'}</li>
 				</ol>
 
 				<h3 style={{ color: '#333', margin: '15px 0 10px' }}>核心特性：</h3>
