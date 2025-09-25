@@ -1,0 +1,117 @@
+.card-clock {
+  background-color: #212121;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-family: Arial, sans-serif;
+
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.8); // 适当缩放以适应容器
+  }
+
+  .flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 8px; // 减少时分秒之间的距离
+    border: 1px solid #fff;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .number {
+    position: relative;
+    height: calc(var(--piece-size) * 5.8); // 基于片段大小计算高度
+    width: calc(var(--piece-size) * 3.4); // 基于片段大小计算宽度
+    margin: 20px;
+    --piece-size: 10px; // 默认片段大小
+  }
+
+  .piece {
+    background-color: #fff;
+    border: 2px solid transparent;
+    border-right-color: #aaa;
+    border-bottom-color: #aaa;
+    position: absolute;
+    height: var(--piece-size);
+    width: var(--piece-size);
+    transform: scale(0);
+    transition: transform 0.2s linear;
+
+    &.show {
+      transform: scale(1);
+    }
+  }
+
+  // 13个片段的位置，按照原版HTML代码的布局
+  .piece:nth-of-type(1) {
+    top: 0;
+    left: 0;
+  }
+
+  .piece:nth-of-type(2) {
+    top: 0;
+    left: calc(var(--piece-size) * 1.2);
+  }
+
+  .piece:nth-of-type(3) {
+    top: 0;
+    left: calc(var(--piece-size) * 2.4);
+  }
+
+  .piece:nth-of-type(4) {
+    top: calc(var(--piece-size) * 1.2);
+    left: 0;
+  }
+
+  .piece:nth-of-type(5) {
+    top: calc(var(--piece-size) * 1.2);
+    left: calc(var(--piece-size) * 2.4);
+  }
+
+  .piece:nth-of-type(6) {
+    top: calc(var(--piece-size) * 2.4);
+    left: 0;
+  }
+
+  .piece:nth-of-type(7) {
+    top: calc(var(--piece-size) * 2.4);
+    left: calc(var(--piece-size) * 1.2);
+  }
+
+  .piece:nth-of-type(8) {
+    top: calc(var(--piece-size) * 2.4);
+    left: calc(var(--piece-size) * 2.4);
+  }
+
+  .piece:nth-of-type(9) {
+    top: calc(var(--piece-size) * 3.6);
+    left: 0;
+  }
+
+  .piece:nth-of-type(10) {
+    top: calc(var(--piece-size) * 3.6);
+    left: calc(var(--piece-size) * 2.4);
+  }
+
+  .piece:nth-of-type(11) {
+    top: calc(var(--piece-size) * 4.8);
+    left: 0;
+  }
+
+  .piece:nth-of-type(12) {
+    top: calc(var(--piece-size) * 4.8);
+    left: calc(var(--piece-size) * 1.2);
+  }
+
+  .piece:nth-of-type(13) {
+    top: calc(var(--piece-size) * 4.8);
+    left: calc(var(--piece-size) * 2.4);
+  }
+
+
+}

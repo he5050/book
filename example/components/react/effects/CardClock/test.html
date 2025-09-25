@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardClock 测试页面</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .demo-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .clock-container {
+      background-color: #212121;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="test-container">
+    <h1>CardClock 卡片时钟测试</h1>
+
+    <div class="demo-section">
+      <h2>修复后的效果预览</h2>
+      <p>现在的改进包括：</p>
+      <ul>
+        <li>使用5x7点阵布局，35个片段组成数字</li>
+        <li>优化了数字状态映射，更接近数码管显示效果</li>
+        <li>改进了片段大小和间距</li>
+        <li>增加了发光效果和阴影</li>
+        <li>使用CSS Grid布局确保片段位置精确</li>
+      </ul>
+
+      <div class="clock-container">
+        <div id="react-root"></div>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2>主要修复内容</h2>
+      <h3>1. 数字状态映射优化</h3>
+      <p>重新设计了0-9数字的片段组合，使其更符合点阵显示效果</p>
+
+      <h3>2. 布局系统改进</h3>
+      <p>从绝对定位改为CSS Grid布局，确保片段位置精确且响应式</p>
+
+      <h3>3. 视觉效果增强</h3>
+      <p>添加了发光效果、阴影和更平滑的动画过渡</p>
+
+      <h3>4. 尺寸和间距优化</h3>
+      <p>调整了容器大小、片段大小和间距，使整体效果更协调</p>
+    </div>
+  </div>
+
+  <script>
+    // 这里可以加载React组件进行测试
+    console.log('CardClock 测试页面已加载');
+  </script>
+</body>
+
+</html>
