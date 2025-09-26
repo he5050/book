@@ -35,11 +35,11 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 			this.y = y;
 		}
 
-		clone() {
+		clone(): Point {
 			return new Point(this.x, this.y);
 		}
 
-		length(length?: number) {
+		length(length?: number): number | Point {
 			if (length === undefined) {
 				return Math.sqrt(this.x * this.x + this.y * this.y);
 			}
@@ -49,10 +49,12 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 			return this;
 		}
 
-		normalize() {
-			const length = this.length();
-			this.x /= length;
-			this.y /= length;
+		normalize(): Point {
+			const len = this.length() as number;
+			if (len !== 0) {
+				this.x /= len;
+				this.y /= len;
+			}
 			return this;
 		}
 	}
@@ -63,22 +65,35 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 		velocity: Point;
 		acceleration: Point;
 		age: number;
+		lifespan: number;
+		initialSize: number;
 
 		constructor() {
 			this.position = new Point();
 			this.velocity = new Point();
 			this.acceleration = new Point();
 			this.age = 0;
+			this.lifespan = 0;
+			this.initialSize = 0;
 		}
 
-		initialize(x: number, y: number, dx: number, dy: number) {
+		initialize(
+			x: number,
+			y: number,
+			dx: number,
+			dy: number,
+			lifespan: number,
+			initialSize: number
+		) {
 			this.position.x = x;
 			this.position.y = y;
 			this.velocity.x = dx;
 			this.velocity.y = dy;
-			this.acceleration.x = dx * -0.75;
-			this.acceleration.y = dy * -0.75;
+			this.acceleration.x = dx * -0.5;
+			this.acceleration.y = dy * -0.5;
 			this.age = 0;
+			this.lifespan = lifespan;
+			this.initialSize = initialSize;
 		}
 
 		update(deltaTime: number) {
@@ -90,18 +105,35 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 		}
 
 		draw(context: CanvasRenderingContext2D, image: HTMLImageElement) {
-			function ease(t: number) {
-				return -t * t * t + 1;
+			// 改进的缓动函数，使动画更自然
+			function easeInQuart(t: number) {
+				return t * t * t * t;
 			}
-			const particleSize = image.width * ease(this.age / duration);
-			context.globalAlpha = 1 - this.age / duration;
-			context.drawImage(
-				image,
-				this.position.x - particleSize / 2,
-				this.position.y - particleSize / 2,
-				particleSize,
-				particleSize
-			);
+
+			function easeOutQuart(t: number) {
+				return 1 - Math.pow(1 - t, 4);
+			}
+
+			function easeInOutQuart(t: number) {
+				return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+			}
+
+			// 使用更平滑的缓动函数计算粒子大小和透明度
+			const ageRatio = Math.min(this.age / this.lifespan, 1);
+			const scale = 1 - easeInQuart(ageRatio) * 0.7;
+			const particleSize = this.initialSize * scale;
+
+			// 更自然的透明度变化
+			const alpha = 1 - easeOutQuart(ageRatio);
+			context.globalAlpha = alpha;
+
+			// 添加轻微的旋转效果
+			const rotation = (ageRatio * Math.PI) / 4;
+			context.save();
+			context.translate(this.position.x, this.position.y);
+			context.rotate(rotation);
+			context.drawImage(image, -particleSize / 2, -particleSize / 2, particleSize, particleSize);
+			context.restore();
 		}
 	}
 
@@ -123,7 +155,10 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 		}
 
 		add(x: number, y: number, dx: number, dy: number) {
-			this.particles[this.firstFree].initialize(x, y, dx, dy);
+			// 为每个粒子添加随机的生命周期和初始大小
+			const lifespan = duration * (0.8 + Math.random() * 0.4);
+			const initialSize = size * (0.7 + Math.random() * 0.6);
+			this.particles[this.firstFree].initialize(x, y, dx, dy, lifespan, initialSize);
 			this.firstFree++;
 			if (this.firstFree === this.particles.length) this.firstFree = 0;
 			if (this.firstActive === this.firstFree) this.firstActive++;
@@ -143,8 +178,9 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 					this.particles[i].update(deltaTime);
 				}
 			}
+			// 使用粒子的生命周期而不是固定duration
 			while (
-				this.particles[this.firstActive].age >= this.duration &&
+				this.particles[this.firstActive].age >= this.particles[this.firstActive].lifespan &&
 				this.firstActive !== this.firstFree
 			) {
 				this.firstActive++;
@@ -169,7 +205,7 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 	}
 
 	// Calculate point on heart curve
-	const pointOnHeart = (t: number) => {
+	const pointOnHeart = (t: number): Point => {
 		return new Point(
 			160 * Math.pow(Math.sin(t), 3),
 			130 * Math.cos(t) - 50 * Math.cos(2 * t) - 20 * Math.cos(3 * t) - 10 * Math.cos(4 * t) + 25
@@ -185,7 +221,7 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 		canvas.width = size;
 		canvas.height = size;
 
-		const to = (t: number) => {
+		const to = (t: number): Point => {
 			const point = pointOnHeart(t);
 			point.x = size / 2 + (point.x * size) / 350;
 			point.y = size / 2 - (point.y * size) / 350;
@@ -194,7 +230,7 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 
 		context.beginPath();
 		let t = -Math.PI;
-		let point = to(t);
+		let point: Point = to(t);
 		context.moveTo(point.x, point.y);
 		while (t < Math.PI) {
 			t += 0.01;
@@ -224,12 +260,15 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({
 
 		context.clearRect(0, 0, canvas.width, canvas.height);
 
-		const particleRate = particleCount / duration;
+		// 调整粒子发射速率，使动画更流畅
+		const particleRate = particleCount / (duration * 2);
 		const amount = particleRate * deltaTime;
 
 		for (let i = 0; i < amount; i++) {
-			const pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
-			const dir = pos.clone().length(velocity);
+			// 添加随机性使粒子分布更自然
+			const angleVariation = (Math.random() - 0.5) * 0.5;
+			const pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random() + angleVariation);
+			const dir = pos.clone().length(velocity * (0.7 + Math.random() * 0.6)) as Point;
 			const particles = particlesRef.current as any;
 			particles.add(canvas.width / 2 + pos.x, canvas.height / 2 - pos.y, dir.x, -dir.y);
 		}
