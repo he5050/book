@@ -1,0 +1,11 @@
+.wave-animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  canvas {
+    background: #111;
+    margin-top: 20px;
+    border-radius: 8px;
+  }
+}
