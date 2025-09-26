@@ -167,6 +167,9 @@
         text-align: center;
 
         .card-back-content {
+          // 修复背面内容翻转问题
+          transform: scaleX(-1);
+
           h3 {
             font-size: 28px;
             margin: 0 0 20px 0;
