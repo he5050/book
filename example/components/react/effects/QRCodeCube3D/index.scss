@@ -1,0 +1,161 @@
+.qr-code-cube-3d {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  background: #000;
+  position: relative;
+
+  // 添加背景混合模式效果
+  &::after {
+    content: '';
+    position: absolute;
+    background: #212121;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: lighten;
+    pointer-events: none;
+  }
+
+  .cube {
+    --s: 243px;
+    --hs: calc(var(--s) / 2);
+    --animation-duration: 15s;
+
+    display: block;
+    width: var(--s);
+    height: var(--s);
+    transform-style: preserve-3d;
+    will-change: transform;
+    animation: rotate var(--animation-duration) linear infinite;
+    position: relative;
+    z-index: 1;
+
+    .side {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+
+      // 二维码图案生成
+      --sq: conic-gradient(from 270deg at calc(100% / 3) calc(100% / 3),
+          #fff 90deg, transparent 0);
+
+      background:
+        var(--sq) calc(var(--s) / 3) calc(var(--s) / 3) / 100% 100%,
+        var(--sq) calc(100% / 6) calc(100% / 6) / calc(100% / 3) calc(100% / 3),
+        var(--sq) calc(100% / 6) calc(100% / 6) / calc(100% / 9) calc(100% / 9),
+        var(--sq) calc(100% / 6) calc(100% / 6) / calc(100% / 27) calc(100% / 27),
+        var(--sq) calc(100% / 6) calc(100% / 6) / calc(100% / 81) calc(100% / 81);
+
+      background-color: #000;
+      background-blend-mode: difference;
+
+      // 添加边框效果
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      // 添加轻微的发光效果
+      box-shadow:
+        inset 0 0 20px rgba(255, 255, 255, 0.05),
+        0 0 10px rgba(255, 255, 255, 0.1);
+
+      // 立方体六个面的定位
+      &:nth-child(1) {
+        transform: translateZ(var(--hs));
+      }
+
+      &:nth-child(2) {
+        transform: translateZ(calc(-1 * var(--hs)));
+      }
+
+      &:nth-child(3) {
+        transform: rotateY(90deg) translateZ(var(--hs));
+      }
+
+      &:nth-child(4) {
+        transform: rotateY(-90deg) translateZ(var(--hs));
+      }
+
+      &:nth-child(5) {
+        transform: rotateX(90deg) translateZ(var(--hs));
+      }
+
+      &:nth-child(6) {
+        transform: rotateX(-90deg) translateZ(var(--hs));
+      }
+    }
+  }
+
+  // 旋转动画
+  @keyframes rotate {
+    0% {
+      transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    }
+
+    100% {
+      transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+    }
+  }
+
+  // 悬停效果
+  &:hover .cube {
+    animation-play-state: paused;
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    .cube {
+      --s: 180px;
+      --hs: calc(var(--s) / 2);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cube {
+      --s: 150px;
+      --hs: calc(var(--s) / 2);
+    }
+  }
+}
+
+// 额外的视觉增强
+.qr-code-cube-3d {
+  // 添加径向渐变背景
+  background: radial-gradient(circle at center,
+      rgba(33, 33, 33, 0.8) 0%,
+      rgba(0, 0, 0, 1) 70%);
+
+  // 添加动态光效
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle,
+        rgba(255, 255, 255, 0.03) 0%,
+        transparent 70%);
+    transform: translate(-50%, -50%);
+    animation: pulse 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
