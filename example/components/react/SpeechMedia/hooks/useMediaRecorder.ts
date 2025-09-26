@@ -7,6 +7,7 @@ export type MediaType = 'audio' | 'video';
 export interface UseMediaRecorderReturn {
 	isRecording: boolean;
 	mediaBlob: Blob | null;
+	mediaStream: MediaStream | null;
 	startRecording: () => Promise<void>;
 	stopRecording: () => void;
 	resetRecording: () => void;
@@ -19,6 +20,7 @@ const useMediaRecorder = (mediaType: MediaType = 'audio'): UseMediaRecorderRetur
 	const [mediaBlob, setMediaBlob] = useState<Blob | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [isSupported, setIsSupported] = useState(true);
+	const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
 
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 	const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -44,6 +46,7 @@ const useMediaRecorder = (mediaType: MediaType = 'audio'): UseMediaRecorderRetur
 
 			const stream = await navigator.mediaDevices.getUserMedia(constraints);
 			mediaStreamRef.current = stream;
+			setMediaStream(stream);
 
 			// 创建MediaRecorder实例
 			const mediaRecorder = new MediaRecorder(stream);
@@ -66,6 +69,7 @@ const useMediaRecorder = (mediaType: MediaType = 'audio'): UseMediaRecorderRetur
 
 				// 停止所有轨道
 				stream.getTracks().forEach(track => track.stop());
+				setMediaStream(null);
 			};
 
 			mediaRecorder.onerror = event => {
@@ -74,7 +78,7 @@ const useMediaRecorder = (mediaType: MediaType = 'audio'): UseMediaRecorderRetur
 			};
 
 			// 开始录制
-			mediaRecorder.start();
+			mediaRecorder.start(1000); // 每秒触发一次dataavailable事件，实现实时预览
 			setIsRecording(true);
 			setError(null);
 		} catch (err) {
@@ -100,11 +104,19 @@ const useMediaRecorder = (mediaType: MediaType = 'audio'): UseMediaRecorderRetur
 		if (mediaRecorderRef.current && isRecording) {
 			mediaRecorderRef.current.stop();
 		}
+
+		// 停止媒体流
+		if (mediaStreamRef.current) {
+			mediaStreamRef.current.getTracks().forEach(track => track.stop());
+			mediaStreamRef.current = null;
+			setMediaStream(null);
+		}
 	};
 
 	return {
 		isRecording,
 		mediaBlob,
+		mediaStream,
 		startRecording,
 		stopRecording,
 		resetRecording,

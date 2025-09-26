@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import useTextToSpeech, { Voice } from './hooks/useTextToSpeech';
 import useSpeechToText from './hooks/useSpeechToText';
 import useMediaRecorder from './hooks/useMediaRecorder';
@@ -39,18 +39,35 @@ const SpeechMediaExample: React.FC = () => {
 		error: sttError
 	} = useSpeechToText();
 
-	// MediaRecorder相关状态
+	// MediaRecorder相关状态 - 分别管理音频和视频
 	const [mediaType, setMediaType] = useState<'audio' | 'video'>('audio');
+	const {
+		isRecording: isAudioRecording,
+		mediaBlob: audioBlob,
+		mediaStream: audioStream,
+		startRecording: startAudioRecording,
+		stopRecording: stopAudioRecording,
+		resetRecording: resetAudioRecording,
+		error: audioError,
+		isSupported: audioIsSupported
+	} = useMediaRecorder('audio');
 
 	const {
-		isRecording,
-		mediaBlob,
-		startRecording: mediaStartRecording,
-		stopRecording: mediaStopRecording,
-		resetRecording: mediaResetRecording,
-		error: mediaError,
-		isSupported: mediaIsSupported
-	} = useMediaRecorder(mediaType);
+		isRecording: isVideoRecording,
+		mediaBlob: videoBlob,
+		mediaStream: videoStream,
+		startRecording: startVideoRecording,
+		stopRecording: stopVideoRecording,
+		resetRecording: resetVideoRecording,
+		error: videoError,
+		isSupported: videoIsSupported
+	} = useMediaRecorder('video');
+
+	// 分别管理音频和视频的录制状态
+	const isRecording = mediaType === 'audio' ? isAudioRecording : isVideoRecording;
+	const mediaBlob = mediaType === 'audio' ? audioBlob : videoBlob;
+	const mediaError = mediaType === 'audio' ? audioError : videoError;
+	const mediaIsSupported = mediaType === 'audio' ? audioIsSupported : videoIsSupported;
 
 	const handleTtsSpeak = () => {
 		ttsSpeak(ttsText, { rate: ttsRate, pitch: ttsPitch, volume: ttsVolume });
@@ -58,9 +75,29 @@ const SpeechMediaExample: React.FC = () => {
 
 	const handleMediaStartRecording = async () => {
 		try {
-			await mediaStartRecording();
+			if (mediaType === 'audio') {
+				await startAudioRecording();
+			} else {
+				await startVideoRecording();
+			}
 		} catch (err) {
 			console.error('开始录制失败:', err);
+		}
+	};
+
+	const handleMediaStopRecording = () => {
+		if (mediaType === 'audio') {
+			stopAudioRecording();
+		} else {
+			stopVideoRecording();
+		}
+	};
+
+	const handleMediaResetRecording = () => {
+		if (mediaType === 'audio') {
+			resetAudioRecording();
+		} else {
+			resetVideoRecording();
 		}
 	};
 
@@ -76,6 +113,35 @@ const SpeechMediaExample: React.FC = () => {
 		document.body.removeChild(a);
 		URL.revokeObjectURL(url);
 	};
+
+	// 实时预览引用
+	const audioPreviewRef = useRef<HTMLAudioElement>(null);
+	const videoPreviewRef = useRef<HTMLVideoElement>(null);
+
+	// 设置实时预览
+	useEffect(() => {
+		if (audioPreviewRef.current && audioStream) {
+			audioPreviewRef.current.srcObject = audioStream;
+		}
+
+		return () => {
+			if (audioPreviewRef.current) {
+				audioPreviewRef.current.srcObject = null;
+			}
+		};
+	}, [audioStream]);
+
+	useEffect(() => {
+		if (videoPreviewRef.current && videoStream) {
+			videoPreviewRef.current.srcObject = videoStream;
+		}
+
+		return () => {
+			if (videoPreviewRef.current) {
+				videoPreviewRef.current.srcObject = null;
+			}
+		};
+	}, [videoStream]);
 
 	return (
 		<div className="speech-media-container">
@@ -280,14 +346,37 @@ const SpeechMediaExample: React.FC = () => {
 						>
 							{isRecording ? '录制中...' : '开始录制'}
 						</button>
-						<button className="btn-stop" onClick={mediaStopRecording} disabled={!isRecording}>
+						<button className="btn-stop" onClick={handleMediaStopRecording} disabled={!isRecording}>
 							停止录制
 						</button>
-						<button className="btn-reset" onClick={mediaResetRecording} disabled={isRecording}>
+						<button
+							className="btn-reset"
+							onClick={handleMediaResetRecording}
+							disabled={isRecording}
+						>
 							重置
 						</button>
 					</div>
 
+					{/* 实时预览 */}
+					{isRecording && (
+						<div className="live-preview">
+							<h3>实时预览:</h3>
+							{mediaType === 'audio' ? (
+								<div className="audio-preview">
+									<audio ref={audioPreviewRef} controls autoPlay />
+									<div className="recording-indicator">正在录音...</div>
+								</div>
+							) : (
+								<div className="video-preview">
+									<video ref={videoPreviewRef} controls autoPlay muted width="100%" />
+									<div className="recording-indicator">正在录屏...</div>
+								</div>
+							)}
+						</div>
+					)}
+
+					{/* 录制结果 */}
 					{mediaBlob && (
 						<div className="media-preview">
 							<h3>录制结果:</h3>

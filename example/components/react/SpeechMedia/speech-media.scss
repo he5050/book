@@ -173,6 +173,36 @@
     margin-bottom: 30px;
   }
 
+  .live-preview {
+    margin: 25px 0;
+    text-align: center;
+
+    h3 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .audio-preview,
+    .video-preview {
+      margin-bottom: 15px;
+    }
+
+    audio,
+    video {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .recording-indicator {
+      margin-top: 10px;
+      font-weight: 500;
+      color: #e74c3c;
+      animation: pulse 1.5s infinite;
+    }
+  }
+
   .media-preview {
     margin: 25px 0;
     text-align: center;
