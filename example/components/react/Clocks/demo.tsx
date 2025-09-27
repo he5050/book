@@ -1,124 +1,95 @@
 import React from 'react';
-import AnalogClock from './AnalogClock';
-import DigitalClock from './DigitalClock';
-import FlipClock from './FlipClock';
-import NeonClock from './NeonClock';
-import LCDClock from './LCDClock';
-import BinaryClock from './BinaryClock';
+import SkeuomorphismClock from './SkeuomorphismClock';
+import FlatDesignClock from './FlatDesignClock';
+import MaterialDesignClock from './MaterialDesignClock';
+import NeumorphismClock from './NeumorphismClock';
+import GlassmorphismClock from './GlassmorphismClock';
+import ClaymorphismClock from './ClaymorphismClock';
+import NeoBrutalismClock from './NeoBrutalismClock';
+import MinimalismClock from './MinimalismClock';
 
-// 演示用的组件示例
-export const AnalogClockDemo = () => (
+// 拟物化设计时钟演示
+export const SkeuomorphismClockDemo: React.FC = () => (
   <div style={{ padding: '20px', textAlign: 'center' }}>
-    <h3>模拟时钟</h3>
-    <AnalogClock
-      size={250}
-      backgroundColor="#f8f9fa"
-      hourHandColor="#007bff"
-      minuteHandColor="#6c757d"
-      secondHandColor="#dc3545"
-      showNumbers={true}
-      showTicks={true}
-    />
-    <p>传统的指针式时钟，支持自定义颜色和大小</p>
+    <h3>拟物化设计时钟</h3>
+    <p>模拟真实物理对象的外观和质感</p>
+    <SkeuomorphismClock size={280} />
   </div>
 );
 
-export const DigitalClockDemo = () => (
+// 扁平化设计时钟演示
+export const FlatDesignClockDemo: React.FC = () => (
   <div style={{ padding: '20px', textAlign: 'center' }}>
-    <h3>数字时钟</h3>
-    <DigitalClock
-      format="24"
-      showSeconds={true}
-      showDate={true}
-      fontSize="2.5rem"
-      color="#2c3e50"
-      backgroundColor="#ecf0f1"
-      borderRadius="15px"
-      padding="30px"
-    />
-    <p>简洁的数字显示，支持12/24小时制</p>
+    <h3>扁平化设计时钟</h3>
+    <p>简洁明快，去除多余装饰元素</p>
+    <FlatDesignClock size={280} />
   </div>
 );
 
-export const FlipClockDemo = () => (
-  <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#2c3e50' }}>
-    <h3 style={{ color: 'white' }}>翻页时钟</h3>
-    <FlipClock
-      format="24"
-      showSeconds={true}
-      cardColor="#34495e"
-      textColor="#ecf0f1"
-      cardWidth={80}
-      cardHeight={100}
-      fontSize="2.5rem"
-    />
-    <p style={{ color: 'white' }}>具有翻页动画效果的数字时钟</p>
+// 材料设计时钟演示
+export const MaterialDesignClockDemo: React.FC = () => (
+  <div style={{ padding: '20px', textAlign: 'center' }}>
+    <h3>材料设计时钟</h3>
+    <p>Google的设计语言，强调层次和动效</p>
+    <MaterialDesignClock size={280} />
   </div>
 );
 
-export const NeonClockDemo = () => (
-  <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#000' }}>
-    <h3 style={{ color: '#00ffff' }}>霓虹时钟</h3>
-    <NeonClock
-      format="24"
-      showSeconds={true}
-      neonColor="#00ffff"
-      backgroundColor="#000"
-      fontSize="3rem"
-      glowIntensity={25}
-      animated={true}
-    />
-    <p style={{ color: '#00ffff' }}>霓虹灯发光效果，支持动画闪烁</p>
+// 新拟物化时钟演示
+export const NeumorphismClockDemo: React.FC = () => (
+  <div style={{ padding: '20px', textAlign: 'center' }}>
+    <h3>新拟物化时钟</h3>
+    <p>柔和的阴影和高光营造立体感</p>
+    <NeumorphismClock size={280} />
   </div>
 );
 
-export const LCDClockDemo = () => (
-  <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#001100' }}>
-    <h3 style={{ color: '#00ff00' }}>LCD时钟</h3>
-    <LCDClock
-      format="24"
-      showSeconds={true}
-      showDate={true}
-      lcdColor="#00ff00"
-      backgroundColor="#001100"
-      fontSize="2.5rem"
-      showGrid={true}
-    />
-    <p style={{ color: '#00ff00' }}>模拟LCD显示屏效果，带网格背景</p>
+// 玻璃拟态时钟演示
+export const GlassmorphismClockDemo: React.FC = () => (
+  <div style={{ padding: '20px', textAlign: 'center' }}>
+    <h3>玻璃拟态时钟</h3>
+    <p>透明玻璃质感，模糊背景效果</p>
+    <GlassmorphismClock size={280} />
   </div>
 );
 
-export const BinaryClockDemo = () => (
-  <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#000' }}>
-    <h3 style={{ color: '#00ff00' }}>二进制时钟</h3>
-    <BinaryClock
-      onColor="#00ff00"
-      offColor="#333"
-      backgroundColor="#000"
-      dotSize={25}
-      spacing={8}
-      showLabels={true}
-      showSeconds={true}
-    />
-    <p style={{ color: '#00ff00' }}>以二进制形式显示时间，极客风格</p>
+// 粘土拟态时钟演示
+export const ClaymorphismClockDemo: React.FC = () => (
+  <div style={{ padding: '20px', textAlign: 'center' }}>
+    <h3>粘土拟态时钟</h3>
+    <p>柔软的粘土质感，温暖的色调</p>
+    <ClaymorphismClock size={280} />
   </div>
 );
 
-// 综合演示组件
-export const AllClocksDemo = () => (
-  <div style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '20px',
-    padding: '20px'
-  }}>
-    <AnalogClockDemo />
-    <DigitalClockDemo />
-    <FlipClockDemo />
-    <NeonClockDemo />
-    <LCDClockDemo />
-    <BinaryClockDemo />
+// 新野兽主义时钟演示
+export const NeoBrutalismClockDemo: React.FC = () => (
+  <div style={{ padding: '20px', textAlign: 'center' }}>
+    <h3>新野兽主义时钟</h3>
+    <p>大胆的色彩和强烈的对比</p>
+    <NeoBrutalismClock size={280} />
   </div>
 );
 
-export default AllClocksDemo;
+// 极简主义时钟演示
+export const MinimalismClockDemo: React.FC = () => (
+  <div style={{ padding: '20px', textAlign: 'center' }}>
+    <h3>极简主义时钟</h3>
+    <p>去繁就简，只保留最核心的元素</p>
+    <MinimalismClock size={280} />
+  </div>
+);
+
+// 默认导出所有演示组件
+const ClockDemos = {
+  SkeuomorphismClockDemo,
+  FlatDesignClockDemo,
+  MaterialDesignClockDemo,
+  NeumorphismClockDemo,
+  GlassmorphismClockDemo,
+  ClaymorphismClockDemo,
+  NeoBrutalismClockDemo,
+  MinimalismClockDemo
+};
+
+export default ClockDemos;
