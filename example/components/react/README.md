@@ -1,3 +1,12 @@
+---
+date: 2025-09-27 14:06:04
+title: README
+permalink: /pages/180d3f
+categories:
+  - example
+  - components
+  - react
+---
 # 卡片时钟组件
 
 基于掘金文章设计的现代化React时钟组件，支持丰富的配置选项和多种主题。

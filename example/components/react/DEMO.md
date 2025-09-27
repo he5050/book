@@ -1,3 +1,12 @@
+---
+date: 2025-09-27 14:06:04
+title: DEMO
+permalink: /pages/bf2e69
+categories:
+  - example
+  - components
+  - react
+---
 # 卡片时钟演示页面使用指南
 
 ## 📖 概述
