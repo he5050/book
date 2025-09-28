@@ -1,130 +1,137 @@
-.wave-animation-container {
+.wave-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
   padding: 20px;
-  background-color: #212121;
-  border-radius: 8px;
+  background: #212121;
+  border-radius: 12px;
+  min-height: 300px;
+  justify-content: center;
+}
+
+.e-card {
+  background: transparent;
+  box-shadow: 0px 8px 28px -9px rgba(0, 0, 0, 0.45);
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.wave {
+  position: absolute;
+  width: 540px;
+  height: 700px;
+  left: 0;
+  top: 0;
+  margin-left: -50%;
+  margin-top: -70%;
+  border-radius: 40%;
+  animation: wave 55s infinite linear;
+
+  &.wave-2,
+  &.wave-3 {
+    top: 210px;
+  }
+
+  &.wave-2 {
+    animation-duration: 50s;
+  }
+
+  &.wave-3 {
+    animation-duration: 45s;
+  }
+}
+
+/* 播放状态下的快速动画 */
+.playing .wave {
+  animation-duration: 3s;
+
+  &.wave-2 {
+    animation-duration: 4s;
+  }
+
+  &.wave-3 {
+    animation-duration: 5s;
+  }
+}
+
+.info {
+  text-align: center;
+  font-size: 20px;
+  position: absolute;
+  top: 5.6em;
+  left: 0;
+  right: 0;
+  color: rgb(255, 255, 255);
+  font-weight: 600;
+  z-index: 10;
+}
+
+.text {
+  font-size: 14px;
+  font-weight: 600;
+  position: relative;
+  top: 1em;
+  text-transform: lowercase;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.control-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #af40ff, #5b42f3);
   color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 
-  h3 {
-    text-align: center;
-    margin-top: 0;
-    color: #fff;
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(175, 64, 255, 0.3);
   }
 
-  .demo-content {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@keyframes wave {
+  0% {
+    transform: rotate(0deg);
   }
 
-  .e-card {
-    margin: 50px auto;
-    background: transparent;
-    box-shadow: 0px 8px 28px -9px rgba(0, 0, 0, 0.45);
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-  }
-
-  .wave {
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-radius: 40%;
-    animation: wave 55s infinite linear;
-  }
-
-  .info {
-    text-align: center;
-    font-size: 20px;
-    position: absolute;
-    top: 5.6em;
-    left: 0;
-    right: 0;
-    color: rgb(255, 255, 255);
-    font-weight: 600;
-    z-index: 10;
-  }
-
-  .text {
-    font-size: 14px;
-    font-weight: 100;
-    position: relative;
-    font-weight: 600;
-    top: 1em;
-    text-transform: lowercase;
-  }
-
-  @keyframes wave {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  .controls {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 15px;
-    background: #333;
-    padding: 20px;
-    border-radius: 8px;
-    color: white;
-    margin: 0 auto;
-
-    .control-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-
-      label {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      input[type="range"] {
-        width: 100%;
-      }
-
-      select {
-        width: 100%;
-        padding: 5px;
-        border-radius: 4px;
-        background: #444;
-        color: white;
-        border: 1px solid #666;
-      }
-
-      input[type="color"] {
-        width: 40px;
-        height: 40px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      .color-input {
-        width: 100%;
-        padding: 5px;
-        border-radius: 4px;
-        background: #444;
-        color: white;
-        border: 1px solid #666;
-      }
-    }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
 // 响应式设计
 @media (max-width: 768px) {
-  .wave-animation-container {
-    .controls {
-      grid-template-columns: 1fr;
-    }
+  .wave-container {
+    padding: 15px;
+    min-height: 250px;
+  }
+
+  .controls {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .control-btn {
+    width: 100%;
   }
 }
