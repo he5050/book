@@ -29,7 +29,7 @@ const teekConfig = defineTeekConfig({
 		sidebarOption: {
 			ignoreList: ['.vitepress', 'sh', 'types', 'example', '.git', '.github', '.vscode', 'docs'],
 			initItems: false,
-			restart: true
+			restart: false
 		}
 	},
 	markdown: {
