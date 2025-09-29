@@ -36,7 +36,7 @@ const WaveAnimation: React.FC<WaveAnimationProps> = ({
 	width = 200,
 	height = 200,
 	playing = false,
-	text = "这里测试文本",
+	text = '这里测试文本',
 	opacity = 0.6,
 	waveCount = 3,
 	colors = ['#af40ff', '#5b42f3', '#00ddeb'],
@@ -67,8 +67,8 @@ const WaveAnimation: React.FC<WaveAnimationProps> = ({
 	const renderWaves = () => {
 		return Array.from({ length: waveCount }).map((_, index) => {
 			const currentSpeed = isPlaying
-				? (fastAnimationSpeeds[index] || fastAnimationSpeeds[0] || 3)
-				: (animationSpeeds[index] || animationSpeeds[0] || 55);
+				? fastAnimationSpeeds[index] || fastAnimationSpeeds[0] || 3
+				: animationSpeeds[index] || animationSpeeds[0] || 55;
 
 			return (
 				<div
@@ -90,24 +90,26 @@ const WaveAnimation: React.FC<WaveAnimationProps> = ({
 	};
 
 	return (
-		<div className="wave-container">
-			<div
-				className={`e-card ${isPlaying ? 'playing' : ''}`}
-				style={{ width: `${width}px`, height: `${height}px` }}
-				onClick={togglePlaying}
-			>
-				{renderWaves()}
-				<div className="info">
-					<div className="text">{text}</div>
+		<div className="wave-container-box">
+			<div className="wave-container">
+				<div
+					className={`e-card ${isPlaying ? 'playing' : ''}`}
+					style={{ width: `${width}px`, height: `${height}px` }}
+					onClick={togglePlaying}
+				>
+					{renderWaves()}
+					<div className="info">
+						<div className="text">{text}</div>
+					</div>
 				</div>
+				{showControls && (
+					<div className="controls">
+						<button onClick={togglePlaying} className="control-btn">
+							{isPlaying ? '暂停动画' : '播放动画'}
+						</button>
+					</div>
+				)}
 			</div>
-			{showControls && (
-				<div className="controls">
-					<button onClick={togglePlaying} className="control-btn">
-						{isPlaying ? '暂停动画' : '播放动画'}
-					</button>
-				</div>
-			)}
 		</div>
 	);
 };

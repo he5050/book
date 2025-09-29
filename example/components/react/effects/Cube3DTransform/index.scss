@@ -1,0 +1,123 @@
+.cube-3d-transform {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: #333;
+  padding: 20px;
+
+  .container {
+    transform-style: preserve-3d;
+    perspective: 2000px;
+    transform: rotateX(-30deg) rotateY(-45deg);
+    width: var(--cube-size, 3em);
+    height: var(--cube-size, 3em);
+    position: relative;
+  }
+
+  .box-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-style: preserve-3d;
+
+    &:nth-child(1) {
+      transform: translate3d(0em, 3em, 1.5em);
+    }
+
+    &:nth-child(2) {
+      transform: rotateY(-90deg) rotateX(90deg) translate3d(0, 3em, 1.5em);
+    }
+
+    &:nth-child(3) {
+      transform: rotateZ(-90deg) rotateX(-90deg) translate3d(0, 3em, 1.5em);
+    }
+  }
+
+  .box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-style: preserve-3d;
+    animation: animate var(--animation-duration, 4s) infinite;
+    width: var(--cube-size, 3em);
+    height: var(--cube-size, 3em);
+    background-color: var(--box-color, #3498db);
+
+    &:before,
+    &:after {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      content: "";
+    }
+
+    &:before {
+      left: 100%;
+      bottom: 0;
+      transform: rotateY(90deg);
+      transform-origin: 0 50%;
+      background-color: var(--box-color, #3498db);
+    }
+
+    &:after {
+      left: 0;
+      bottom: 100%;
+      transform: rotateX(90deg);
+      transform-origin: 0 100%;
+      background-color: var(--box-color-dark, #2980b9);
+    }
+  }
+
+  @keyframes animate {
+    8.33% {
+      transform: translate3d(-50%, -50%, 0) scaleZ(2);
+    }
+
+    16.7% {
+      transform: translate3d(-50%, -50%, calc(-1 * var(--cube-size, 3em))) scaleZ(1);
+    }
+
+    25% {
+      transform: translate3d(-50%, calc(-2 * var(--cube-size, 3em)), calc(-1 * var(--cube-size, 3em))) scaleY(2);
+    }
+
+    33.3% {
+      transform: translate3d(-50%, calc(-3 * var(--cube-size, 3em)), calc(-1 * var(--cube-size, 3em))) scaleY(1);
+    }
+
+    41.7% {
+      transform: translate3d(calc(-2 * var(--cube-size, 3em)), calc(-3 * var(--cube-size, 3em)), calc(-1 * var(--cube-size, 3em))) scaleX(2);
+    }
+
+    50% {
+      transform: translate3d(calc(-3 * var(--cube-size, 3em)), calc(-3 * var(--cube-size, 3em)), calc(-1 * var(--cube-size, 3em))) scaleX(1);
+    }
+
+    58.3% {
+      transform: translate3d(calc(-3 * var(--cube-size, 3em)), calc(-3 * var(--cube-size, 3em)), 0) scaleZ(2);
+    }
+
+    66.7% {
+      transform: translate3d(calc(-3 * var(--cube-size, 3em)), calc(-3 * var(--cube-size, 3em)), 0) scaleZ(1);
+    }
+
+    75% {
+      transform: translate3d(calc(-3 * var(--cube-size, 3em)), calc(-2 * var(--cube-size, 3em)), 0) scaleY(2);
+    }
+
+    83.3% {
+      transform: translate3d(calc(-3 * var(--cube-size, 3em)), calc(-1 * var(--cube-size, 3em)), 0) scaleY(1);
+    }
+
+    91.7% {
+      transform: translate3d(calc(-2 * var(--cube-size, 3em)), calc(-1 * var(--cube-size, 3em)), 0) scaleX(2);
+    }
+
+    100% {
+      transform: translate3d(-50%, -50%, 0) scaleX(1);
+    }
+  }
+}
