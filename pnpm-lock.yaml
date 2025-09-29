@@ -86,6 +86,9 @@ importers:
       vitepress-plugin-legend:
         specifier: ^1.1.0
         version: 1.1.0(@parcel/watcher@2.5.1)(@types/node@22.15.29)(@vue/compiler-sfc@3.5.21)(db0@0.3.2)(ioredis@5.7.0)(jiti@2.5.1)(magicast@0.3.5)(markmap-common@0.18.9)(rollup@4.50.1)(sass@1.89.1)(terser@5.44.0)(typescript@5.9.2)(vite@7.1.5(@types/node@22.15.29)(jiti@2.5.1)(sass@1.92.1)(terser@5.44.0)(yaml@2.8.1))(vue-tsc@3.0.6(typescript@5.9.2))(yaml@2.8.1)
+      vue-flip-motion:
+        specifier: ^0.0.9
+        version: 0.0.9(vue@3.5.21(typescript@5.9.2))
     devDependencies:
       '@types/howler':
         specifier: ^2.2.12
@@ -6431,6 +6434,11 @@ packages:
 
   vue-devtools-stub@0.1.0:
     resolution: {integrity: sha512-RutnB7X8c5hjq39NceArgXg28WZtZpGc3+J16ljMiYnFhKvd8hITxSWQSQ5bvldxMDU6gG5mkxl1MTQLXckVSQ==}
+
+  vue-flip-motion@0.0.9:
+    resolution: {integrity: sha512-7h0ST4B8H2jVYzcqO2m7nm78m5p1yE+s0DwQMALgQ2MFOhM//jU7g2SZ4SiZkr2FjORl5AAJrqGDbRrpZ7d8kg==}
+    peerDependencies:
+      vue: ^2.6.10 || ^3.0.0
 
   vue-flow-layout@0.1.1:
     resolution: {integrity: sha512-JdgRRUVrN0Y2GosA0M68DEbKlXMqJ7FQgsK8CjQD2vxvNSqAU6PZEpi4cfcTVtfM2GVOMjHo7GKKLbXxOBqDqA==}
@@ -14111,6 +14119,10 @@ snapshots:
       vue: 3.5.21(typescript@5.9.2)
 
   vue-devtools-stub@0.1.0: {}
+
+  vue-flip-motion@0.0.9(vue@3.5.21(typescript@5.9.2)):
+    dependencies:
+      vue: 3.5.21(typescript@5.9.2)
 
   vue-flow-layout@0.1.1(vue@3.5.21(typescript@5.9.2)):
     dependencies:
