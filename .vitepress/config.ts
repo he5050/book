@@ -28,7 +28,8 @@ const teekConfig = defineTeekConfig({
 		},
 		sidebarOption: {
 			ignoreList: ['.vitepress', 'sh', 'types', 'example', '.git', '.github', '.vscode', 'docs'],
-			initItems: false
+			initItems: false,
+			restart: true
 		}
 	},
 	markdown: {
@@ -90,7 +91,7 @@ export default withMermaid(
 
 		// ✅ Mermaid 配置项
 		mermaid: {
-			theme: 'default', // 可选 "dark" | "forest" | "neutral"
+			theme: 'forest', // 可选 "dark" | "forest" | "neutral"
 			securityLevel: 'loose',
 			themeVariables: {
 				primaryColor: '#42b883',
