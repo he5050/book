@@ -136,12 +136,3 @@ const App = () => {
 
 - React 16.8+
 - TypeScript 3.0+（如果使用 TypeScript）
-
-## 浏览器兼容性
-
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
-
-对于需要支持更老浏览器的项目，需要添加相应的 polyfill。
