@@ -1,0 +1,143 @@
+.hover-card-3d {
+  .card {
+    width: 300px;
+    height: 380px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    margin: 20px auto;
+  }
+
+  .card:hover {
+    transform: translateY(-15px) rotateX(5deg) rotateY(-5deg) scale(1.03);
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-icon {
+    font-size: 60px;
+    margin-bottom: 25px;
+    color: #fff;
+    transition: all 0.3s ease;
+    transform: translateZ(30px);
+  }
+
+  .card:hover .card-icon {
+    transform: translateZ(50px) scale(1.2);
+    color: #ffdb58;
+  }
+
+  .card-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    transform: translateZ(20px);
+  }
+
+  .card:hover .card-title {
+    transform: translateZ(40px);
+    color: #ffdb58;
+  }
+
+  .card-content {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin-bottom: 25px;
+    transform: translateZ(10px);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover .card-content {
+    transform: translateZ(30px);
+  }
+
+  .card-button {
+    padding: 12px 30px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    transform: translateZ(10px);
+    margin-top: auto;
+  }
+
+  .card-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateZ(30px) scale(1.05);
+  }
+
+  .card-glare {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .card-glare::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
+    opacity: 0;
+  }
+
+  .card:hover .card-glare::after {
+    opacity: 1;
+    animation: glare 1.5s ease-in-out;
+  }
+
+  @keyframes glare {
+    0% {
+      transform: rotate(45deg) translate(-50%, -50%);
+    }
+
+    100% {
+      transform: rotate(45deg) translate(50%, 50%);
+    }
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .card {
+      width: 250px;
+      height: 340px;
+    }
+
+    .card-icon {
+      font-size: 50px;
+    }
+
+    .card-title {
+      font-size: 22px;
+    }
+
+    .card-content {
+      font-size: 14px;
+    }
+  }
+}
