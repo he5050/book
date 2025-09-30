@@ -83,7 +83,7 @@ export default withMermaid(
 				{ text: '笔记', link: '/notes', activeMatch: '/01.笔记/' },
 				{ text: '效果', link: '/special-effects', activeMatch: '/02.特效/' },
 				{ text: '工具', link: '/tools', activeMatch: '/03.工具/' },
-				{ text: '小朋友专用', link: '/wawa', activeMatch: '/09.字贴/' }
+				{ text: '小朋友专用', link: '/wawa', activeMatch: '/09.小朋友/' }
 			],
 			socialLinks: [{ icon: 'github', link: 'https://github.com/he5050/book' }],
 			search: { provider: 'local' }
