@@ -1,0 +1,13 @@
+.mask-effect {
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  // 添加前缀以提高浏览器兼容性
+  -webkit-mask-size: cover;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-mode: alpha;
+}

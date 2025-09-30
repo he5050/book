@@ -94,9 +94,11 @@ export default withMermaid(
 			theme: 'forest', // 可选 "dark" | "forest" | "neutral"
 			securityLevel: 'loose',
 			themeVariables: {
-				primaryColor: '#42b883',
-				primaryTextColor: '#333333',
-				lineColor: '#666666'
+				fill: '#722ed1',
+				stroke: '#722ed1',
+				primaryColor: '#722ed1',
+				primaryTextColor: '#fff',
+				lineColor: '#722ed1'
 			}
 		}
 	})
