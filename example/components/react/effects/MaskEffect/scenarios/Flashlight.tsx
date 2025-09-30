@@ -49,9 +49,30 @@ const FlashlightExample: React.FC = () => {
 							将鼠标悬停在此区域上查看效果
 						</div>
 						<div style={{ marginTop: '20px', display: 'flex', gap: '20px' }}>
-							<div style={{ width: '40px', height: '40px', backgroundColor: '#3498db', borderRadius: '50%' }}></div>
-							<div style={{ width: '40px', height: '40px', backgroundColor: '#e74c3c', borderRadius: '50%' }}></div>
-							<div style={{ width: '40px', height: '40px', backgroundColor: '#2ecc71', borderRadius: '50%' }}></div>
+							<div
+								style={{
+									width: '40px',
+									height: '40px',
+									backgroundColor: '#3498db',
+									borderRadius: '50%'
+								}}
+							></div>
+							<div
+								style={{
+									width: '40px',
+									height: '40px',
+									backgroundColor: '#e74c3c',
+									borderRadius: '50%'
+								}}
+							></div>
+							<div
+								style={{
+									width: '40px',
+									height: '40px',
+									backgroundColor: '#2ecc71',
+									borderRadius: '50%'
+								}}
+							></div>
 						</div>
 					</div>
 				</MaskEffect>
