@@ -32,7 +32,7 @@
       </div>
 
       <Flip :mutation="gridItems" :animate-option="{ duration: 600, easing: 'ease-in-out' }"
-        styles="['position-x', 'position-y']">
+        :styles="['position-x', 'position-y']">
         <div class="grid-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px">
           <div v-for="item in gridItems" :key="item.id" :id="`grid-${item.id}`" :style="{
             padding: '20px',
@@ -66,7 +66,7 @@
       </div>
 
       <Flip :mutation="nestedItems" :animate-option="{ duration: 800, easing: 'ease-in-out' }"
-        styles="['position-x', 'position-y']" selector=".nested-item">
+        :styles="['position-x', 'position-y']" selector=".nested-item">
         <div class="nested-container" style="min-height: 300px">
           <div v-for="item in nestedItems" :key="item.id" class="nested-item" :id="`nested-${item.id}`" :style="{
             position: 'relative',
@@ -108,7 +108,7 @@
       </div>
 
       <Flip :mutation="filteredItems" :animate-option="{ duration: 500, easing: 'ease-in-out' }"
-        styles="['position-x', 'position-y', 'opacity']">
+        :styles="['position-x', 'position-y', 'opacity']">
         <div class="filter-container">
           <div v-for="item in filteredItems" :key="item.id" :id="`filter-${item.id}`" :style="{
             padding: '15px',
@@ -141,7 +141,7 @@
       </div>
 
       <Flip :mutation="selectorItems" :animate-option="{ duration: 600, easing: 'ease-in-out' }"
-        styles="['position-x', 'position-y']" selector=".animated-card">
+        :styles="['position-x', 'position-y']" selector=".animated-card">
         <div class="selector-container">
           <div style="display: flex; flex-wrap: wrap; gap: 15px">
             <div v-for="item in selectorItems" :key="item.id" class="card-wrapper"
@@ -229,8 +229,11 @@ const resetGrid = () => {
 const moveToFirst = (item) => {
   const index = gridItems.value.findIndex(i => i.id === item.id)
   if (index > 0) {
-    const [movedItem] = gridItems.value.splice(index, 1)
-    gridItems.value.unshift(movedItem)
+    // 创建新的数组以确保响应式更新
+    const newItems = [...gridItems.value]
+    const [movedItem] = newItems.splice(index, 1)
+    newItems.unshift(movedItem)
+    gridItems.value = newItems
   }
 }
 
