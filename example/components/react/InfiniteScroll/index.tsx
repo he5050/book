@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useCallback } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import './index.scss';
 
@@ -25,9 +25,9 @@ interface InfiniteScrollExampleProps {
 
 const InfiniteScrollExample: React.FC<InfiniteScrollExampleProps> = ({
 	width = 500,
-	height,
+	height = undefined,
 	initialCount = 20,
-	loadCount = 20,
+	loadCount = 10, // 默认每次加载10条数据
 	maxCount = 100,
 	theme = 'light'
 }) => {
@@ -40,24 +40,26 @@ const InfiniteScrollExample: React.FC<InfiniteScrollExampleProps> = ({
 	);
 	const [hasMore, setHasMore] = useState(true);
 
-	const fetchMoreData = () => {
+	const fetchMoreData = useCallback(() => {
 		// 模拟异步请求
 		setTimeout(() => {
-			const currentLength = items.length;
-			const newItems = Array.from({ length: loadCount }, (_, i) => ({
-				id: currentLength + i,
-				name: `数据项 #${currentLength + i}`,
-				description: `这是第 ${currentLength + i + 1} 个数据项的描述信息，包含一些示例文本内容。`
-			}));
+			setItems(prevItems => {
+				const currentLength = prevItems.length;
+				const newItems = Array.from({ length: loadCount }, (_, i) => ({
+					id: currentLength + i,
+					name: `数据项 #${currentLength + i}`,
+					description: `这是第 ${currentLength + i + 1} 个数据项的描述信息，包含一些示例文本内容。`
+				}));
 
-			setItems(prev => [...prev, ...newItems]);
+				// 检查是否达到最大数据量
+				if (currentLength + newItems.length >= maxCount) {
+					setHasMore(false);
+				}
 
-			// 检查是否达到最大数据量
-			if (currentLength + newItems.length >= maxCount) {
-				setHasMore(false);
-			}
+				return [...prevItems, ...newItems];
+			});
 		}, 1000);
-	};
+	}, [loadCount, maxCount]);
 
 	return (
 		<div className={`infinite-scroll-example ${theme}`} style={{ width: `${width}px` }}>
