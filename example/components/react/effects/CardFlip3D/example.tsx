@@ -5,9 +5,18 @@ const CardFlip3DExample: React.FC = () => {
 	return (
 		<div
 			className="card-flip-3d-example"
-			style={{ padding: '20px', textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}
+			style={{
+				padding: '20px',
+				textAlign: 'center',
+				maxWidth: '1200px',
+				margin: '0 auto',
+				backgroundColor: '#2c3e50',
+				minHeight: '100vh'
+			}}
 		>
-			<h1 style={{ color: '#333', marginBottom: '30px' }}>3D卡片翻转动画效果演示</h1>
+			<h1 style={{ color: '#fff', marginBottom: '30px', paddingTop: '20px' }}>
+				3D卡片翻转动画效果演示
+			</h1>
 
 			<div
 				style={{
@@ -40,7 +49,7 @@ const CardFlip3DExample: React.FC = () => {
 				style={{
 					marginTop: '40px',
 					padding: '25px',
-					backgroundColor: '#f8f9fa',
+					backgroundColor: 'rgba(255, 255, 255, 0.9)',
 					borderRadius: '12px',
 					boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
 					textAlign: 'left',
