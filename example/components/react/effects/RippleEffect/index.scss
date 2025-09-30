@@ -1,0 +1,20 @@
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: ripple-animation 600ms linear;
+    pointer-events: none;
+  }
+
+  @keyframes ripple-animation {
+    to {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0;
+    }
+  }
+}
