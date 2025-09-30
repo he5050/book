@@ -1,0 +1,165 @@
+.liquid-button {
+  position: relative;
+  padding: 12px 24px;
+  background: var(--liquid-btn-bg, #4a90e2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  width: 200px;
+  height: 50px;
+  outline: none;
+
+  // 液态波动效果
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent);
+    transform: translateX(-100%);
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  &:hover {
+    &::before {
+      transform: translateX(100%);
+    }
+
+    .liquid-button__wave {
+      animation: liquid-wave 2s cubic-bezier(0.23, 1, 0.32, 1) infinite alternate;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+    transition: all 0.2s ease;
+  }
+
+  &__text {
+    position: relative;
+    z-index: 2;
+  }
+
+  // 水波纹效果
+  &__ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: translate(-50%, -50%);
+    animation: ripple-animation 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    z-index: 1;
+  }
+
+  // 液态波动层
+  &__wave {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background: linear-gradient(45deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.3));
+    z-index: 0;
+  }
+
+  // 液态形态变化动画
+  @keyframes liquid-wave {
+    0% {
+      border-radius: 45% 55% 60% 40% / 50% 45% 55% 50%;
+    }
+
+    100% {
+      border-radius: 55% 45% 40% 60% / 55% 50% 45% 50%;
+    }
+  }
+
+  // 水波纹动画
+  @keyframes ripple-animation {
+    0% {
+      width: 0;
+      height: 0;
+      opacity: 0.6;
+    }
+
+    100% {
+      width: 500px;
+      height: 500px;
+      opacity: 0;
+    }
+  }
+}
+
+// 自定义样式示例
+.custom-liquid-button {
+  --liquid-btn-bg: #e74c3c;
+}
+
+.small-button {
+  width: 120px;
+  height: 35px;
+  font-size: 14px;
+}
+
+.large-button {
+  width: 250px;
+  height: 60px;
+  font-size: 18px;
+}
+
+// 演示容器样式
+.liquid-animation-demo {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  .demo-section {
+    margin-bottom: 30px;
+
+    h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+  }
+
+  .button-group {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .demo-info {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 30px;
+
+    h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    ul {
+      padding-left: 20px;
+
+      li {
+        margin: 10px 0;
+      }
+    }
+  }
+}
