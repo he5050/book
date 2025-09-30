@@ -46,13 +46,23 @@ const SmartColorAnalyzer: React.FC<SmartColorAnalyzerProps> = ({
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
-		// 设置Canvas尺寸
-		canvas.width = canvasWidth;
-		canvas.height = canvasHeight;
+		// 获取设备像素比
+		const dpr = window.devicePixelRatio || 1;
+
+		// 设置Canvas实际尺寸（考虑设备像素比）
+		canvas.width = canvasWidth * dpr;
+		canvas.height = canvasHeight * dpr;
+
+		// 设置Canvas显示尺寸
+		canvas.style.width = `${canvasWidth}px`;
+		canvas.style.height = `${canvasHeight}px`;
 
 		// 获取绘图上下文
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
+
+		// 缩放绘图上下文以适配高清屏
+		ctx.scale(dpr, dpr);
 
 		// 设置初始背景
 		ctx.fillStyle = '#f8f9fa';
@@ -61,15 +71,29 @@ const SmartColorAnalyzer: React.FC<SmartColorAnalyzerProps> = ({
 		// 添加事件监听器
 		const startDrawing = (e: MouseEvent | TouchEvent) => {
 			setIsDrawing(true);
+			// 获取起始坐标
+			let x, y;
+			if (e instanceof MouseEvent) {
+				const rect = canvas.getBoundingClientRect();
+				x = e.clientX - rect.left;
+				y = e.clientY - rect.top;
+			} else {
+				const rect = canvas.getBoundingClientRect();
+				x = e.touches[0].clientX - rect.left;
+				y = e.touches[0].clientY - rect.top;
+			}
+
+			// 初始化路径
+			if (ctx) {
+				ctx.beginPath();
+				ctx.moveTo(x, y);
+			}
 			draw(e);
 		};
 
 		const stopDrawing = () => {
 			setIsDrawing(false);
-			const ctx = canvas.getContext('2d');
-			if (ctx) {
-				ctx.beginPath();
-			}
+			// 不再调用 ctx.beginPath()，这样可以保持绘制的路径
 		};
 
 		const draw = (e: MouseEvent | TouchEvent) => {
@@ -88,15 +112,14 @@ const SmartColorAnalyzer: React.FC<SmartColorAnalyzerProps> = ({
 			}
 
 			// 设置绘图样式
-			ctx.lineWidth = 5;
+			ctx.lineWidth = 5 * dpr; // 考虑设备像素比调整线宽
 			ctx.lineCap = 'round';
 			ctx.strokeStyle = currentColor;
 
-			// 绘制
+			// 绘制线条
 			ctx.lineTo(x, y);
 			ctx.stroke();
-			ctx.beginPath();
-			ctx.moveTo(x, y);
+			// 不再调用 beginPath 和 moveTo，保持路径连续
 		};
 
 		// 添加事件监听器
@@ -214,7 +237,9 @@ const SmartColorAnalyzer: React.FC<SmartColorAnalyzerProps> = ({
 		}
 
 		try {
-			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+			// 使用canvasWidth和canvasHeight而不是canvas.width和canvas.height
+			// 因为canvas的物理尺寸是经过dpr缩放的
+			const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
 			const data = imageData.data;
 
 			let warmPixels = 0;
@@ -260,8 +285,9 @@ const SmartColorAnalyzer: React.FC<SmartColorAnalyzerProps> = ({
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
 
+		// 使用canvasWidth和canvasHeight而不是canvas.width和canvas.height
 		ctx.fillStyle = '#f8f9fa';
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
 		// 重置比例
 		setWarmRatio(0);
