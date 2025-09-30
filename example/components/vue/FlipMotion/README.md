@@ -47,13 +47,13 @@ flowchart TD
 
 ### 基本使用
 
-```vue
+``vue
 <template>
-	<Flip :mutation="list">
-		<div v-for="item in list" :key="item.id">
-			{{ item.name }}
-		</div>
-	</Flip>
+<Flip :mutation="list">
+<div v-for="item in list" :key="item.id">
+{{ item.name }}
+</div>
+</Flip>
 </template>
 
 <script setup>
@@ -66,11 +66,12 @@ const list = ref([
 	{ id: 3, name: '项目 C' }
 ]);
 </script>
+
 ```
 
 ### 高级使用
 
-```vue
+``vue
 <template>
 	<Flip
 		:mutation="list"
@@ -110,6 +111,123 @@ const onAnimationFinish = element => {
 };
 </script>
 ```
+
+## 🚀 高级用法
+
+### 嵌套动画
+
+FlipMotion 组件支持嵌套使用，可以实现更复杂的动画效果：
+
+``vue
+<template>
+<Flip
+:mutation="list"
+:animate-option="{duration: 800}"
+:styles="['position-x','position-y']"
+selector=".item"
+
+>
+
+    <div class="container">
+      <div v-for="item in list" :key="item.id" class="item">
+        <Flip
+          :mutation="item"
+          :styles="['backgroundColor']"
+          :animate-option="{duration: 500}"
+        >
+          <div :style="{backgroundColor: item.color}">
+            {{ item.name }}
+          </div>
+        </Flip>
+      </div>
+    </div>
+
+  </Flip>
+</template>
+```
+
+### 自定义选择器
+
+通过 `selector` 属性可以精确控制需要动画的元素：
+
+``vue
+<template>
+<Flip
+:mutation="list"
+selector=".animated-item"
+:animate-option="{duration: 500}"
+
+>
+
+    <div class="wrapper">
+      <div class="animated-item" v-for="item in list" :key="item.id">
+        {{ item.text }}
+      </div>
+    </div>
+
+  </Flip>
+</template>
+```
+
+### 列表过滤动画
+
+在列表过滤场景中，FlipMotion 可以自动处理元素的进入和离开动画：
+
+``vue
+<template>
+<Flip
+:mutation="filteredList"
+:animate-option="{duration: 500}"
+:styles="['position-x', 'position-y', 'opacity']"
+
+>
+
+    <div class="list-container">
+      <div
+        v-for="item in filteredList"
+        :key="item.id"
+        :style="{opacity: 1}"
+      >
+        {{ item.name }}
+      </div>
+    </div>
+
+  </Flip>
+</template>
+```
+
+## 🎯 应用场景
+
+### 1. 网格布局动画
+
+在网格布局中实现元素位置交换动画，如相册重排、图标排序等。
+
+### 2. 嵌套组件动画
+
+实现复合动画效果，如卡片位置移动同时背景色变化。
+
+### 3. 动态列表管理
+
+处理列表项的添加、删除、过滤等操作的流畅动画。
+
+### 4. 表单动态字段
+
+表单字段的动态添加和删除动画效果。
+
+## 🎨 样式属性详解
+
+FlipMotion 支持多种样式属性的动画：
+
+| 样式属性          | 说明         | 应用场景         |
+| ----------------- | ------------ | ---------------- |
+| `position-x`      | X 轴位置动画 | 元素左右移动     |
+| `position-y`      | Y 轴位置动画 | 元素上下移动     |
+| `width`           | 宽度变化动画 | 元素宽度调整     |
+| `height`          | 高度变化动画 | 元素高度调整     |
+| `backgroundColor` | 背景色变化   | 背景色渐变过渡   |
+| `color`           | 文字颜色变化 | 文字颜色渐变过渡 |
+| `opacity`         | 透明度变化   | 元素淡入淡出     |
+| `borderRadius`    | 圆角变化     | 元素圆角调整     |
 
 ## API 参考
 
