@@ -22,9 +22,9 @@ const FlashlightExample: React.FC = () => {
 				<MaskEffect
 					width={400}
 					height={250}
-					backgroundImage="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-					maskImage={`radial-gradient(circle at ${position.x} ${position.y}, white 20%, black 70%)`}
-					maskMode="luminance"
+					backgroundImage="linear-gradient(135deg, #2c3e50 0%, #4a6491 100%)"
+					maskImage={`radial-gradient(circle at ${position.x} ${position.y}, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.9) 15%, rgba(255, 255, 255, 0.7) 30%, rgba(0, 0, 0, 0) 60%)`}
+					maskMode="alpha"
 					maskSize="100% 100%"
 					maskPosition="center"
 					maskRepeat="no-repeat"
@@ -34,15 +34,25 @@ const FlashlightExample: React.FC = () => {
 							width: '100%',
 							height: '100%',
 							display: 'flex',
+							flexDirection: 'column',
 							alignItems: 'center',
 							justifyContent: 'center',
 							color: 'white',
 							fontSize: '20px',
 							fontWeight: 'bold',
-							textAlign: 'center'
+							textAlign: 'center',
+							textShadow: '0 0 10px rgba(255, 255, 255, 0.5)'
 						}}
 					>
-						将鼠标悬停在此区域上查看手电筒效果
+						<div>手电筒效果演示</div>
+						<div style={{ marginTop: '10px', fontSize: '14px', fontWeight: 'normal' }}>
+							将鼠标悬停在此区域上查看效果
+						</div>
+						<div style={{ marginTop: '20px', display: 'flex', gap: '20px' }}>
+							<div style={{ width: '40px', height: '40px', backgroundColor: '#3498db', borderRadius: '50%' }}></div>
+							<div style={{ width: '40px', height: '40px', backgroundColor: '#e74c3c', borderRadius: '50%' }}></div>
+							<div style={{ width: '40px', height: '40px', backgroundColor: '#2ecc71', borderRadius: '50%' }}></div>
+						</div>
 					</div>
 				</MaskEffect>
 			</div>
