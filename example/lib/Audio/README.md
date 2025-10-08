@@ -1,3 +1,12 @@
+---
+date: 2025-10-08 21:08:52
+title: README
+permalink: /pages/4821ce
+categories:
+  - example
+  - lib
+  - Audio
+---
 # AudioProcessor 使用文档
 
 `AudioProcessor` 是一个功能强大的音频处理库，允许您轻松地在浏览器中进行录音、播放、暂停、恢复和停止等操作。它还提供了获取音频数据（PCM 和 WAV 格式）、下载音频文件以及分析音频波形（时域和频域）的功能。
