@@ -3,24 +3,24 @@
  * 每个实例管理一个独立的音频播放状态。
  */
 export default class Player {
-    /** @private 音频上下文，用于所有音频操作 */
-    private context: AudioContext | null = null;
-    /** @private 音频分析节点，用于获取频域和时域数据 */
-    private analyser: AnalyserNode | null = null;
-    /** @private 音频源节点，代表正在播放的音频 */
-    private source: AudioBufferSourceNode | null = null;
-    /** @private 存储解码前的原始音频数据 */
-    private audioData: ArrayBuffer | null = null;
-    /** @private 标记当前是否处于暂停状态 */
-    private isPaused: boolean = false;
-    /** @private 记录暂停时已经播放的时长，用于恢复播放 */
-    private playTime: number = 0;
-    /** @private 记录开始或恢复播放时的时间戳，用于计算播放时长 */
-    private playStamp: number = 0;
-    /** @private 记录音频播放完成时的总时长 */
-    private totalTime: number = 0;
-    /** @private 播放结束时触发的回调函数 */
-    private endPlayFn: () => void = () => {};
+	/** @private 音频上下文，用于所有音频操作 */
+	private context: AudioContext | null = null;
+	/** @private 音频分析节点，用于获取频域和时域数据 */
+	private analyser: AnalyserNode | null = null;
+	/** @private 音频源节点，代表正在播放的音频 */
+	private source: AudioBufferSourceNode | null = null;
+	/** @private 存储解码前的原始音频数据 */
+	private audioData: ArrayBuffer | null = null;
+	/** @private 标记当前是否处于暂停状态 */
+	private isPaused: boolean = false;
+	/** @private 记录暂停时已经播放的时长，用于恢复播放 */
+	private playTime: number = 0;
+	/** @private 记录开始或恢复播放时的时间戳，用于计算播放时长 */
+	private playStamp: number = 0;
+	/** @private 记录音频播放完成时的总时长 */
+	private totalTime: number = 0;
+	/** @private 播放结束时触发的回调函数 */
+	private endPlayFn: () => void = () => {};
 
 	constructor() {
 		this.init();
@@ -34,7 +34,7 @@ export default class Player {
 		if (!this.context) {
 			const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
 			if (!AudioContext) {
-				console.error("浏览器不支持 AudioContext");
+				console.error('浏览器不支持 AudioContext');
 				return;
 			}
 			this.context = new AudioContext();
@@ -79,15 +79,15 @@ export default class Player {
 
 			this.context.decodeAudioData(
 				this.audioData.slice(0),
-				(buffer) => {
+				buffer => {
 					if (!this.context) {
 						return reject(new Error('音频上下文不可用'));
 					}
 
-					this.destroySource();
+					this.destroySource(); // 销毁当前音频源节点
 
-					this.source = this.context.createBufferSource();
-					this.source.buffer = buffer;
+					this.source = this.context.createBufferSource(); // 创建音频源节点
+					this.source.buffer = buffer; // 为音频源节点设置音频数据
 
 					this.source.onended = () => {
 						if (!this.isPaused && this.context) {
@@ -107,7 +107,7 @@ export default class Player {
 					this.playStamp = this.context.currentTime;
 					resolve();
 				},
-				(err) => {
+				err => {
 					reject(new Error(`音频解码失败: ${err.message}`));
 				}
 			);
@@ -219,6 +219,8 @@ export default class Player {
 		if (this.totalTime) {
 			return this.totalTime;
 		}
-		return this.isPaused ? this.playTime : this.context.currentTime - this.playStamp + this.playTime;
+		return this.isPaused
+			? this.playTime
+			: this.context.currentTime - this.playStamp + this.playTime;
 	}
 }
