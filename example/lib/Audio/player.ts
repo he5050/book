@@ -1,194 +1,224 @@
-import { throwError } from './exception';
-
-declare let window: any;
-
-let source: AudioBufferSourceNode | null = null;
-let playTime: number = 0; // 相对时间，记录暂停位置
-let playStamp: number = 0; // 开始或暂停后开始的时间戳(绝对)
-let context: AudioContext | null = null;
-let analyser: AnalyserNode | null = null;
-
-let audioData: ArrayBuffer | null = null;
-let isPaused: boolean = false;
-let totalTime: number = 0;
-let endplayFn: () => void = function () {};
-
 /**
- * 初始化音频上下文
+ * Player 类提供了一组方法来控制音频播放。
+ * 每个实例管理一个独立的音频播放状态。
  */
-function init(): void {
-	context = new (window.AudioContext || window.webkitAudioContext)();
-	analyser = context.createAnalyser();
-	analyser.fftSize = 2048; // 表示存储频域的大小
-}
-
-/**
- * 播放音频
- * @returns {Promise<void>} 返回一个Promise，播放成功时resolve，失败时reject
- */
-function playAudio(): Promise<void> {
-	isPaused = false;
-
-	if (!context) {
-		return Promise.reject(new Error('Audio context not initialized'));
-	}
-
-	return new Promise((resolve, reject) => {
-		if (!audioData) {
-			reject(new Error('No audio data to play'));
-			return;
-		}
-
-		context.decodeAudioData(
-			audioData.slice(0),
-			buffer => {
-				if (!context) {
-					reject(new Error('Audio context not available'));
-					return;
-				}
-
-				source = context.createBufferSource();
-
-				// 播放结束的事件绑定
-				source.onended = () => {
-					if (!isPaused) {
-						// 暂停的时候也会触发该事件
-						// 计算音频总时长
-						totalTime = context!.currentTime - playStamp + playTime;
-						endplayFn();
-					}
-				};
-
-				// 设置数据
-				source.buffer = buffer;
-				// connect到分析器
-				if (analyser) {
-					source.connect(analyser);
-					analyser.connect(context.destination);
-				}
-				source.start(0, playTime);
-
-				// 记录当前的时间戳，以备暂停时使用
-				playStamp = context.currentTime;
-				resolve();
-			},
-			function (e) {
-				reject(e);
-			}
-		);
-	});
-}
-
-// 销毁source, 由于 decodeAudioData 产生的source每次停止后就不能使用，所以暂停也意味着销毁，下次需重新启动。
-function destroySource() {
-	if (source) {
-		source.stop();
-		source = null;
-	}
-}
-
 export default class Player {
+    /** @private 音频上下文，用于所有音频操作 */
+    private context: AudioContext | null = null;
+    /** @private 音频分析节点，用于获取频域和时域数据 */
+    private analyser: AnalyserNode | null = null;
+    /** @private 音频源节点，代表正在播放的音频 */
+    private source: AudioBufferSourceNode | null = null;
+    /** @private 存储解码前的原始音频数据 */
+    private audioData: ArrayBuffer | null = null;
+    /** @private 标记当前是否处于暂停状态 */
+    private isPaused: boolean = false;
+    /** @private 记录暂停时已经播放的时长，用于恢复播放 */
+    private playTime: number = 0;
+    /** @private 记录开始或恢复播放时的时间戳，用于计算播放时长 */
+    private playStamp: number = 0;
+    /** @private 记录音频播放完成时的总时长 */
+    private totalTime: number = 0;
+    /** @private 播放结束时触发的回调函数 */
+    private endPlayFn: () => void = () => {};
+
+	constructor() {
+		this.init();
+	}
+
 	/**
-	 * 播放录音
-	 * @static
-	 * @param {ArrayBuffer} arraybuffer 音频数据
-	 * @returns {Promise<void>} 返回一个Promise
-	 * @memberof Player
+	 * 初始化音频上下文和分析器。
+	 * @private
 	 */
-	static play(arraybuffer: ArrayBuffer): Promise<void> {
-		if (!context) {
-			// 第一次播放要初始化
-			init();
+	private init(): void {
+		if (!this.context) {
+			const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+			if (!AudioContext) {
+				console.error("浏览器不支持 AudioContext");
+				return;
+			}
+			this.context = new AudioContext();
+			this.analyser = this.context.createAnalyser();
+			this.analyser.fftSize = 2048; // 设置FFT大小，用于频谱分析
 		}
-		this.stopPlay();
-		// 缓存播放数据
-		audioData = arraybuffer;
-		totalTime = 0;
-
-		return playAudio();
 	}
 
 	/**
-	 * 暂停播放录音
-	 * @memberof Player
+	 * 销毁当前的音频源。
+	 * @private
 	 */
-	static pausePlay(): void {
-		destroySource();
-		if (context) {
-			// 多次暂停需要累加
-			playTime += context.currentTime - playStamp;
+	private destroySource(): void {
+		if (this.source) {
+			this.source.onended = null; // 清理事件监听器
+			this.source.stop();
+			this.source.disconnect();
+			this.source = null;
 		}
-		isPaused = true;
 	}
 
 	/**
-	 * 恢复播放录音
-	 * @memberof Player
-	 * @returns {Promise<void>} 返回一个Promise
+	 * 异步播放音频。
+	 * @private
+	 * @returns {Promise<void>}
 	 */
-	static resumePlay(): Promise<void> {
-		return playAudio();
+	private playAudio(): Promise<void> {
+		if (!this.context) {
+			return Promise.reject(new Error('音频上下文未初始化'));
+		}
+
+		this.isPaused = false;
+
+		return new Promise((resolve, reject) => {
+			if (!this.audioData) {
+				return reject(new Error('没有可播放的音频数据'));
+			}
+
+			if (!this.context) {
+				return reject(new Error('音频上下文不可用'));
+			}
+
+			this.context.decodeAudioData(
+				this.audioData.slice(0),
+				(buffer) => {
+					if (!this.context) {
+						return reject(new Error('音频上下文不可用'));
+					}
+
+					this.destroySource();
+
+					this.source = this.context.createBufferSource();
+					this.source.buffer = buffer;
+
+					this.source.onended = () => {
+						if (!this.isPaused && this.context) {
+							this.totalTime = this.context.currentTime - this.playStamp + this.playTime;
+							this.endPlayFn();
+						}
+					};
+
+					if (this.analyser) {
+						this.source.connect(this.analyser);
+						this.analyser.connect(this.context.destination);
+					} else {
+						this.source.connect(this.context.destination);
+					}
+
+					this.source.start(0, this.playTime);
+					this.playStamp = this.context.currentTime;
+					resolve();
+				},
+				(err) => {
+					reject(new Error(`音频解码失败: ${err.message}`));
+				}
+			);
+		});
 	}
 
 	/**
-	 * 停止播放
-	 * @memberof Player
+	 * 开始播放指定的音频数据。
+	 * @param {ArrayBuffer} arraybuffer - 包含音频数据的ArrayBuffer。
+	 * @returns {Promise<void>}
 	 */
-	static stopPlay() {
-		playTime = 0;
-		audioData = null;
-
-		destroySource();
-	}
-
-	/**
-	 * 销毁播放器
-	 * @memberof Player
-	 */
-	static destroyPlay() {
+	public play(arraybuffer: ArrayBuffer): Promise<void> {
+		this.init();
 		this.stopPlay();
+
+		this.audioData = arraybuffer;
+		this.totalTime = 0;
+
+		return this.playAudio();
 	}
 
 	/**
-	 * 获取音频分析数据
-	 * @returns {Uint8Array} 返回频域数据数组
-	 * @memberof Player
+	 * 暂停当前正在播放的音频。
 	 */
-	static getAnalyseData(): Uint8Array {
-		if (!analyser) {
-			// 如果analyser未初始化，返回空数组
+	public pausePlay(): void {
+		if (this.context && !this.isPaused) {
+			this.isPaused = true;
+			this.playTime += this.context.currentTime - this.playStamp;
+			this.destroySource();
+		}
+	}
+
+	/**
+	 * 恢复播放已暂停的音频。
+	 * @returns {Promise<void>}
+	 */
+	public resumePlay(): Promise<void> {
+		if (this.isPaused) {
+			return this.playAudio();
+		}
+		return Promise.resolve();
+	}
+
+	/**
+	 * 停止播放并重置播放状态。
+	 */
+	public stopPlay(): void {
+		this.playTime = 0;
+		this.totalTime = 0;
+		this.isPaused = false;
+		this.audioData = null;
+		this.destroySource();
+	}
+
+	/**
+	 * 销毁播放器，释放所有资源。
+	 */
+	public destroyPlay(): void {
+		this.stopPlay();
+		if (this.context && this.context.state !== 'closed') {
+			this.context.close();
+		}
+		this.context = null;
+		this.analyser = null;
+	}
+
+	/**
+	 * 获取当前播放音频的时域数据（波形数据）。
+	 * @returns {Uint8Array} 包含时域数据的Uint8Array。
+	 */
+	public getTimeDomainData(): Uint8Array {
+		if (!this.analyser) {
 			return new Uint8Array(0);
 		}
-		
-		let dataArray = new Uint8Array(analyser.frequencyBinCount);
-		// 将数据拷贝到dataArray中。
-		analyser.getByteTimeDomainData(dataArray);
-
+		const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+		this.analyser.getByteTimeDomainData(dataArray);
 		return dataArray;
 	}
 
 	/**
-	 * 增加录音播放完成的事件绑定
-	 * @static
-	 * @param {() => void} fn 播放完成后的回调函数
-	 * @memberof Player
+	 * 获取当前播放音频的频域数据。
+	 * @returns {Uint8Array} 包含频域数据的Uint8Array。
 	 */
-	static addPlayEnd(fn: () => void = function () {}) {
-		endplayFn = fn;
+	public getFrequencyData(): Uint8Array {
+		if (!this.analyser) {
+			return new Uint8Array(0);
+		}
+		const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+		this.analyser.getByteFrequencyData(dataArray);
+		return dataArray;
 	}
 
 	/**
-	 * 获取已经播放的时长
-	 * @returns {number} 已播放的时间（秒）
-	 * @memberof Player
+	 * 设置一个在音频播放自然结束时触发的回调函数。
+	 * @param {() => void} [fn=() => {}] - 播放结束时执行的回调。
 	 */
-	static getPlayTime(): number {
-		if (!context) {
+	public addPlayEnd(fn: () => void = () => {}): void {
+		this.endPlayFn = fn;
+	}
+
+	/**
+	 * 获取当前已播放的时长（秒）。
+	 * @returns {number} 已播放的秒数。
+	 */
+	public getPlayTime(): number {
+		if (!this.context) {
 			return 0;
 		}
-		
-		let pTime = isPaused ? playTime : context.currentTime - playStamp + playTime;
-
-		return totalTime || pTime;
+		if (this.totalTime) {
+			return this.totalTime;
+		}
+		return this.isPaused ? this.playTime : this.context.currentTime - this.playStamp + this.playTime;
 	}
 }
