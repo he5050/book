@@ -1,195 +1,172 @@
-interface DataViewLike {
-	byteLength: number;
-	buffer: {
-		byteLength: number;
-	};
-	getUint8: (byteOffset: number) => number;
-}
-
 /**
- * 在data中的offset位置开始写入str字符串
- * @param {DataView} data    二进制数据
- * @param {Number}      offset  偏移量
- * @param {String}      str     字符串
+ * 在 DataView 的指定偏移量处写入字符串。
+ * @param {DataView} view - 要写入的 DataView 实例。
+ * @param {number} offset - 开始写入的字节偏移量。
+ * @param {string} str - 要写入的 ASCII 字符串。
  */
-function writeString(data: DataView, offset: number, str: string): void {
+function writeString(view: DataView, offset: number, str: string): void {
 	for (let i = 0; i < str.length; i++) {
-		data.setUint8(offset + i, str.charCodeAt(i));
+		view.setUint8(offset + i, str.charCodeAt(i));
 	}
 }
 
 /**
- * 数据合并压缩
- * 根据输入和输出的采样率压缩数据，
- * 比如输入的采样率是48k的，我们需要的是（输出）的是16k的，由于48k与16k是3倍关系，
- * 所以输入数据中每隔3取1位
+ * 通过重采样来压缩音频数据，实现输入采样率到输出采样率的转换。
+ * 这是一个使用最近邻采样法的简单实现。
  *
- * @param {Float32Array|Object} data       [-1, 1]的pcm数据，如果是双声道则为包含left和right的对象
- * @param {number} inputSampleRate  输入采样率
- * @param {number} outputSampleRate 输出采样率
- * @returns  {Float32Array}         压缩处理后的二进制数据
+ * @param {Float32Array | { left: Float32Array; right: Float32Array }} data - PCM 数据，范围在 [-1, 1] 之间，支持单声道或双声道。
+ * @param {number} inputSampleRate - 输入采样率 (例如, 48000)。
+ * @param {number} outputSampleRate - 期望的输出采样率 (例如, 16000)。
+ * @returns {Float32Array} - 重采样后的音频数据，如果是双声道则为交错格式。
  */
 export function compress(
-	data: Float32Array | { left: Float32Array; right: Float32Array }, 
-	inputSampleRate: number, 
+	data: Float32Array | { left: Float32Array; right: Float32Array },
+	inputSampleRate: number,
 	outputSampleRate: number
 ): Float32Array {
-	// 压缩，根据采样率进行压缩
-	let rate = inputSampleRate / outputSampleRate,
-		compression = Math.max(rate, 1),
-		lData: Float32Array,
-		rData: Float32Array,
-		length: number,
-		result: Float32Array,
-		index = 0,
-		j = 0;
+	const rate = inputSampleRate / outputSampleRate;
+	const compression = Math.max(rate, 1);
 
-	// 处理单声道或双声道数据
+	let leftChannel: Float32Array;
+	let rightChannel: Float32Array;
+
 	if (data instanceof Float32Array) {
-		lData = data;
-		rData = new Float32Array(0);
+		leftChannel = data;
+		rightChannel = new Float32Array(0);
 	} else {
-		lData = data.left;
-		rData = data.right;
+		leftChannel = data.left;
+		rightChannel = data.right;
 	}
 
-	length = Math.floor((lData.length + rData.length) / rate);
-	result = new Float32Array(length);
+	const newLength = Math.floor((leftChannel.length + rightChannel.length) / rate);
+	const result = new Float32Array(newLength);
 
-	// 循环间隔 compression 位取一位数据
-	while (index < length) {
-		// 取整是因为存在比例compression不是整数的情况
-		let temp = Math.floor(j);
+	let resultIndex = 0;
+	let sourceIndex = 0;
 
-		result[index] = lData[temp];
-		index++;
+	while (resultIndex < newLength) {
+		const sampleIndex = Math.floor(sourceIndex);
 
-		if (rData.length) {
-			/*
-			 * 双声道处理
-			 * e.inputBuffer.getChannelData(0)得到了左声道4096个样本数据，1是右声道的数据，
-			 * 此处需要组和成LRLRLR这种格式，才能正常播放，所以要处理下
-			 */
-			result[index] = rData[temp];
-			index++;
+		result[resultIndex++] = leftChannel[sampleIndex];
+
+		if (rightChannel.length > 0) {
+			result[resultIndex++] = rightChannel[sampleIndex];
 		}
 
-		j += compression;
+		sourceIndex += compression;
 	}
-	// 返回压缩后的一维数据
+
 	return result;
 }
 
 /**
- * 转换到我们需要的对应格式的编码
+ * 将原始 PCM 数据 (Float32Array) 编码为 8 位或 16 位的 PCM DataView。
  *
- * @param {Float32Array} bytes      pcm二进制数据
- * @param {number}  sampleBits      采样位数
- * @param {boolean} littleEdian     是否是小端字节序
- * @returns {DataView}              pcm二进制数据
+ * @param {Float32Array} pcmData - 原始 PCM 数据，范围在 [-1, 1] 之间。
+ * @param {number} sampleBits - 期望的采样位数 (8 或 16)。
+ * @param {boolean} [littleEndian=true] - 为 16 位编码指定字节序。
+ * @returns {DataView} - 编码后的 PCM 数据。
  */
-export function encodePCM(bytes: Float32Array, sampleBits: number, littleEndian: boolean = true): DataView {
-	let offset = 0,
-		dataLength = bytes.length * (sampleBits / 8),
-		buffer = new ArrayBuffer(dataLength),
-		data = new DataView(buffer);
+export function encodePCM(pcmData: Float32Array, sampleBits: number, littleEndian: boolean = true): DataView {
+	const dataLength = pcmData.length * (sampleBits / 8);
+	const buffer = new ArrayBuffer(dataLength);
+	const view = new DataView(buffer);
+	let offset = 0;
 
-	// 写入采样数据
 	if (sampleBits === 8) {
-		for (let i = 0; i < bytes.length; i++, offset++) {
-			// 范围[-1, 1]
-			let s = Math.max(-1, Math.min(1, bytes[i]));
-			// 8位采样位划分成2^8=256份，它的范围是0-255;
-			// 对于8位的话，负数*128，正数*127，然后整体向上平移128(+128)，即可得到[0,255]范围的数据。
-			let val = s < 0 ? s * 128 : s * 127;
-			val = +val + 128;
-			data.setInt8(offset, val);
+		for (let i = 0; i < pcmData.length; i++, offset++) {
+			// 将值限制在 [-1, 1] 范围内
+			const s = Math.max(-1, Math.min(1, pcmData[i]));
+			// 转换为 8 位无符号 PCM (0-255)
+			const val = s < 0 ? s * 128 : s * 127;
+			view.setUint8(offset, val + 128);
 		}
 	} else {
-		for (let i = 0; i < bytes.length; i++, offset += 2) {
-			let s = Math.max(-1, Math.min(1, bytes[i]));
-			// 16位的划分的是2^16=65536份，范围是-32768到32767
-			// 因为我们收集的数据范围在[-1,1]，那么你想转换成16位的话，只需要对负数*32768,对正数*32767,即可得到范围在[-32768,32767]的数据。
-			data.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, littleEndian);
+		// 16-bit
+		for (let i = 0; i < pcmData.length; i++, offset += 2) {
+			// 将值限制在 [-1, 1] 范围内
+			const s = Math.max(-1, Math.min(1, pcmData[i]));
+			// 转换为 16 位有符号 PCM (-32768 to 32767)
+			const val = s < 0 ? s * 0x8000 : s * 0x7fff;
+			view.setInt16(offset, val, littleEndian);
 		}
 	}
 
-	return data;
+	return view;
 }
 
 /**
- * 编码wav，一般wav格式是在pcm文件前增加44个字节的文件头，
- * 所以，此处只需要在pcm数据前增加下就行了。
+ * 通过在 PCM 数据前添加 44 字节的 WAV 头，将其编码为 WAV 格式。
  *
- * @param {DataViewLike} bytes           pcm二进制数据
- * @param {number}  inputSampleRate  输入采样率
- * @param {number}  outputSampleRate 输出采样率
- * @param {number}  numChannels      声道数
- * @param {number}  outputSampleBits  输出采样位数
- * @param {boolean} littleEdian      是否是小端字节序
- * @returns {DataView}               wav二进制数据
+ * @param {DataView} pcmData - 要编码的 PCM 数据。
+ * @param {number} inputSampleRate - 输入采样率 (为保持 API 兼容性而保留，但未使用)。
+ * @param {number} outputSampleRate - PCM 数据的实际采样率。
+ * @param {number} numChannels - 声道数 (1 为单声道, 2 为双声道)。
+ * @param {number} outputSampleBits - 采样位数 (8 或 16)。
+ * @param {boolean} [littleEndian=true] - 为头部字段指定字节序。
+ * @returns {DataView} - 完整的 WAV 文件数据 (DataView)。
  */
 export function encodeWAV(
-	bytes: DataViewLike,
-	inputSampleRate: number,
+	pcmData: DataView,
+	inputSampleRate: number, // 未使用，但为保持兼容性而保留
 	outputSampleRate: number,
 	numChannels: number = 1,
 	outputSampleBits: number,
 	littleEndian: boolean = true
 ): DataView {
-	let sampleRate = outputSampleRate > inputSampleRate ? inputSampleRate : outputSampleRate, // 输出采样率较大时，仍使用输入的值，
-		sampleBits = outputSampleBits,
-		buffer = new ArrayBuffer(44 + bytes.byteLength),
-		data = new DataView(buffer),
-		channelCount = numChannels, // 声道
-		offset = 0;
+	const pcmByteLength = pcmData.byteLength;
+	const buffer = new ArrayBuffer(44 + pcmByteLength);
+	const view = new DataView(buffer);
+	let offset = 0;
 
-	// 资源交换文件标识符
-	writeString(data, offset, 'RIFF');
+	// 资源交换文件标识符 (RIFF)
+	writeString(view, offset, 'RIFF');
 	offset += 4;
-	// 下个地址开始到文件尾总字节数,即文件大小-8
-	data.setUint32(offset, 36 + bytes.byteLength, littleEndian);
+	// 文件大小 (ChunkSize)，即文件总大小 - 8
+	view.setUint32(offset, 36 + pcmByteLength, littleEndian);
 	offset += 4;
-	// WAV文件标志
-	writeString(data, offset, 'WAVE');
-	offset += 4;
-	// 波形格式标志
-	writeString(data, offset, 'fmt ');
-	offset += 4;
-	// 过滤字节,一般为 0x10 = 16
-	data.setUint32(offset, 16, littleEndian);
-	offset += 4;
-	// 格式类别 (PCM形式采样数据)
-	data.setUint16(offset, 1, littleEndian);
-	offset += 2;
-	// 声道数
-	data.setUint16(offset, channelCount, littleEndian);
-	offset += 2;
-	// 采样率,每秒样本数,表示每个通道的播放速度
-	data.setUint32(offset, sampleRate, littleEndian);
-	offset += 4;
-	// 波形数据传输率 (每秒平均字节数) 声道数 × 采样频率 × 采样位数 / 8
-	data.setUint32(offset, channelCount * sampleRate * (sampleBits / 8), littleEndian);
-	offset += 4;
-	// 快数据调整数 采样一次占用字节数 声道数 × 采样位数 / 8
-	data.setUint16(offset, channelCount * (sampleBits / 8), littleEndian);
-	offset += 2;
-	// 采样位数
-	data.setUint16(offset, sampleBits, littleEndian);
-	offset += 2;
-	// 数据标识符
-	writeString(data, offset, 'data');
-	offset += 4;
-	// 采样数据总数,即数据总大小-44
-	data.setUint32(offset, bytes.byteLength, littleEndian);
+	// WAV 文件标志
+	writeString(view, offset, 'WAVE');
 	offset += 4;
 
-	// 给wav头增加pcm体
-	for (let i = 0; i < bytes.byteLength; ) {
-		data.setUint8(offset, bytes.getUint8(i));
-		offset++;
-		i++;
+	// "fmt " 子块
+	writeString(view, offset, 'fmt ');
+	offset += 4;
+	// 子块大小 (Subchunk1Size)，对于 PCM 总是 16
+	view.setUint32(offset, 16, littleEndian);
+	offset += 4;
+	// 音频格式 (AudioFormat)，对于 PCM 总是 1
+	view.setUint16(offset, 1, littleEndian);
+	offset += 2;
+	// 声道数 (NumChannels)
+	view.setUint16(offset, numChannels, littleEndian);
+	offset += 2;
+	// 采样率 (SampleRate)
+	view.setUint32(offset, outputSampleRate, littleEndian);
+	offset += 4;
+	// 字节率 (ByteRate) = SampleRate * NumChannels * (BitsPerSample/8)
+	const byteRate = outputSampleRate * numChannels * (outputSampleBits / 8);
+	view.setUint32(offset, byteRate, littleEndian);
+	offset += 4;
+	// 块对齐 (BlockAlign) = NumChannels * (BitsPerSample/8)
+	const blockAlign = numChannels * (outputSampleBits / 8);
+	view.setUint16(offset, blockAlign, littleEndian);
+	offset += 2;
+	// 采样位数 (BitsPerSample)
+	view.setUint16(offset, outputSampleBits, littleEndian);
+	offset += 2;
+
+	// "data" 子块
+	writeString(view, offset, 'data');
+	offset += 4;
+	// 数据大小 (Subchunk2Size)
+	view.setUint32(offset, pcmByteLength, littleEndian);
+	offset += 4;
+
+	// 写入 PCM 数据
+	for (let i = 0; i < pcmByteLength; i++) {
+		view.setUint8(offset + i, pcmData.getUint8(i));
 	}
 
-	return data;
+	return view;
 }

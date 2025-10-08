@@ -115,7 +115,7 @@ export default class Recorder {
 	/**
 	 * @description 是否正在录音
 	 */
-	private isRecording: boolean = false;
+	protected isRecording: boolean = false;
 
 	/**
 	 * @param {RecorderConfig} options - 录音配置项。

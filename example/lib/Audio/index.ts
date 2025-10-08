@@ -7,92 +7,145 @@ import Recorder from './recorder';
  * 录音器配置接口
  */
 interface RecorderConfig {
-	sampleBits?: number; // 采样位数 (8 或 16)
-	sampleRate?: number; // 采样率 (Hz)
-	numChannels?: number; // 声道数 (1 或 2)
+	/**
+	 * @description 采样位数 (8 或 16)
+	 * @default 16
+	 */
+	sampleBits?: number;
+	/**
+	 * @description 采样率 (Hz)
+	 * @default 浏览器默认采样率
+	 */
+	sampleRate?: number;
+	/**
+	 * @description 声道数 (1 或 2)
+	 * @default 1
+	 */
+	numChannels?: number;
 }
 
 /**
  * 音频分析数据接口
  */
 interface AnalysisData {
-	frequencyData: Uint8Array; // 频域数据
-	timeDomainData: Uint8Array; // 时域数据
+	/**
+	 * @description 频域数据
+	 */
+	frequencyData: Uint8Array;
+	/**
+	 * @description 时域数据
+	 */
+	timeDomainData: Uint8Array;
 }
 
 /**
  * 声道数据接口
  */
 interface ChannelData {
-	left: DataView | null;
-	right: DataView | null;
+	/**
+	 * @description 左声道数据
+	 */
+	left: DataView;
+	/**
+	 * @description 右声道数据
+	 */
+	right: DataView;
 }
 
 /**
- * AudioProcessor 类提供了音频录制、播放和处理的功能。
+ * AudioProcessor 类在 Recorder 的基础上，集成了 Player 功能，
+ * 提供了完整的音频录制、处理、播放和下载的功能。
  * @extends Recorder
  */
 class AudioProcessor extends Recorder {
+	/**
+	 * @description 播放器实例
+	 * @private
+	 */
 	private player: Player;
-	private isRecording: boolean = false;
-	private isPaused: boolean = false;
+	/**
+	 * @description 是否正在播放
+	 * @private
+	 */
 	private isPlaying: boolean = false;
+	/**
+	 * @description 播放是否曾被暂停
+	 * @private
+	 */
 	private wasPaused: boolean = false;
 
-	public onPlay: (() => void) | undefined;
-	public onPausePlay: (() => void) | undefined;
-	public onResumePlay: (() => void) | undefined;
-	public onStopPlay: (() => void) | undefined;
-	public onPlayEnd: (() => void) | undefined;
+	// --- 播放相关的事件回调 ---
+	/**
+	 * @description 开始播放时触发
+	 */
+	public onPlay?: () => void;
+	/**
+	 * @description 暂停播放时触发
+	 */
+	public onPausePlay?: () => void;
+	/**
+	 * @description 恢复播放时触发
+	 */
+	public onResumePlay?: () => void;
+	/**
+	 * @description 停止播放时触发
+	 */
+	public onStopPlay?: () => void;
+	/**
+	 * @description 播放结束时触发
+	 */
+	public onPlayEnd?: () => void;
 
 	/**
 	 * 构造函数
-	 * @param options 录音器配置选项
+	 * @param {RecorderConfig} options - 录音器配置选项
 	 */
 	constructor(options: RecorderConfig = {}) {
 		super(options);
 		this.player = new Player();
+
+		// 将播放结束的回调绑定到播放器
+		this.player.addPlayEnd(() => {
+			this.isPlaying = false;
+			this.wasPaused = false;
+			this.onPlayEnd?.();
+		});
 	}
 
 	/**
-	 * 重新设置录音配置
-	 * @param options 录音器配置选项
+	 * 重新设置录音配置。
+	 * 此方法会覆盖现有的录音配置。
+	 * @param {RecorderConfig} options - 新的录音器配置选项
 	 */
 	public setOption(options: RecorderConfig = {}): void {
 		this.setNewOption(options);
 	}
 
 	/**
-	 * 开始录音
-	 * @returns Promise<void> 录音开始的Promise
+	 * 开始录音。如果已在录音，则会返回一个 rejected Promise。
+	 * @returns {Promise<void>} - 录音开始的Promise
 	 */
 	public start(): Promise<void> {
 		if (this.isRecording) {
 			return Promise.reject(new Error('录音已在进行中'));
 		}
-		this.isRecording = true;
-		this.isPaused = false;
+		// isRecording 状态由父类 Recorder 管理
 		return this.startRecord();
 	}
 
 	/**
-	 * 暂停录音
+	 * 暂停录音。
 	 */
 	public pause(): void {
-		if (this.isRecording && !this.isPaused) {
-			this.isPaused = true;
-			this.pauseRecord();
-		}
+		// isRecording 状态检查在父类中进行
+		this.pauseRecord();
 	}
 
 	/**
-	 * 继续录音
+	 * 继续录音。
 	 */
 	public resume(): void {
-		if (this.isRecording && this.isPaused) {
-			this.isPaused = false;
-			this.resumeRecord();
-		}
+		this.resumeRecord();
 	}
 
 	/**
@@ -100,20 +153,25 @@ class AudioProcessor extends Recorder {
 	 * 注意：此操作会重置录音状态。
 	 */
 	public stop(): void {
-		if (this.isRecording) {
-			this.isRecording = false;
-			this.isPaused = false;
-			this.stopRecord();
-		}
+		this.stopRecord();
 	}
 
 	/**
 	 * 播放录音。
-	 * 注意：调用此方法会先停止正在进行的录音。
+	 * 如果正在录音，会先停止录音。
+	 * 如果正在播放，会先停止当前播放。
 	 */
 	public play(): void {
-		this.stop();
-		if (this.isPlaying) {
+		// getWAV -> getPCM -> stop -> stopRecord 会处理录音停止的逻辑
+		const wavData = this.getWAV();
+
+		if (wavData.byteLength <= 44) {
+			console.warn('没有有效的录音数据可供播放。');
+			return;
+		}
+
+		// 停止当前可能正在播放的音频
+		if (this.isPlaying || this.wasPaused) {
 			this.player.stopPlay();
 		}
 
@@ -121,27 +179,20 @@ class AudioProcessor extends Recorder {
 		this.wasPaused = false;
 
 		this.onPlay?.();
-		if (this.onPlayEnd) {
-			this.player.addPlayEnd(this.onPlayEnd);
-		}
-
-		const wavData = this.getWAV();
-
-		if (wavData.byteLength > 44) {
-			this.player.play(wavData.buffer);
-		}
+		// 注意：onPlayEnd 回调已在构造函数中统一处理
+		this.player.play(wavData.buffer);
 	}
 
 	/**
 	 * 获取已播放的时长（秒）
-	 * @returns 已播放的秒数
+	 * @returns {number} - 已播放的秒数
 	 */
 	public getPlayTime(): number {
 		return this.player.getPlayTime();
 	}
 
 	/**
-	 * 暂停播放
+	 * 暂停播放。
 	 */
 	public pausePlay(): void {
 		if (this.isPlaying) {
@@ -153,7 +204,7 @@ class AudioProcessor extends Recorder {
 	}
 
 	/**
-	 * 恢复播放
+	 * 恢复播放。
 	 */
 	public resumePlay(): void {
 		if (this.wasPaused && !this.isPlaying) {
@@ -165,7 +216,7 @@ class AudioProcessor extends Recorder {
 	}
 
 	/**
-	 * 停止播放
+	 * 停止播放。
 	 */
 	public stopPlay(): void {
 		if (this.isPlaying || this.wasPaused) {
@@ -177,8 +228,8 @@ class AudioProcessor extends Recorder {
 	}
 
 	/**
-	 * 销毁实例，释放资源
-	 * @returns Promise<void> 销毁完成的Promise
+	 * 销毁实例，释放所有资源。
+	 * @returns {Promise<void>} - 销毁完成的Promise
 	 */
 	public destroy(): Promise<void> {
 		this.player.destroyPlay();
@@ -186,8 +237,8 @@ class AudioProcessor extends Recorder {
 	}
 
 	/**
-	 * 获取录音时的音频分析数据
-	 * @returns 包含频域和时域数据的对象
+	 * 获取录音时的音频分析数据。
+	 * @returns {AnalysisData} - 包含频域和时域数据的对象。
 	 */
 	public getRecordingAnalysisData(): AnalysisData {
 		return {
@@ -197,8 +248,8 @@ class AudioProcessor extends Recorder {
 	}
 
 	/**
-	 * 获取播放时的音频分析数据
-	 * @returns 包含频域和时域数据的对象
+	 * 获取播放时的音频分析数据。
+	 * @returns {AnalysisData} - 包含频域和时域数据的对象。
 	 */
 	public getPlaybackAnalysisData(): AnalysisData {
 		return {
@@ -210,7 +261,7 @@ class AudioProcessor extends Recorder {
 	/**
 	 * 获取PCM格式的音频数据。
 	 * 注意：此操作会先停止当前录音。
-	 * @returns PCM格式的DataView数据
+	 * @returns {DataView} - PCM格式的DataView数据。
 	 */
 	public getPCM(): DataView {
 		this.stop();
@@ -220,16 +271,16 @@ class AudioProcessor extends Recorder {
 	}
 
 	/**
-	 * 获取PCM格式的Blob数据
-	 * @returns PCM格式的Blob数据
+	 * 获取PCM格式的Blob数据。
+	 * @returns {Blob} - PCM格式的Blob数据。
 	 */
 	public getPCMBlob(): Blob {
 		return new Blob([this.getPCM()]);
 	}
 
 	/**
-	 * 下载PCM格式的录音文件
-	 * @param name 文件名，默认为'recorder'
+	 * 下载PCM格式的录音文件。
+	 * @param {string} name - 文件名，默认为'recorder'。
 	 */
 	public downloadPCM(name: string = 'recorder'): void {
 		const pcmBlob = this.getPCMBlob();
@@ -237,8 +288,8 @@ class AudioProcessor extends Recorder {
 	}
 
 	/**
-	 * 获取WAV编码的音频数据
-	 * @returns WAV编码的DataView数据
+	 * 获取WAV编码的音频数据。
+	 * @returns {DataView} - WAV编码的DataView数据。
 	 */
 	public getWAV(): DataView {
 		const pcmData = this.getPCM();
@@ -253,16 +304,16 @@ class AudioProcessor extends Recorder {
 	}
 
 	/**
-	 * 获取WAV音频的Blob数据
-	 * @returns WAV格式的Blob数据
+	 * 获取WAV音频的Blob数据。
+	 * @returns {Blob} - WAV格式的Blob数据。
 	 */
 	public getWAVBlob(): Blob {
 		return new Blob([this.getWAV()], { type: 'audio/wav' });
 	}
 
 	/**
-	 * 下载WAV格式的录音文件
-	 * @param name 文件名，默认为'recorder'
+	 * 下载WAV格式的录音文件。
+	 * @param {string} name - 文件名，默认为'recorder'。
 	 */
 	public downloadWAV(name: string = 'recorder'): void {
 		const wavBlob = this.getWAVBlob();
@@ -270,10 +321,10 @@ class AudioProcessor extends Recorder {
 	}
 
 	/**
-	 * 通用下载接口
-	 * @param blob 要下载的Blob数据
-	 * @param name 文件名
-	 * @param type 文件类型
+	 * 通用下载接口。
+	 * @param {Blob} blob - 要下载的Blob数据。
+	 * @param {string} name - 文件名。
+	 * @param {string} type - 文件类型。
 	 */
 	public downloadBlob(blob: Blob, name: string, type: string): void {
 		download(blob, name, type);
@@ -282,36 +333,37 @@ class AudioProcessor extends Recorder {
 	/**
 	 * 获取左右声道的数据。
 	 * 如果是单声道，左右声道数据相同。
-	 * @returns 包含左右声道数据的对象
+	 * @returns {ChannelData} - 包含左右声道数据的对象。
 	 */
 	public getChannelData(): ChannelData {
 		const pcmDataView = this.getPCM();
 		const length = pcmDataView.byteLength;
 		const littleEndian = this.littleEndian;
-		const result: ChannelData = { left: null, right: null };
+		const { numChannels, sampleBits } = this.config;
+		const result: ChannelData = { left: pcmDataView, right: pcmDataView };
 
-		if (this.config.numChannels === 2) {
+		if (numChannels === 2) {
 			const leftChannelData = new DataView(new ArrayBuffer(length / 2));
 			const rightChannelData = new DataView(new ArrayBuffer(length / 2));
+			const bytesPerSample = sampleBits / 8;
 
-			if (this.config.sampleBits === 16) {
-				for (let i = 0; i < length / 4; i++) {
-					const leftIndex = i * 2;
-					leftChannelData.setInt16(leftIndex, pcmDataView.getInt16(i * 4, littleEndian), littleEndian);
-					rightChannelData.setInt16(leftIndex, pcmDataView.getInt16(i * 4 + 2, littleEndian), littleEndian);
-				}
-			} else {
-				for (let i = 0; i < length / 2; i++) {
-					leftChannelData.setInt8(i, pcmDataView.getInt8(i * 2));
-					rightChannelData.setInt8(i, pcmDataView.getInt8(i * 2 + 1));
+			for (let i = 0; i < length / (bytesPerSample * 2); i++) {
+				const leftIndex = i * bytesPerSample;
+				const pcmIndex = i * bytesPerSample * 2;
+
+				if (bytesPerSample === 2) {
+					// 16-bit
+					leftChannelData.setInt16(leftIndex, pcmDataView.getInt16(pcmIndex, littleEndian), littleEndian);
+					rightChannelData.setInt16(leftIndex, pcmDataView.getInt16(pcmIndex + 2, littleEndian), littleEndian);
+				} else {
+					// 8-bit
+					leftChannelData.setInt8(leftIndex, pcmDataView.getInt8(pcmIndex));
+					rightChannelData.setInt8(leftIndex, pcmDataView.getInt8(pcmIndex + 1));
 				}
 			}
 
 			result.left = leftChannelData;
 			result.right = rightChannelData;
-		} else {
-			result.left = pcmDataView;
-			result.right = pcmDataView; // 单声道时，左右声道数据相同
 		}
 
 		return result;
