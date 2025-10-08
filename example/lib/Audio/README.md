@@ -1,238 +1,161 @@
-# Audio Recording Library
+# Audio Recorder & Player Library
 
-A comprehensive TypeScript audio recording library that provides recording, playback, and audio format conversion capabilities for web applications.
+一个功能完整的音频录制和播放库，支持录音、播放、PCM/WAV格式转换和下载功能。
 
-## Features
+## 功能特性
 
-- 🎙️ **Audio Recording**: Record audio from microphone with customizable settings
-- ▶️ **Audio Playback**: Play recorded audio with full control (play, pause, resume, stop)
-- 🔄 **Format Conversion**: Convert between PCM and WAV formats
-- 📊 **Real-time Analysis**: Get audio waveform data during recording and playback
-- ⚙️ **Configurable**: Customizable sample rate, bit depth, and channel count
-- 💾 **Download Support**: Download recorded audio as PCM or WAV files
-- 🎚️ **Volume Monitoring**: Real-time volume level detection
-- ⏱️ **Duration Tracking**: Track recording and playback duration
+- 音频录制（支持多种采样率和声道设置）
+- 音频播放（支持暂停、恢复、停止）
+- PCM 和 WAV 格式编码
+- 音频数据压缩和转换
+- 音频文件下载
+- 音频波形数据获取
+- 双声道支持
 
-## Installation
+## 安装
 
-```bash
-npm install your-audio-library
-```
+将整个 `Audio` 文件夹复制到你的项目中。
 
-## Quick Start
+## 使用方法
+
+### 基本用法
 
 ```typescript
 import AudioRecorder from './Audio';
 
-// Create recorder instance
+// 创建录音实例
 const recorder = new AudioRecorder({
-  sampleRate: 44100,
-  sampleBits: 16,
-  numChannels: 1
+  sampleBits: 16,      // 采样位数 (8 或 16)
+  sampleRate: 44100,   // 采样率 (Hz)
+  numChannels: 1       // 声道数 (1 或 2)
 });
 
-// Start recording
+// 开始录音
 recorder.start().then(() => {
-  console.log('Recording started');
-}).catch(err => {
-  console.error('Failed to start recording:', err);
+  console.log('开始录音');
+}).catch((error) => {
+  console.error('录音启动失败:', error);
 });
 
-// Stop recording
+// 停止录音
 recorder.stop();
 
-// Play recorded audio
+// 播放录音
 recorder.play();
 
-// Download as WAV
+// 下载WAV文件
 recorder.downloadWAV('my-recording');
 ```
 
-## Configuration Options
+### 详细API
+
+#### 构造函数
 
 ```typescript
-interface RecorderConfig {
-  sampleBits?: number;    // Sample bit depth: 8 or 16 (default: 16)
-  sampleRate?: number;    // Sample rate in Hz (default: browser's native rate)
-  numChannels?: number;   // Number of channels: 1 or 2 (default: 1)
-  compiling?: boolean;    // Real-time processing (experimental)
-}
+const recorder = new AudioRecorder(options);
 ```
 
-### Supported Sample Rates
-- 8000 Hz
-- 11025 Hz  
-- 16000 Hz
-- 22050 Hz
-- 24000 Hz
-- 44100 Hz
-- 48000 Hz
+**options 参数:**
 
-## API Reference
+| 参数 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| sampleBits | number | 16 | 采样位数 (8 或 16) |
+| sampleRate | number | 浏览器默认采样率 | 采样率 (8000, 11025, 16000, 22050, 24000, 44100, 48000) |
+| numChannels | number | 1 | 声道数 (1 或 2) |
 
-### Recording Methods
+#### 录音控制方法
 
-#### `start(): Promise<void>`
-Start audio recording. Returns a promise that resolves when recording begins.
+- `start(): Promise<void>` - 开始录音
+- `pause(): void` - 暂停录音
+- `resume(): void` - 恢复录音
+- `stop(): void` - 停止录音
 
-#### `pause(): void`
-Pause the current recording session.
+#### 播放控制方法
 
-#### `resume(): void`
-Resume a paused recording session.
+- `play(): void` - 播放录音
+- `pausePlay(): void` - 暂停播放
+- `resumePlay(): void` - 恢复播放
+- `stopPlay(): void` - 停止播放
 
-#### `stop(): void`
-Stop the current recording session.
+#### 数据获取方法
 
-### Playback Methods
+- `getPCM(): DataView` - 获取PCM格式的音频数据
+- `getPCMBlob(): Blob` - 获取PCM格式的Blob数据
+- `getWAV(): DataView` - 获取WAV格式的音频数据
+- `getWAVBlob(): Blob` - 获取WAV格式的Blob数据
+- `getChannelData(): ChannelData` - 获取左右声道的数据
 
-#### `play(): void`
-Play the recorded audio.
+#### 下载方法
 
-#### `pausePlay(): void`
-Pause audio playback.
+- `downloadPCM(name?: string): void` - 下载PCM格式文件
+- `downloadWAV(name?: string): void` - 下载WAV格式文件
+- `download(blob: Blob, name: string, type: string): void` - 通用下载方法
 
-#### `resumePlay(): void`
-Resume paused audio playback.
+#### 其他方法
 
-#### `stopPlay(): void`
-Stop audio playback.
+- `getRecordAnalyseData(): AnalyseData` - 获取当前录音的波形数据
+- `getPlayAnalyseData(): AnalyseData` - 获取录音播放时的波形数据
+- `getPlayTime(): number` - 获取已经播放的时间
+- `setOption(options: RecorderConfig): void` - 重新设置配置
+- `destroy(): Promise<void>` - 销毁录音器实例，释放资源
 
-#### `getPlayTime(): number`
-Get the current playback time in seconds.
-
-### Data Export Methods
-
-#### `getPCM(): DataView`
-Get recorded audio as PCM data.
-
-#### `getPCMBlob(): Blob`
-Get recorded audio as PCM Blob.
-
-#### `getWAV(): DataView`
-Get recorded audio as WAV data with proper headers.
-
-#### `getWAVBlob(): Blob`
-Get recorded audio as WAV Blob.
-
-#### `getChannelData(): { left: DataView, right?: DataView }`
-Get separate left and right channel data.
-
-### Download Methods
-
-#### `downloadPCM(name?: string): void`
-Download recorded audio as PCM file.
-
-#### `downloadWAV(name?: string): void`
-Download recorded audio as WAV file.
-
-#### `download(blob: Blob, name: string, type: string): void`
-Generic download method for custom formats.
-
-### Analysis Methods
-
-#### `getRecordAnalyseData(): Uint8Array`
-Get real-time waveform data during recording.
-
-#### `getPlayAnalyseData(): Uint8Array`
-Get real-time waveform data during playback.
-
-### Utility Methods
-
-#### `setOption(options: RecorderConfig): void`
-Update recorder configuration.
-
-#### `destroy(): Promise<void>`
-Clean up resources and destroy the recorder instance.
-
-## Event Callbacks
+### 事件回调
 
 ```typescript
-// Recording progress
-recorder.onprogress = (data) => {
-  console.log(`Duration: ${data.duration}s, Size: ${data.fileSize} bytes, Volume: ${data.vol}%`);
+// 录音播放回调
+recorder.onPlay = () => {
+  console.log('开始播放');
 };
 
-// Legacy progress callback
-recorder.onprocess = (duration) => {
-  console.log(`Recording duration: ${duration}s`);
+// 录音暂停播放回调
+recorder.onPausePlay = () => {
+  console.log('暂停播放');
 };
 
-// Playback events
-recorder.onPlay = () => console.log('Playback started');
-recorder.onPausePlay = () => console.log('Playback paused');
-recorder.onResumePlay = () => console.log('Playback resumed');
-recorder.onStopPlay = () => console.log('Playback stopped');
-recorder.onPlayEnd = () => console.log('Playback finished');
+// 录音恢复播放回调
+recorder.onResumePlay = () => {
+  console.log('恢复播放');
+};
+
+// 录音停止播放回调
+recorder.onStopPlay = () => {
+  console.log('停止播放');
+};
+
+// 录音正常播放结束回调
+recorder.onPlayEnd = () => {
+  console.log('播放结束');
+};
 ```
 
-## Browser Compatibility
+### 权限获取
 
-- Chrome 47+
-- Firefox 44+
+在开始录音前，你可能需要获取用户的音频录制权限：
+
+```typescript
+import { Recorder } from './Audio';
+
+Recorder.getPermission().then(() => {
+  console.log('音频录制权限已获取');
+}).catch((error) => {
+  console.error('获取音频录制权限失败:', error);
+});
+```
+
+## 浏览器兼容性
+
+- Chrome 49+
+- Firefox 42+
 - Safari 11+
-- Edge 79+
+- Edge 13+
 
-Requires `getUserMedia` API support for microphone access.
+## 注意事项
 
-## Error Handling
+1. 在某些浏览器中，录音功能需要在HTTPS环境下才能正常工作
+2. 需要用户授权访问麦克风
+3. 录音功能在移动设备上可能需要用户交互（如点击按钮）才能启动
+4. WAV文件包含完整的音频头信息，而PCM文件只包含原始音频数据
 
-```typescript
-recorder.start().catch(error => {
-  if (error.name === 'NotAllowedError') {
-    console.error('Microphone access denied');
-  } else if (error.name === 'NotFoundError') {
-    console.error('No microphone found');
-  } else {
-    console.error('Recording error:', error);
-  }
-});
-```
+## 许可证
 
-## Examples
-
-### Basic Recording
-```typescript
-const recorder = new AudioRecorder();
-
-// Start recording
-await recorder.start();
-
-// Record for 5 seconds
-setTimeout(() => {
-  recorder.stop();
-  recorder.downloadWAV('recording');
-}, 5000);
-```
-
-### High Quality Stereo Recording
-```typescript
-const recorder = new AudioRecorder({
-  sampleRate: 48000,
-  sampleBits: 16,
-  numChannels: 2
-});
-
-recorder.onprogress = (data) => {
-  updateUI(data.duration, data.vol);
-};
-
-await recorder.start();
-```
-
-### Real-time Audio Visualization
-```typescript
-const recorder = new AudioRecorder();
-await recorder.start();
-
-function visualize() {
-  const data = recorder.getRecordAnalyseData();
-  drawWaveform(data);
-  requestAnimationFrame(visualize);
-}
-visualize();
-```
-
-## License
-
-MIT License
+MIT

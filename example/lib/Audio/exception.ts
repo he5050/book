@@ -1,8 +1,8 @@
 /**
  * 异常处理
  * @static
- * @param {*} message   错误消息
+ * @param {string} message   错误消息
  */
-export function throwError(message: string) {
+export function throwError(message: string): never {
 	throw new Error(message);
 }

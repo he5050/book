@@ -1,18 +1,18 @@
-interface dataview {
+interface DataViewLike {
 	byteLength: number;
 	buffer: {
 		byteLength: number;
 	};
-	getUint8: any;
+	getUint8: (byteOffset: number) => number;
 }
 
 /**
  * 在data中的offset位置开始写入str字符串
- * @param {TypedArrays} data    二进制数据
+ * @param {DataView} data    二进制数据
  * @param {Number}      offset  偏移量
  * @param {String}      str     字符串
  */
-function writeString(data, offset, str): void {
+function writeString(data: DataView, offset: number, str: string): void {
 	for (let i = 0; i < str.length; i++) {
 		data.setUint8(offset + i, str.charCodeAt(i));
 	}
@@ -24,21 +24,37 @@ function writeString(data, offset, str): void {
  * 比如输入的采样率是48k的，我们需要的是（输出）的是16k的，由于48k与16k是3倍关系，
  * 所以输入数据中每隔3取1位
  *
- * @param {float32array} data       [-1, 1]的pcm数据
+ * @param {Float32Array|Object} data       [-1, 1]的pcm数据，如果是双声道则为包含left和right的对象
  * @param {number} inputSampleRate  输入采样率
  * @param {number} outputSampleRate 输出采样率
- * @returns  {float32array}         压缩处理后的二进制数据
+ * @returns  {Float32Array}         压缩处理后的二进制数据
  */
-export function compress(data, inputSampleRate: number, outputSampleRate: number) {
+export function compress(
+	data: Float32Array | { left: Float32Array; right: Float32Array }, 
+	inputSampleRate: number, 
+	outputSampleRate: number
+): Float32Array {
 	// 压缩，根据采样率进行压缩
 	let rate = inputSampleRate / outputSampleRate,
 		compression = Math.max(rate, 1),
-		lData = data.left,
-		rData = data.right,
-		length = Math.floor((lData.length + rData.length) / rate),
-		result = new Float32Array(length),
+		lData: Float32Array,
+		rData: Float32Array,
+		length: number,
+		result: Float32Array,
 		index = 0,
 		j = 0;
+
+	// 处理单声道或双声道数据
+	if (data instanceof Float32Array) {
+		lData = data;
+		rData = new Float32Array(0);
+	} else {
+		lData = data.left;
+		rData = data.right;
+	}
+
+	length = Math.floor((lData.length + rData.length) / rate);
+	result = new Float32Array(length);
 
 	// 循环间隔 compression 位取一位数据
 	while (index < length) {
@@ -67,12 +83,12 @@ export function compress(data, inputSampleRate: number, outputSampleRate: number
 /**
  * 转换到我们需要的对应格式的编码
  *
- * @param {float32array} bytes      pcm二进制数据
+ * @param {Float32Array} bytes      pcm二进制数据
  * @param {number}  sampleBits      采样位数
  * @param {boolean} littleEdian     是否是小端字节序
- * @returns {dataview}              pcm二进制数据
+ * @returns {DataView}              pcm二进制数据
  */
-export function encodePCM(bytes, sampleBits: number, littleEdian: boolean = true) {
+export function encodePCM(bytes: Float32Array, sampleBits: number, littleEdian: boolean = true): DataView {
 	let offset = 0,
 		dataLength = bytes.length * (sampleBits / 8),
 		buffer = new ArrayBuffer(dataLength),
@@ -105,24 +121,24 @@ export function encodePCM(bytes, sampleBits: number, littleEdian: boolean = true
  * 编码wav，一般wav格式是在pcm文件前增加44个字节的文件头，
  * 所以，此处只需要在pcm数据前增加下就行了。
  *
- * @param {DataView} bytes           pcm二进制数据
+ * @param {DataViewLike} bytes           pcm二进制数据
  * @param {number}  inputSampleRate  输入采样率
  * @param {number}  outputSampleRate 输出采样率
  * @param {number}  numChannels      声道数
- * @param {number}  oututSampleBits  输出采样位数
+ * @param {number}  outputSampleBits  输出采样位数
  * @param {boolean} littleEdian      是否是小端字节序
  * @returns {DataView}               wav二进制数据
  */
 export function encodeWAV(
-	bytes: dataview,
+	bytes: DataViewLike,
 	inputSampleRate: number,
 	outputSampleRate: number,
-	numChannels: number,
-	oututSampleBits: number,
+	numChannels: number = 1,
+	outputSampleBits: number,
 	littleEdian: boolean = true
-) {
+): DataView {
 	let sampleRate = outputSampleRate > inputSampleRate ? inputSampleRate : outputSampleRate, // 输出采样率较大时，仍使用输入的值，
-		sampleBits = oututSampleBits,
+		sampleBits = outputSampleBits,
 		buffer = new ArrayBuffer(44 + bytes.byteLength),
 		data = new DataView(buffer),
 		channelCount = numChannels, // 声道

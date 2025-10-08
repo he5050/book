@@ -18,43 +18,61 @@ interface RecorderConfig {
 	compiling?: boolean; // 是否边录边播 (实验性功能)
 }
 
+/**
+ * 音频分析数据接口
+ */
+interface AnalyseData {
+	frequencyData: Uint8Array;
+	timeDomainData: Uint8Array;
+}
+
+/**
+ * 声道数据接口
+ */
+interface ChannelData {
+	left: DataView | null;
+	right: DataView | null;
+}
+
 class Index extends Recorder {
 	private isRecording: boolean = false; // 是否正在录音
 	private isPause: boolean = false; // 是否是暂停
 	private isPlaying: boolean = false; // 是否正在播放
 
-	public onPlay: () => void; // 音频播放回调
-	public onPausePlay: () => void; // 音频暂停回调
-	public onResumePlay: () => void; // 音频恢复播放回调
-	public onStopPlay: () => void; // 音频停止播放回调
-	public onPlayEnd: () => void; // 音频正常播放结束
+	public onPlay: (() => void) | undefined; // 音频播放回调
+	public onPausePlay: (() => void) | undefined; // 音频暂停回调
+	public onResumePlay: (() => void) | undefined; // 音频恢复播放回调
+	public onStopPlay: (() => void) | undefined; // 音频停止播放回调
+	public onPlayEnd: (() => void) | undefined; // 音频正常播放结束
+	
 	/**
-	 * @param {Object} options 包含以下三个参数：
-	 * sampleBits，采样位数，一般8,16，默认16
-	 * sampleRate，采样率，一般 11025、16000、22050、24000、44100、48000，默认为浏览器自带的采样率
-	 * numChannels，声道，1或2
+	 * 构造函数
+	 * @param options 录音器配置选项
+	 * @param options.sampleBits 采样位数，一般8,16，默认16
+	 * @param options.sampleRate 采样率，一般 11025、16000、22050、24000、44100、48000，默认为浏览器自带的采样率
+	 * @param options.numChannels 声道数，1或2，默认1
+	 * @param options.compiling 是否边录边播 (实验性功能)，默认false
 	 */
-	constructor(options: recorderConfig = {}) {
+	constructor(options: RecorderConfig = {}) {
 		super(options);
 	}
 
 	/**
 	 * 重新修改配置
-	 *
-	 * @param {recorderConfig} [options={}]
-	 * @memberof Recorder
+	 * @param options 录音器配置选项
 	 */
-	public setOption(options: recorderConfig = {}) {
+	public setOption(options: RecorderConfig = {}): void {
 		this.setNewOption(options);
 	}
 
 	/**
-	 * Start the recording
+	 * 开始录音
+	 * @returns Promise 录音开始的Promise
 	 */
-	start(): Promise<{}> {
+	start(): Promise<void> {
 		if (this.isRecording) {
 			// 正在录音，则不允许
-			return Promise.reject();
+			return Promise.reject(new Error('录音已在进行中'));
 		}
 
 		this.isRecording = true;
@@ -63,7 +81,7 @@ class Index extends Recorder {
 	}
 
 	/**
-	 * Pause the recording
+	 * 暂停录音
 	 */
 	pause(): void {
 		if (this.isRecording && !this.isPause) {
@@ -85,8 +103,6 @@ class Index extends Recorder {
 
 	/**
 	 * 停止录音
-	 *
-	 * @memberof Recorder
 	 */
 	stop(): void {
 		if (this.isRecording) {
@@ -105,7 +121,7 @@ class Index extends Recorder {
 		this.isPlaying = true;
 
 		this.onPlay && this.onPlay();
-		Player.addPlayEnd(this.onPlayEnd); // 注册播放完成后的回调事件
+		this.onPlayEnd && Player.addPlayEnd(this.onPlayEnd); // 注册播放完成后的回调事件
 
 		const dataV = this.getWAV();
 
@@ -116,6 +132,7 @@ class Index extends Recorder {
 
 	/**
 	 * 获取已经播放了多长时间
+	 * @returns 已播放的秒数
 	 */
 	getPlayTime(): number {
 		return Player.getPlayTime();
@@ -123,8 +140,6 @@ class Index extends Recorder {
 
 	/**
 	 * 暂停播放录音
-	 *
-	 * @memberof Recorder
 	 */
 	pausePlay(): void {
 		if (this.isRecording || !this.isPlaying) {
@@ -139,8 +154,6 @@ class Index extends Recorder {
 
 	/**
 	 * 恢复播放录音
-	 *
-	 * @memberof Recorder
 	 */
 	resumePlay(): void {
 		if (this.isRecording || this.isPlaying) {
@@ -155,8 +168,6 @@ class Index extends Recorder {
 
 	/**
 	 * 停止播放
-	 *
-	 * @memberof Recorder
 	 */
 	stopPlay(): void {
 		if (this.isRecording) {
@@ -169,7 +180,11 @@ class Index extends Recorder {
 		Player.stopPlay();
 	}
 
-	destroy(): Promise<{}> {
+	/**
+	 * 销毁录音器实例，释放资源
+	 * @returns Promise 销毁完成的Promise
+	 */
+	destroy(): Promise<void> {
 		Player.destroyPlay();
 
 		return this.destroyRecord();
@@ -201,133 +216,138 @@ class Index extends Recorder {
 	// }
 
 	/**
-	 * 获取当前录音的波形数据，
-	 * 调取频率由外部控制。
-	 *
-	 * @memberof Recorder
+	 * 获取当前录音的波形数据
+	 * 调取频率由外部控制
+	 * @returns 分析数据对象，包含频域和时域数据
 	 */
-	getRecordAnalyseData(): any {
-		return this.getAnalyseData();
+	getRecordAnalyseData(): AnalyseData {
+		const data = this.getAnalyseData();
+		return {
+			frequencyData: data,
+			timeDomainData: data
+		};
 	}
 
 	/**
-	 * 获取录音播放时的波形数据，
-	 *
-	 * @memberof Recorder
+	 * 获取录音播放时的波形数据
+	 * @returns 分析数据对象，包含频域和时域数据
 	 */
-	getPlayAnalyseData(): any {
-		// 现在录音和播放不允许同时进行，所有复用的录音的analyser节点。
-		return Player.getAnalyseData();
+	getPlayAnalyseData(): AnalyseData {
+		// 现在录音和播放不允许同时进行，所以复用录音的analyser节点
+		const data = Player.getAnalyseData();
+		return {
+			frequencyData: data,
+			timeDomainData: data
+		};
 	}
 
-	getPCM(): any {
+	/**
+	 * 获取PCM格式的音频数据
+	 * @returns PCM格式的DataView数据
+	 */
+	getPCM(): DataView {
 		// 先停止
 		this.stop();
 		// 获取pcm数据
 		let data: any = this.getData();
 		// 根据输入输出比例 压缩或扩展
-		data = compress(data, this.inputSampleRate, this.outputSampleRate);
+		const compressedData = compress(data, this.inputSampleRate, this.outputSampleRate);
 		// 按采样位数重新编码
-		return encodePCM(data, this.oututSampleBits, this.littleEdian);
+		return encodePCM(compressedData, this.outputSampleBits, this.littleEdian);
 	}
 
 	/**
 	 * 获取PCM格式的blob数据
-	 *
-	 * @returns { blob }  PCM格式的blob数据
-	 * @memberof Recorder
+	 * @returns PCM格式的Blob数据
 	 */
-	getPCMBlob(): any {
+	getPCMBlob(): Blob {
 		return new Blob([this.getPCM()]);
 	}
 
 	/**
-	 * 下载录音pcm数据
-	 *
-	 * @param {string} [name='recorder']    重命名的名字
-	 * @memberof Recorder
+	 * 下载录音PCM数据
+	 * @param name 文件名，默认为'recorder'
 	 */
 	downloadPCM(name: string = 'recorder'): void {
-		let pcmBlob = this.getPCMBlob();
-
+		const pcmBlob = this.getPCMBlob();
 		downloadPCM(pcmBlob, name);
 	}
 
 	/**
-	 * 获取WAV编码的二进制数据(dataview)
-	 *
-	 * @returns {dataview}  WAV编码的二进制数据
-	 * @memberof Recorder
+	 * 获取WAV编码的二进制数据
+	 * @returns WAV编码的DataView数据
 	 */
-	getWAV(): any {
-		let pcmTemp = this.getPCM();
+	getWAV(): DataView {
+		const pcmTemp = this.getPCM();
 
 		// PCM增加44字节的头就是WAV格式了
 		return encodeWAV(
 			pcmTemp,
 			this.inputSampleRate,
 			this.outputSampleRate,
-			this.config.numChannels,
-			this.oututSampleBits,
+			this.config.numChannels || 1,
+			this.outputSampleBits,
 			this.littleEdian
 		);
 	}
 
 	/**
-	 * 获取WAV音频的blob数据
-	 *
-	 * @returns { blob }    wav格式blob数据
-	 * @memberof Recorder
+	 * 获取WAV音频的Blob数据
+	 * @returns WAV格式的Blob数据
 	 */
-	getWAVBlob(): any {
+	getWAVBlob(): Blob {
 		return new Blob([this.getWAV()], { type: 'audio/wav' });
 	}
 
 	/**
-	 * 下载录音的wav数据
-	 *
-	 * @param {string} [name='recorder']    重命名的名字
-	 * @memberof Recorder
+	 * 下载录音的WAV数据
+	 * @param name 文件名，默认为'recorder'
 	 */
 	downloadWAV(name: string = 'recorder'): void {
-		let wavBlob = this.getWAVBlob();
-
+		const wavBlob = this.getWAVBlob();
 		downloadWAV(wavBlob, name);
 	}
 
 	/**
 	 * 通用的下载接口
+	 * @param blob 要下载的Blob数据
+	 * @param name 文件名
+	 * @param type 文件类型
 	 */
-	download(blob, name: string, type: string): void {
+	download(blob: Blob, name: string, type: string): void {
 		download(blob, name, type);
 	}
 
 	/**
-	 * 获取左和右声道的数据
-	 *
-	 * @returns [DataView]
+	 * 获取左右声道的数据
+	 * @returns 包含左右声道数据的对象
 	 */
-	getChannelData(): any {
+	getChannelData(): ChannelData {
 		const all = this.getPCM();
 		const length = all.byteLength;
 		const littleEdian = this.littleEdian;
-		const res = { left: null, right: null };
+		const res: ChannelData = { left: null, right: null };
 
 		if (this.config.numChannels === 2) {
-			// 双通道,劈开
+			// 双通道，拆分数据
 			const lD = new DataView(new ArrayBuffer(length / 2));
 			const rD = new DataView(new ArrayBuffer(length / 2));
-			// 双声道，需要拆分下数据
 
 			if (this.config.sampleBits === 16) {
-				for (var i = 0; i < length / 2; i += 2) {
-					lD.setInt16(i, all.getInt16(i * 2, littleEdian), littleEdian);
-					rD.setInt16(i, all.getInt16(i * 2 + 2, littleEdian), littleEdian);
+				// 16位采样，每个样本2字节
+				for (let i = 0; i < length / 4; i++) {
+					const leftIndex = i * 2;
+					const rightIndex = leftIndex + 2;
+					lD.setInt16(leftIndex, all.getInt16(i * 4, littleEdian), littleEdian);
+					rD.setInt16(leftIndex, all.getInt16(i * 4 + 2, littleEdian), littleEdian);
 				}
 			} else {
-				for (var i = 0; i < length / 2; i += 2) {
-					lD.setInt8(i, all.getInt8(i * 2));
-					rD.setInt8(i, all.getInt8(i * 2 + 1));
+				// 8位采样，每个样本1字节
+				for (let i = 0; i < length / 2; i++) {
+					const leftIndex = i;
+					const rightIndex = i;
+					lD.setInt8(leftIndex, all.getInt8(i * 2));
+					rD.setInt8(rightIndex, all.getInt8(i * 2 + 1));
 				}
 			}
 
