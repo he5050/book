@@ -1,0 +1,28 @@
+.scroll-text-container {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 500px; // 固定容器宽度
+  position: relative;
+}
+
+.st-inner {
+  display: inline-block;
+
+  &.st-scrolling {
+    animation: scroll 10s linear infinite;
+  }
+}
+
+.st-scrolling .st-section {
+  padding: 0 5px;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translate3d(0%, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
