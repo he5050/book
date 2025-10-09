@@ -1,6 +1,101 @@
 
-export function encodeMP3 (){
+/**
+ * 将 PCM 数据编码为 MP3 格式
+ * 基于你提供的 lamejs 使用方式进行实现
+ * @param {DataView} pcmData - 16位 PCM 数据
+ * @param {number} sampleRate - 采样率
+ * @param {number} numChannels - 声道数 (1 或 2)
+ * @param {number} bitrateKbps - MP3 比特率 (kbps)
+ * @param {boolean} littleEndian - 字节序
+ * @returns {Uint8Array[]} - MP3 数据块数组
+ */
+export function encodeMP3(
+	pcmData: DataView,
+	sampleRate: number,
+	numChannels: number,
+	bitrateKbps: number = 128,
+	littleEndian: boolean = true
+): Uint8Array[] {
+	// 检查 lamejs 是否可用
+	if (typeof (window as any).lamejs === 'undefined') {
+		throw new Error('lamejs 库未加载，请确保已引入 lamejs');
+	}
 
+	const lamejs = (window as any).lamejs;
+
+	try {
+		// 检查是否存在 MPEGMode 问题
+		if (typeof (window as any).MPEGMode === 'undefined') {
+			// 尝试定义缺失的常量
+			(window as any).MPEGMode = {
+				STEREO: 0,
+				JOINT_STEREO: 1,
+				DUAL_CHANNEL: 2,
+				MONO: 3,
+				NOT_SET: 4
+			};
+		}
+		
+		// 创建 MP3 编码器
+		const mp3enc = new lamejs.Mp3Encoder(numChannels, sampleRate, bitrateKbps);
+
+		// 将 PCM DataView 转换为 Int16Array
+		const samples = pcmData.byteLength / 2; // 16位 = 2字节
+
+		// 创建左右声道数据
+		let leftData: Int16Array;
+		let rightData: Int16Array | null = null;
+
+		if (numChannels === 1) {
+			// 单声道
+			leftData = new Int16Array(samples);
+			for (let i = 0; i < samples; i++) {
+				leftData[i] = pcmData.getInt16(i * 2, littleEndian);
+			}
+		} else {
+			// 双声道 - 交错格式转换为分离格式
+			const samplesPerChannel = samples / 2;
+			leftData = new Int16Array(samplesPerChannel);
+			rightData = new Int16Array(samplesPerChannel);
+
+			for (let i = 0; i < samplesPerChannel; i++) {
+				leftData[i] = pcmData.getInt16(i * 4, littleEndian);
+				rightData[i] = pcmData.getInt16(i * 4 + 2, littleEndian);
+			}
+		}
+
+		// 编码 MP3（参考你提供的原始代码逻辑）
+		const buffer: Uint8Array[] = [];
+		const maxSamples = 1152; // MP3 编码器的标准块大小
+		const remaining = leftData.length;
+
+		for (let i = 0; i < remaining; i += maxSamples) {
+			const left = leftData.subarray(i, i + maxSamples);
+			let mp3buf: Uint8Array;
+
+			if (numChannels === 2 && rightData) {
+				const right = rightData.subarray(i, i + maxSamples);
+				mp3buf = mp3enc.encodeBuffer(left, right);
+			} else {
+				mp3buf = mp3enc.encodeBuffer(left);
+			}
+
+			if (mp3buf.length > 0) {
+				buffer.push(mp3buf);
+			}
+		}
+
+		// 刷新编码器缓冲区
+		const enc = mp3enc.flush();
+		if (enc.length > 0) {
+			buffer.push(enc);
+		}
+
+		return buffer;
+	} catch (error) {
+		console.error('MP3 编码错误:', error);
+		throw new Error(`MP3 编码失败: ${(error as Error).message}`);
+	}
 }
 /**
  * 在 DataView 的指定偏移量处写入字符串。
@@ -71,7 +166,11 @@ export function compress(
  * @param {boolean} [littleEndian=true] - 为 16 位编码指定字节序。
  * @returns {DataView} - 编码后的 PCM 数据。
  */
-export function encodePCM(pcmData: Float32Array, sampleBits: number, littleEndian: boolean = true): DataView {
+export function encodePCM(
+	pcmData: Float32Array,
+	sampleBits: number,
+	littleEndian: boolean = true
+): DataView {
 	const dataLength = pcmData.length * (sampleBits / 8);
 	const buffer = new ArrayBuffer(dataLength);
 	const view = new DataView(buffer);
