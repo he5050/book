@@ -12,10 +12,11 @@ try {
 
 interface PinyinConverterProps {
 	text?: string;
-	mode?: 'initial' | 'full' | 'tone';
+	mode?: 'initial' | 'full' | 'tone' | 'annotated';
 	library?: 'localeCompare' | 'pinyin-pro' | 'pinyinjs';
 	useUpperCase?: boolean;
 	className?: string;
+	showAnnotated?: boolean;
 }
 
 /**
@@ -68,17 +69,56 @@ export const getTheFirstLetterForPinyin = (
 	return useUpperCase ? firstLetter.toUpperCase() : firstLetter.toLowerCase();
 };
 
+// 注音显示组件
+const AnnotatedText: React.FC<{ text: string; pinyinArray: string[] }> = ({
+	text,
+	pinyinArray
+}) => {
+	return (
+		<div className="annotated-text">
+			{text.split('').map((char, index) => (
+				<span key={index} className="annotated-char">
+					<span className="pinyin-annotation">{pinyinArray[index] || ''}</span>
+					<span className="chinese-char">{char}</span>
+				</span>
+			))}
+		</div>
+	);
+};
+
 const PinyinConverter: React.FC<PinyinConverterProps> = ({
 	text = '',
 	mode = 'initial',
 	library = 'pinyin-pro',
 	useUpperCase = false,
-	className = ''
+	className = '',
+	showAnnotated = false
 }) => {
 	const [result, setResult] = useState<string>('');
+	const [pinyinArray, setPinyinArray] = useState<string[]>([]);
 
 	useEffect(() => {
 		let convertedText = '';
+		let pinyinResults: string[] = [];
+
+		// 如果是注音模式，获取每个字符的拼音
+		if (mode === 'annotated' || showAnnotated) {
+			try {
+				if (library === 'pinyin-pro') {
+					// 为每个字符获取拼音
+					pinyinResults = text.split('').map(char => {
+						if (/^\w/.test(char)) {
+							return char;
+						}
+						const pinyinResult = pinyin(char, { toneType: 'none', type: 'array' });
+						return Array.isArray(pinyinResult) ? pinyinResult[0] || '' : String(pinyinResult);
+					});
+				}
+			} catch (error) {
+				console.error('注音获取失败:', error);
+				pinyinResults = [];
+			}
+		}
 
 		switch (library) {
 			case 'localeCompare':
@@ -88,6 +128,8 @@ const PinyinConverter: React.FC<PinyinConverterProps> = ({
 						.split('')
 						.map(char => getTheFirstLetterForPinyin(char, useUpperCase))
 						.join('');
+				} else if (mode === 'annotated') {
+					convertedText = '不支持该模式';
 				} else {
 					// localeCompare 方式不支持完整拼音和带音调拼音
 					convertedText = '不支持该模式';
@@ -107,9 +149,12 @@ const PinyinConverter: React.FC<PinyinConverterProps> = ({
 						case 'tone':
 							convertedText = pinyin(text, { toneType: 'symbol' });
 							break;
+						case 'annotated':
+							convertedText = pinyin(text, { toneType: 'none' });
+							break;
 					}
 
-					if (useUpperCase) {
+					if (useUpperCase && mode !== 'annotated') {
 						convertedText = convertedText.toUpperCase();
 					}
 				} catch (error) {
@@ -136,9 +181,12 @@ const PinyinConverter: React.FC<PinyinConverterProps> = ({
 							// pinyinjs 不支持音调标注
 							convertedText = pinyinjs.getFullChars(text);
 							break;
+						case 'annotated':
+							convertedText = '不支持该模式';
+							break;
 					}
 
-					if (useUpperCase) {
+					if (useUpperCase && mode !== 'annotated') {
 						convertedText = convertedText.toUpperCase();
 					}
 				} catch (error) {
@@ -148,11 +196,16 @@ const PinyinConverter: React.FC<PinyinConverterProps> = ({
 		}
 
 		setResult(convertedText);
-	}, [text, mode, library, useUpperCase]);
+		setPinyinArray(pinyinResults);
+	}, [text, mode, library, useUpperCase, showAnnotated]);
 
 	return (
 		<div className={`pinyin-converter ${className}`}>
-			<div className="pinyin-result">{result}</div>
+			{mode === 'annotated' || showAnnotated ? (
+				<AnnotatedText text={text} pinyinArray={pinyinArray} />
+			) : (
+				<div className="pinyin-result">{result}</div>
+			)}
 		</div>
 	);
 };

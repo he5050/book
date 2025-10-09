@@ -13,4 +13,31 @@
     font-size: 16px;
     word-break: break-all;
   }
+
+  .annotated-text {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    min-height: 60px;
+  }
+
+  .annotated-char {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 5px;
+  }
+
+  .pinyin-annotation {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 2px;
+  }
+
+  .chinese-char {
+    font-size: 18px;
+  }
 }

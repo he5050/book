@@ -3,9 +3,10 @@ import PinyinConverter, { getTheFirstLetterForPinyin } from './index';
 
 const PinyinConverterExample: React.FC = () => {
 	const [text, setText] = useState('你好世界');
-	const [mode, setMode] = useState<'initial' | 'full' | 'tone'>('initial');
+	const [mode, setMode] = useState<'initial' | 'full' | 'tone' | 'annotated'>('initial');
 	const [library, setLibrary] = useState<'localeCompare' | 'pinyin-pro' | 'pinyinjs'>('pinyin-pro');
 	const [useUpperCase, setUseUpperCase] = useState(false);
+	const [showAnnotated, setShowAnnotated] = useState(false);
 
 	return (
 		<div
@@ -60,6 +61,7 @@ const PinyinConverterExample: React.FC = () => {
 							<option value="initial">拼音首字母</option>
 							<option value="full">完整拼音</option>
 							<option value="tone">带音调拼音</option>
+							<option value="annotated">注音显示</option>
 						</select>
 					</label>
 				</div>
@@ -79,7 +81,7 @@ const PinyinConverterExample: React.FC = () => {
 					</label>
 				</div>
 
-				<div className="control-item">
+				<div className="control-item" style={{ marginBottom: '10px' }}>
 					<label>
 						大写输出:
 						<input
@@ -90,12 +92,30 @@ const PinyinConverterExample: React.FC = () => {
 						/>
 					</label>
 				</div>
+
+				<div className="control-item">
+					<label>
+						注音显示:
+						<input
+							type="checkbox"
+							checked={showAnnotated}
+							onChange={e => setShowAnnotated(e.target.checked)}
+							style={{ marginLeft: '10px', verticalAlign: 'middle' }}
+						/>
+					</label>
+				</div>
 			</div>
 
 			{/* 组件演示 */}
 			<div className="demo-container" style={{ marginBottom: '20px' }}>
 				<h4>转换结果：</h4>
-				<PinyinConverter text={text} mode={mode} library={library} useUpperCase={useUpperCase} />
+				<PinyinConverter
+					text={text}
+					mode={mode}
+					library={library}
+					useUpperCase={useUpperCase}
+					showAnnotated={showAnnotated}
+				/>
 			</div>
 
 			{/* localeCompare 方式单独演示 */}
