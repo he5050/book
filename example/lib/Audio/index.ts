@@ -1,5 +1,5 @@
 import { downloadPCM, downloadWAV, download } from './download';
-import { compress, encodePCM, encodeWAV } from './transform';
+import { compress, encodePCM, encodeWAV, encodeMP3 } from './transform';
 import Player from './player';
 import Recorder from './recorder';
 
@@ -305,7 +305,8 @@ class AudioProcessor extends Recorder {
 	 */
 	public downloadPCM(name: string = 'recorder'): void {
 		const pcmBlob = this.getPCMBlob();
-		downloadPCM(pcmBlob, name);
+		const clean = this.sanitizeName(name, '.pcm');
+		downloadPCM(pcmBlob, clean);
 	}
 
 	/**
@@ -338,7 +339,8 @@ class AudioProcessor extends Recorder {
 	 */
 	public downloadWAV(name: string = 'recorder'): void {
 		const wavBlob = this.getWAVBlob();
-		downloadWAV(wavBlob, name);
+		const clean = this.sanitizeName(name, '.wav');
+		downloadWAV(wavBlob, clean);
 	}
 
 	/**
@@ -348,7 +350,8 @@ class AudioProcessor extends Recorder {
 	 * @param {string} type - 文件类型。
 	 */
 	public downloadBlob(blob: Blob, name: string, type: string): void {
-		download(blob, name, type);
+		const clean = this.sanitizeName(name, type.startsWith('audio/wav') ? '.wav' : type.startsWith('audio/mpeg') ? '.mp3' : '');
+		download(blob, clean, type);
 	}
 
 	/**
@@ -442,6 +445,57 @@ class AudioProcessor extends Recorder {
 		return this.start().then(() => {
 			console.warn('startWithConvert 暂未实现，已降级为普通录音 start()');
 		});
+	}
+
+	/**
+	 * 语义化的 MP3 播放封装：
+	 * - 无参数：不支持（需外部文件或已编码数据）
+	 * - 传入 ArrayBuffer：播放外部 MP3 数据
+	 */
+	public playMP3(buffer?: ArrayBuffer): void {
+		if (!buffer) {
+			console.warn('playMP3 需要传入外部 MP3 的 ArrayBuffer');
+			return;
+		}
+		this.play(buffer);
+	}
+
+	/**
+	 * 将当前录音编码为 MP3 的 Blob
+	 * @param {number} bitrateKbps - MP3 比特率，默认 128
+	 * @returns {Blob}
+	 */
+	public getMP3Blob(bitrateKbps: number = 128): Blob {
+		// 使用 16bit PCM 作为编码输入，避免 8bit 造成失真
+		const raw = this.getData();
+		const compressed = compress(raw, this.inputSampleRate, this.outputSampleRate);
+		const pcm16 = encodePCM(compressed, 16, this.littleEndian);
+		const chunks = encodeMP3(pcm16, this.outputSampleRate, this.config.numChannels ?? 1, bitrateKbps, this.littleEndian);
+		return new Blob(chunks, { type: 'audio/mpeg' });
+	}
+
+	/**
+	 * 下载 MP3 文件
+	 */
+	public downloadMP3(name: string = 'recorder', bitrateKbps: number = 128): void {
+		const mp3Blob = this.getMP3Blob(bitrateKbps);
+		const clean = this.sanitizeName(name, '.mp3');
+		this.downloadBlob(mp3Blob, clean, 'audio/mpeg');
+	}
+
+	/**
+	 * 规范化文件名：移除已存在的目标后缀，避免重复，如 "a.wav" → "a"
+	 */
+	private sanitizeName(name: string, ext: '.wav' | '.pcm' | '.mp3'): string {
+		const lower = name.trim().toLowerCase();
+		const target = ext.toLowerCase();
+		let base = name.trim();
+		if (lower.endsWith(target)) {
+			base = base.slice(0, base.length - target.length);
+		}
+		// 移除可能的重复点号，如 "a." → "a"
+		if (base.endsWith('.')) base = base.slice(0, -1);
+		return base;
 	}
 }
 

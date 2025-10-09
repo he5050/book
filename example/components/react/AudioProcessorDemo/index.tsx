@@ -37,6 +37,7 @@ const AudioProcessorDemo: React.FC = () => {
 	const [sampleRate, setSampleRate] = useState(16000);
 	const [sampleBits, setSampleBits] = useState(16);
 	const [numChannels, setNumChannels] = useState('单');
+	const [mp3Bitrate, setMp3Bitrate] = useState(128);
 	const [recordSize, setRecordSize] = useState(0);
 	const [volumePercentage, setVolumePercentage] = useState(0);
 	const [isEdgeConvert, setIsEdgeConvert] = useState(false); // 新增：边录边转开关
@@ -227,6 +228,23 @@ const AudioProcessorDemo: React.FC = () => {
 	const handleDownloadWAV = () => audioProcessorRef.current?.downloadWAV('recording.wav');
 	const handleDownloadPCM = () => audioProcessorRef.current?.downloadPCM('recording.pcm');
 
+	// 播放当前录音的 MP3（先编码为 MP3 Blob，再播放）
+	const handlePlayMP3 = async () => {
+		try {
+			const blob = audioProcessorRef.current?.getMP3Blob(mp3Bitrate);
+			if (!blob) return;
+			const buf = await blob.arrayBuffer();
+			audioProcessorRef.current?.playMP3(buf);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
+	// 下载当前录音为 MP3（避免 .mp3.mp3，内部已规范化）
+	const handleDownloadMP3 = () => {
+		audioProcessorRef.current?.downloadMP3('recording', mp3Bitrate);
+	};
+
 	// 新增：处理外部音频上传
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -263,6 +281,14 @@ const AudioProcessorDemo: React.FC = () => {
 					<select id="channels" value={numChannels} onChange={(e) => setNumChannels(e.target.value)}>
 						<option value="单">单</option>
 						<option value="双">双</option>
+					</select>
+					<label htmlFor="mp3-bitrate">MP3 比特率(kbps):</label>
+					<select id="mp3-bitrate" value={mp3Bitrate} onChange={(e) => setMp3Bitrate(Number(e.target.value))}>
+						<option value="96">96</option>
+						<option value="128">128</option>
+						<option value="192">192</option>
+						<option value="256">256</option>
+						<option value="320">320</option>
 					</select>
 					<div className="edge-convert-toggle">
 						<input
@@ -334,8 +360,8 @@ const AudioProcessorDemo: React.FC = () => {
 				{/* Other Audio Formats */}
 				<div className="other-formats">
 					<h4>其他音频格式</h4>
-					<button onClick={() => console.log('播放MP3')}>播放MP3</button>
-					<button onClick={() => console.log('下载MP3')}>下载MP3</button>
+					<button onClick={handlePlayMP3}>播放MP3</button>
+					<button onClick={handleDownloadMP3}>下载MP3</button>
 				</div>
 
 				{/* Play External Audio */}
