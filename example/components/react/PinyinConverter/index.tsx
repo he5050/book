@@ -12,7 +12,7 @@ try {
 
 interface PinyinConverterProps {
 	text?: string;
-	mode?: 'initial' | 'full' | 'tone' | 'annotated';
+	mode?: 'initial' | 'full' | 'tone' | 'annotated' | 'phonetic';
 	library?: 'localeCompare' | 'pinyin-pro' | 'pinyinjs';
 	useUpperCase?: boolean;
 	className?: string;
@@ -69,6 +69,135 @@ export const getTheFirstLetterForPinyin = (
 	return useUpperCase ? firstLetter.toUpperCase() : firstLetter.toLowerCase();
 };
 
+// 常用汉字拼音映射表（带声调）
+const chinesePinyinMap: { [key: string]: string } = {
+	// 基础词汇
+	你: 'nǐ',
+	好: 'hǎo',
+	世: 'shì',
+	界: 'jiè',
+	旁: 'páng',
+	边: 'biān',
+	学: 'xué',
+	习: 'xí',
+	汉: 'hàn',
+	语: 'yǔ',
+	拼: 'pīn',
+	音: 'yīn',
+	春: 'chūn',
+	天: 'tiān',
+	来: 'lái',
+	了: 'le',
+
+	// 四声示例
+	妈: 'mā',
+	麻: 'má',
+	马: 'mǎ',
+	骂: 'mà',
+
+	// 常用字符
+	中: 'zhōng',
+	国: 'guó',
+	人: 'rén',
+	大: 'dà',
+	小: 'xiǎo',
+	上: 'shàng',
+	下: 'xià',
+	左: 'zuǒ',
+	右: 'yòu',
+	前: 'qián',
+	后: 'hòu',
+	里: 'lǐ',
+	外: 'wài',
+	东: 'dōng',
+	西: 'xī',
+	南: 'nán',
+	北: 'běi',
+	一: 'yī',
+	二: 'èr',
+	三: 'sān',
+	四: 'sì',
+	五: 'wǔ',
+	六: 'liù',
+	七: 'qī',
+	八: 'bā',
+	九: 'jiǔ',
+	十: 'shí',
+	年: 'nián',
+	月: 'yuè',
+	日: 'rì',
+	分: 'fēn',
+	秒: 'miǎo',
+	今: 'jīn',
+	昨: 'zuó',
+	早: 'zǎo',
+	晚: 'wǎn',
+	午: 'wǔ',
+	夜: 'yè',
+	家: 'jiā',
+	校: 'xiào',
+	老: 'lǎo',
+	师: 'shī',
+	同: 'tóng',
+	朋: 'péng',
+	友: 'yǒu',
+	爱: 'ài',
+	喜: 'xǐ',
+	欢: 'huān',
+	快: 'kuài',
+	乐: 'lè',
+	高: 'gāo',
+	兴: 'xìng',
+	开: 'kāi',
+	心: 'xīn',
+	美: 'měi',
+	丽: 'lì',
+	漂: 'piào',
+	亮: 'liàng',
+	聪: 'cōng',
+	智: 'zhì',
+	慧: 'huì'
+};
+
+/**
+ * 获取汉字的带声调拼音（备用方案）
+ * @param char 汉字
+ * @returns 带声调的拼音
+ */
+const getManualPinyin = (char: string): string => {
+	const result = chinesePinyinMap[char] || char;
+	console.log(
+		`备用映射查询 - 字符: ${char}, 映射结果: ${result}, 是否在映射表中: ${char in chinesePinyinMap}`
+	);
+	return result;
+};
+
+/**
+ * 根据拼音声调获取对应的CSS类名
+ * @param pinyinText 拼音文本
+ * @returns 对应声调的CSS类名
+ */
+const getToneClass = (pinyinText: string): string => {
+	// 第一声（ā, ē, ī, ō, ū, ǖ）：蓝色
+	if (/[āēīōūǖ]/.test(pinyinText)) {
+		return 'tone-1';
+	}
+	// 第二声（á, é, í, ó, ú, ǘ）：绿色
+	if (/[áéíóúǘ]/.test(pinyinText)) {
+		return 'tone-2';
+	}
+	// 第三声（ǎ, ě, ǐ, ǒ, ǔ, ǚ）：橙色
+	if (/[ǎěǐǒǔǚ]/.test(pinyinText)) {
+		return 'tone-3';
+	}
+	// 第四声（à, è, ì, ò, ù, ǜ）：红色
+	if (/[àèìòùǜ]/.test(pinyinText)) {
+		return 'tone-4';
+	}
+	// 轻声或无声调：灰色
+	return 'tone-neutral';
+};
+
 // 注音显示组件
 const AnnotatedText: React.FC<{ text: string; pinyinArray: string[] }> = ({
 	text,
@@ -82,6 +211,28 @@ const AnnotatedText: React.FC<{ text: string; pinyinArray: string[] }> = ({
 					<span className="chinese-char">{char}</span>
 				</span>
 			))}
+		</div>
+	);
+};
+
+// 音标显示组件
+const PhoneticText: React.FC<{ text: string; pinyinArray: string[] }> = ({ text, pinyinArray }) => {
+	return (
+		<div className="phonetic-text">
+			{text.split('').map((char, index) => {
+				const pinyinText = pinyinArray[index] || '';
+				const toneClass = getToneClass(pinyinText);
+
+				// 调试信息（可以在浏览器控制台查看）
+				console.log(`字符: ${char}, 拼音: ${pinyinText}, 声调类: ${toneClass}`);
+
+				return (
+					<span key={index} className="phonetic-char">
+						<span className={`pinyin-phonetic ${toneClass}`}>{pinyinText}</span>
+						<span className="chinese-char-phonetic">{char}</span>
+					</span>
+				);
+			})}
 		</div>
 	);
 };
@@ -101,8 +252,8 @@ const PinyinConverter: React.FC<PinyinConverterProps> = ({
 		let convertedText = '';
 		let pinyinResults: string[] = [];
 
-		// 如果是注音模式，获取每个字符的拼音
-		if (mode === 'annotated' || showAnnotated) {
+		// 如果是注音模式或音标模式，获取每个字符的拼音
+		if (mode === 'annotated' || mode === 'phonetic' || showAnnotated) {
 			try {
 				if (library === 'pinyin-pro') {
 					// 为每个字符获取拼音
@@ -110,8 +261,10 @@ const PinyinConverter: React.FC<PinyinConverterProps> = ({
 						if (/^\w/.test(char)) {
 							return char;
 						}
-						const pinyinResult = pinyin(char, { toneType: 'none', type: 'array' });
-						return Array.isArray(pinyinResult) ? pinyinResult[0] || '' : String(pinyinResult);
+						// 根据模式获取拼音
+						const toneType = mode === 'phonetic' ? 'symbol' : 'none';
+						const result = pinyin(char, { toneType });
+						return result;
 					});
 				}
 			} catch (error) {
@@ -152,9 +305,12 @@ const PinyinConverter: React.FC<PinyinConverterProps> = ({
 						case 'annotated':
 							convertedText = pinyin(text, { toneType: 'none' });
 							break;
+						case 'phonetic':
+							convertedText = pinyin(text, { toneType: 'symbol' });
+							break;
 					}
 
-					if (useUpperCase && mode !== 'annotated') {
+					if (useUpperCase && mode !== 'annotated' && mode !== 'phonetic') {
 						convertedText = convertedText.toUpperCase();
 					}
 				} catch (error) {
@@ -184,9 +340,12 @@ const PinyinConverter: React.FC<PinyinConverterProps> = ({
 						case 'annotated':
 							convertedText = '不支持该模式';
 							break;
+						case 'phonetic':
+							convertedText = '不支持该模式';
+							break;
 					}
 
-					if (useUpperCase && mode !== 'annotated') {
+					if (useUpperCase && mode !== 'annotated' && mode !== 'phonetic') {
 						convertedText = convertedText.toUpperCase();
 					}
 				} catch (error) {
@@ -201,7 +360,9 @@ const PinyinConverter: React.FC<PinyinConverterProps> = ({
 
 	return (
 		<div className={`pinyin-converter ${className}`}>
-			{mode === 'annotated' || showAnnotated ? (
+			{mode === 'phonetic' ? (
+				<PhoneticText text={text} pinyinArray={pinyinArray} />
+			) : mode === 'annotated' || showAnnotated ? (
 				<AnnotatedText text={text} pinyinArray={pinyinArray} />
 			) : (
 				<div className="pinyin-result">{result}</div>
