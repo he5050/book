@@ -1,5 +1,6 @@
 import { downloadPCM, downloadWAV, download } from './download';
 import { compress, encodePCM, encodeWAV, encodeMP3 } from './transform';
+import { SpeechProcessor, SpeechRecognizer, SpeechSynthesizer } from './speech';
 import Player from './player';
 import Recorder from './recorder';
 
@@ -73,6 +74,11 @@ class AudioProcessor extends Recorder {
 	 * @private
 	 */
 	private wasPaused: boolean = false;
+	/**
+	 * @description 语音处理器
+	 * @private
+	 */
+	private speechProcessor: SpeechProcessor;
 
 	// --- 播放相关的事件回调 ---
 	/**
@@ -109,6 +115,7 @@ class AudioProcessor extends Recorder {
 	constructor(options: RecorderConfig = {}) {
 		super(options);
 		this.player = new Player();
+		this.speechProcessor = new SpeechProcessor();
 
 		// 将播放结束的回调绑定到播放器
 		this.player.addPlayEnd(() => {
@@ -504,6 +511,117 @@ class AudioProcessor extends Recorder {
 		// 移除可能的重复点号，如 "a." → "a"
 		if (base.endsWith('.')) base = base.slice(0, -1);
 		return base;
+	}
+
+	// ==================== 语音功能 ====================
+
+	/**
+	 * 获取语音识别器
+	 * @returns {SpeechRecognizer | null} 语音识别器实例
+	 */
+	public getSpeechRecognizer(): SpeechRecognizer | null {
+		return this.speechProcessor.getRecognizer();
+	}
+
+	/**
+	 * 获取语音合成器
+	 * @returns {SpeechSynthesizer | null} 语音合成器实例
+	 */
+	public getSpeechSynthesizer(): SpeechSynthesizer | null {
+		return this.speechProcessor.getSynthesizer();
+	}
+
+	/**
+	 * 快速语音识别（一次性）
+	 * @param {string} lang - 识别语言，默认 'zh-CN'
+	 * @returns {Promise<string>} 识别结果
+	 */
+	public async recognizeOnce(lang: string = 'zh-CN'): Promise<string> {
+		return this.speechProcessor.recognizeOnce({ lang });
+	}
+
+	/**
+	 * 文字转语音
+	 * @param {string} text - 要合成的文本
+	 * @param {object} options - 合成选项
+	 * @returns {Promise<void>} 合成完成的Promise
+	 */
+	public async speakText(
+		text: string,
+		options: {
+			lang?: string;
+			rate?: number;
+			pitch?: number;
+			volume?: number;
+		} = {}
+	): Promise<void> {
+		const config = {
+			lang: options.lang || 'zh-CN',
+			rate: options.rate || 1,
+			pitch: options.pitch || 1,
+			volume: options.volume || 1
+		};
+		return this.speechProcessor.speakText(text, config);
+	}
+
+	/**
+	 * 检查语音功能支持情况
+	 * @returns {object} 支持情况
+	 */
+	public static getSpeechSupport(): {
+		recognition: boolean;
+		synthesis: boolean;
+	} {
+		return SpeechProcessor.getSupport();
+	}
+
+	/**
+	 * 停止语音合成
+	 */
+	public stopSpeech(): void {
+		const synthesizer = this.getSpeechSynthesizer();
+		if (synthesizer) {
+			synthesizer.stop();
+		}
+	}
+
+	/**
+	 * 暂停语音合成
+	 */
+	public pauseSpeech(): void {
+		const synthesizer = this.getSpeechSynthesizer();
+		if (synthesizer) {
+			synthesizer.pause();
+		}
+	}
+
+	/**
+	 * 恢复语音合成
+	 */
+	public resumeSpeech(): void {
+		const synthesizer = this.getSpeechSynthesizer();
+		if (synthesizer) {
+			synthesizer.resume();
+		}
+	}
+
+	/**
+	 * 获取可用的语音列表
+	 * @returns {SpeechSynthesisVoice[]} 语音列表
+	 */
+	public getAvailableVoices(): SpeechSynthesisVoice[] {
+		const synthesizer = this.getSpeechSynthesizer();
+		return synthesizer ? synthesizer.getVoices() : [];
+	}
+
+	/**
+	 * 获取指定语言的语音列表
+	 * @param {string} lang - 语言代码
+	 * @returns {SpeechSynthesisVoice[]} 语音列表
+	 */
+	public getVoicesByLanguage(lang: string): SpeechSynthesisVoice[] {
+		const synthesizer = this.getSpeechSynthesizer();
+		return synthesizer ? synthesizer.getVoicesByLang(lang) : [];
 	}
 }
 
