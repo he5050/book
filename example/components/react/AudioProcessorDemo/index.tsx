@@ -84,7 +84,9 @@ const AudioProcessorDemo: React.FC = () => {
 		processor.onPlayEnd = () => {
 			setIsPlaying(false);
 			setIsPlayPaused(false);
-			setPlayTime(0);
+			// 播放结束时显示总时长，而不是重置为0
+			const totalDuration = processor.getDuration();
+			setPlayTime(totalDuration);
 			cancelAnimationFrame(animationFrameRef.current);
 			console.log('播放结束');
 		};
@@ -101,6 +103,7 @@ const AudioProcessorDemo: React.FC = () => {
 		processor.onStopPlay = () => {
 			setIsPlaying(false);
 			setIsPlayPaused(false);
+			// 手动停止播放时重置播放时长为0
 			setPlayTime(0);
 			cancelAnimationFrame(animationFrameRef.current);
 			console.log('播放停止');
