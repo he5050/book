@@ -4,6 +4,7 @@
 	"dictionaryDefinitions": [],
 	"dictionaries": [],
 	"words": [
+		"ABCDEFGHJKLMNOPQRSTWXYZ",
 		"Alova",
 		"animejs",
 		"Animista",
@@ -35,6 +36,7 @@
 		"Paletton",
 		"Palettte",
 		"photoswipe",
+		"pinyinjs",
 		"reactbits",
 		"Shaddows",
 		"simplebar",
