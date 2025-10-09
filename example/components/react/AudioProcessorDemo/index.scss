@@ -121,41 +121,46 @@
 
     // 控制区：固定两列，左右各一组
     .controls {
+        // 改为单列，两行分别是录音控制与播放控制
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px 16px;
+        grid-template-columns: 1fr;
+        gap: 12px 0;
         padding-top: 16px;
         border-top: 1px solid $border;
 
         .control-group {
+            // 每行：标题 + 按钮横向排列，尽量不换行
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             align-items: center;
             gap: 10px;
+            overflow-x: auto;
 
             h4 {
-                width: 100%;
-                margin: 0 0 8px 0;
+                // 不再占满整行，与按钮在同一行
+                width: auto;
+                margin: 0 8px 0 0;
                 font-size: 14px;
                 font-weight: 600;
                 color: $text;
+                flex: 0 0 auto;
             }
         }
     }
 
     // 统一按钮样式（固定，不随响应式变化）
     button {
-        height: 36px;
-        padding: 0 14px;
+        height: 30px;
+        padding: 0 10px;
         border: 1px solid #d9d9d9;
         border-radius: 6px;
         background: #f5f5f5;
         color: #333;
-        font-size: 14px;
-        line-height: 36px;
+        font-size: 13px;
+        line-height: 30px;
         cursor: pointer;
         transition: all 0.15s ease;
-        min-width: 88px;
+        min-width: 72px;
 
         &:hover {
             background: #eee;

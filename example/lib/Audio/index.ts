@@ -96,6 +96,12 @@ class AudioProcessor extends Recorder {
 	 */
 	public onPlayEnd?: () => void;
 
+	// --- 录音相关的事件回调 ---
+	public onStart?: () => void;
+	public onPause?: () => void;
+	public onResume?: () => void;
+	public onStop?: () => void;
+
 	/**
 	 * 构造函数
 	 * @param {RecorderConfig} options - 录音器配置选项
@@ -130,7 +136,10 @@ class AudioProcessor extends Recorder {
 			return Promise.reject(new Error('录音已在进行中'));
 		}
 		// isRecording 状态由父类 Recorder 管理
-		return this.startRecord();
+		return this.startRecord().then(() => {
+			// 录音开始回调
+			this.onStart?.();
+		});
 	}
 
 	/**
@@ -139,6 +148,8 @@ class AudioProcessor extends Recorder {
 	public pause(): void {
 		// isRecording 状态检查在父类中进行
 		this.pauseRecord();
+		// 录音暂停回调
+		this.onPause?.();
 	}
 
 	/**
@@ -146,6 +157,8 @@ class AudioProcessor extends Recorder {
 	 */
 	public resume(): void {
 		this.resumeRecord();
+		// 录音恢复回调
+		this.onResume?.();
 	}
 
 	/**
@@ -154,22 +167,16 @@ class AudioProcessor extends Recorder {
 	 */
 	public stop(): void {
 		this.stopRecord();
+		// 录音结束回调
+		this.onStop?.();
 	}
 
 	/**
-	 * 播放录音。
-	 * 如果正在录音，会先停止录音。
-	 * 如果正在播放，会先停止当前播放。
+	 * 播放音频。
+	 * - 无参数：播放当前录音（WAV）
+	 * - 传入 ArrayBuffer：播放外部音频数据
 	 */
-	public play(): void {
-		// getWAV -> getPCM -> stop -> stopRecord 会处理录音停止的逻辑
-		const wavData = this.getWAV();
-
-		if (wavData.byteLength <= 44) {
-			console.warn('没有有效的录音数据可供播放。');
-			return;
-		}
-
+	public play(buffer?: ArrayBuffer): void {
 		// 停止当前可能正在播放的音频
 		if (this.isPlaying || this.wasPaused) {
 			this.player.stopPlay();
@@ -177,9 +184,23 @@ class AudioProcessor extends Recorder {
 
 		this.isPlaying = true;
 		this.wasPaused = false;
-
 		this.onPlay?.();
-		// 注意：onPlayEnd 回调已在构造函数中统一处理
+
+		// 播放外部音频
+		if (buffer) {
+			this.player.play(buffer);
+			return;
+		}
+
+		// 播放当前录音
+		const wavData = this.getWAV();
+		if (wavData.byteLength <= 44) {
+			console.warn('没有有效的录音数据可供播放。');
+			// 回滚播放状态
+			this.isPlaying = false;
+			this.wasPaused = false;
+			return;
+		}
 		this.player.play(wavData.buffer as ArrayBuffer);
 	}
 
@@ -410,6 +431,20 @@ class AudioProcessor extends Recorder {
 		// 保护边界
 		return Math.max(0, Math.min(100, percent));
 	}
+	/**
+	 * 边录边转/播：当前基础类无对应实现，先降级为普通 start()
+	 * 后续如需真实“边录边转”，可在 Recorder 层添加具体逻辑并在此委托调用。
+	 */
+	public startWithConvert(): Promise<void> {
+		if (this.isRecording) {
+			return Promise.reject(new Error('录音已在进行中'));
+		}
+		return this.start().then(() => {
+			console.warn('startWithConvert 暂未实现，已降级为普通录音 start()');
+		});
+	}
 }
+
+
 
 export default AudioProcessor;
