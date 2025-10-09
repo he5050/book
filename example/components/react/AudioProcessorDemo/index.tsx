@@ -11,8 +11,8 @@ const formatTime = (time: number): string => {
 
 // Helper to format bytes with dynamic units
 const formatBytes = (bytes: number): string => {
-	if (!Number.isFinite(bytes) || bytes < 0) return "0 B";
-	const units = ["B", "KB", "MB", "GB", "TB"];
+	if (!Number.isFinite(bytes) || bytes < 0) return '0 B';
+	const units = ['B', 'KB', 'MB', 'GB', 'TB'];
 	let i = 0;
 	let val = bytes;
 	while (val >= 1024 && i < units.length - 1) {
@@ -84,6 +84,7 @@ const AudioProcessorDemo: React.FC = () => {
 		processor.onPlayEnd = () => {
 			setIsPlaying(false);
 			setIsPlayPaused(false);
+			setPlayTime(0);
 			cancelAnimationFrame(animationFrameRef.current);
 			console.log('播放结束');
 		};
@@ -100,30 +101,46 @@ const AudioProcessorDemo: React.FC = () => {
 		processor.onStopPlay = () => {
 			setIsPlaying(false);
 			setIsPlayPaused(false);
+			setPlayTime(0);
 			cancelAnimationFrame(animationFrameRef.current);
 			console.log('播放停止');
 		};
 
-		// --- Time Updaters ---
-		const recordTimer = setInterval(() => {
-			if (processor.isRecording) {
-				setRecordTime(processor.getDuration());
-			}
-		}, 1000);
-
-		const playTimer = setInterval(() => {
-			if (isPlaying) {
-				setPlayTime(processor.getPlayTime());
-			}
-		}, 1000);
-
 		return () => {
-			clearInterval(recordTimer);
-			clearInterval(playTimer);
 			processor.destroy();
 			cancelAnimationFrame(animationFrameRef.current);
 		};
 	}, [sampleBits, sampleRate, numChannels]);
+
+	// Separate effect for recording time updates
+	useEffect(() => {
+		let recordTimer: NodeJS.Timeout;
+		if (isRecording && !isPaused) {
+			recordTimer = setInterval(() => {
+				if (audioProcessorRef.current) {
+					setRecordTime(audioProcessorRef.current.getDuration());
+				}
+			}, 100);
+		}
+		return () => {
+			if (recordTimer) clearInterval(recordTimer);
+		};
+	}, [isRecording, isPaused]);
+
+	// Separate effect for play time updates
+	useEffect(() => {
+		let playTimer: NodeJS.Timeout;
+		if (isPlaying && !isPlayPaused) {
+			playTimer = setInterval(() => {
+				if (audioProcessorRef.current) {
+					setPlayTime(audioProcessorRef.current.getPlayTime());
+				}
+			}, 100);
+		}
+		return () => {
+			if (playTimer) clearInterval(playTimer);
+		};
+	}, [isPlaying, isPlayPaused]);
 
 	// Update record size and volume percentage
 	useEffect(() => {
@@ -151,7 +168,15 @@ const AudioProcessorDemo: React.FC = () => {
 		setRecordSize(0);
 		setVolumePercentage(0);
 		setIsEdgeConvert(false); // 重置边录边转状态
-		audioProcessorRef.current?.reset();
+		// Reset the audio processor by creating a new instance
+		if (audioProcessorRef.current) {
+			audioProcessorRef.current.destroy();
+			audioProcessorRef.current = new AudioProcessor({
+				sampleBits,
+				sampleRate,
+				numChannels: numChannels === '单' ? 1 : 2
+			});
+		}
 	};
 
 	const drawWave = () => {
@@ -208,9 +233,9 @@ const AudioProcessorDemo: React.FC = () => {
 	// --- Handlers ---
 	const handleStart = () => {
 		if (isEdgeConvert) {
-			audioProcessorRef.current?.startWithConvert().catch(err => console.error(err));
+			audioProcessorRef.current?.startWithConvert()?.catch((err: any) => console.error(err));
 		} else {
-			audioProcessorRef.current?.start().catch(err => console.error(err));
+			audioProcessorRef.current?.start()?.catch((err: any) => console.error(err));
 		}
 	};
 	const handlePause = () => audioProcessorRef.current?.pause();
@@ -251,9 +276,13 @@ const AudioProcessorDemo: React.FC = () => {
 		if (!file) return;
 
 		const reader = new FileReader();
-		reader.onload = (event) => {
+		reader.onload = event => {
 			const arrayBuffer = event.target?.result as ArrayBuffer;
-			audioProcessorRef.current?.play(arrayBuffer).catch(err => console.error(err));
+			try {
+				audioProcessorRef.current?.play(arrayBuffer);
+			} catch (err: any) {
+				console.error(err);
+			}
 		};
 		reader.readAsArrayBuffer(file);
 	};
@@ -267,23 +296,35 @@ const AudioProcessorDemo: React.FC = () => {
 				{/* Configuration */}
 				<div className="configuration">
 					<label htmlFor="sample-rate">采样率:</label>
-					<select id="sample-rate" value={sampleRate} onChange={(e) => setSampleRate(Number(e.target.value))}>
+					<select
+						id="sample-rate"
+						value={sampleRate}
+						onChange={e => setSampleRate(Number(e.target.value))}
+					>
 						<option value="8000">8000</option>
 						<option value="16000">16000</option>
 						<option value="44100">44100</option>
 					</select>
 					<label htmlFor="sample-bits">采样位数:</label>
-					<select id="sample-bits" value={sampleBits} onChange={(e) => setSampleBits(Number(e.target.value))}>
+					<select
+						id="sample-bits"
+						value={sampleBits}
+						onChange={e => setSampleBits(Number(e.target.value))}
+					>
 						<option value="8">8</option>
 						<option value="16">16</option>
 					</select>
 					<label htmlFor="channels">声道数:</label>
-					<select id="channels" value={numChannels} onChange={(e) => setNumChannels(e.target.value)}>
+					<select id="channels" value={numChannels} onChange={e => setNumChannels(e.target.value)}>
 						<option value="单">单</option>
 						<option value="双">双</option>
 					</select>
 					<label htmlFor="mp3-bitrate">MP3 比特率(kbps):</label>
-					<select id="mp3-bitrate" value={mp3Bitrate} onChange={(e) => setMp3Bitrate(Number(e.target.value))}>
+					<select
+						id="mp3-bitrate"
+						value={mp3Bitrate}
+						onChange={e => setMp3Bitrate(Number(e.target.value))}
+					>
 						<option value="96">96</option>
 						<option value="128">128</option>
 						<option value="192">192</option>
@@ -333,11 +374,11 @@ const AudioProcessorDemo: React.FC = () => {
 				{/* Display Information */}
 				<div className="display-info">
 					<div>
-						<span>{Number.isFinite(recordTime) ? recordTime.toFixed(2) : "0.00"}</span>
+						<span>{Number.isFinite(recordTime) ? recordTime.toFixed(2) : '0.00'}</span>
 						<p>录音时长(秒)</p>
 					</div>
 					<div>
-						<span>{Number.isFinite(playTime) ? playTime.toFixed(2) : "0.00"}</span>
+						<span>{Number.isFinite(playTime) ? playTime.toFixed(2) : '0.00'}</span>
 						<p>播放时长(秒)</p>
 					</div>
 					<div>
@@ -345,7 +386,9 @@ const AudioProcessorDemo: React.FC = () => {
 						<p>录音大小</p>
 					</div>
 					<div>
-						<span>{`${Number.isFinite(volumePercentage) ? volumePercentage.toFixed(2) : "0.00"}%`}</span>
+						<span>{`${
+							Number.isFinite(volumePercentage) ? volumePercentage.toFixed(2) : '0.00'
+						}%`}</span>
 						<p>当前录音音量百分比(%)</p>
 					</div>
 				</div>

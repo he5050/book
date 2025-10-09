@@ -1,3 +1,7 @@
+
+export function encodeMP3 (){
+
+}
 /**
  * 在 DataView 的指定偏移量处写入字符串。
  * @param {DataView} view - 要写入的 DataView 实例。
