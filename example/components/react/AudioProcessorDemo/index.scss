@@ -1,120 +1,293 @@
+@use "sass:color";
+
+// 作用域外层，固定高度 500px，取消响应式
 .audio-processor-demo {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    // 主题变量
+    $primary: #1677ff;
+    $danger: #ff4d4f;
+    $bg-page: #f5f7fb;
+    $bg-card: #fff;
+    $border: #eaeaea;
+    $text: #1f2329;
+    $muted: #8c8c8c;
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
-    background-color: #f0f2f5;
-    border-radius: 8px;
-}
+    padding: 16px;
+    background: $bg-page;
 
-.audio-processor-demo h2 {
-    color: #333;
-    margin-bottom: 20px;
-}
 
-.audio-processor-demo .card {
-    background-color: #1a1a1a;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 540px;
-}
+    h2 {
+        color: $text;
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
 
-.audio-processor-demo canvas {
-    width: 100%;
-    height: 100px;
-    border-radius: 8px;
-    background-color: #1a1a1a;
-    display: block;
-}
+    .card {
+        width: 100%;
+        max-width: 100%;
+        background: $bg-card;
+        border-radius: 12px;
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.04),
+            0 6px 20px rgba(0, 0, 0, 0.06);
+        padding: 16px 18px;
 
-.audio-processor-demo .time-display {
-    display: flex;
-    justify-content: space-between;
-    color: #ccc;
-    font-size: 14px;
-    margin-top: 15px;
-    font-family: 'Courier New', Courier, monospace;
-}
+        // 让内容在 500px 高度内可滚动
 
-.audio-processor-demo .controls {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #333;
-}
+    }
 
-.audio-processor-demo .control-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
+    // 顶部参数表单区域：固定三列
+    .configuration {
+        display: grid;
+        grid-template-columns: 80px 1fr 80px 1fr 80px 1fr;
+        gap: 4px 16px;
+        align-items: end;
 
-.audio-processor-demo .control-group h4 {
-    color: #eee;
-    margin: 0 0 10px 0;
-    font-size: 16px;
-    font-weight: 500;
-}
+        label {
+            font-size: 12px;
+            color: $muted;
+            margin-right: 8px;
+            justify-self: end;
+            align-self: center;
+        }
 
-.audio-processor-demo button {
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    min-width: 80px;
-}
+        select {
+            height: 36px;
+            padding: 0 10px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            background: #fff;
+            color: $text;
+            outline: none;
 
-.audio-processor-demo button:hover {
-    background-color: #357abd;
-}
+            &:focus {
+                border-color: $primary;
+                box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.15);
+            }
+        }
 
-.audio-processor-demo button:active {
-    transform: scale(0.98);
-}
+        #sample-rate,
+        #sample-bits,
+        #channels {
+            margin-left: 6px;
+        }
 
-.audio-processor-demo button:disabled {
-    background-color: #555;
-    cursor: not-allowed;
-}
+        .edge-convert-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            grid-column: 1 / -1;
 
-.audio-processor-demo button.stop {
-    background-color: #e94b3c;
-}
+            input[type="checkbox"] {
+                width: 14px;
+                height: 14px;
+                accent-color: $primary;
+            }
 
-.audio-processor-demo button.stop:hover {
-    background-color: #c0392b;
-}
+            label {
+                margin: 0;
+            }
+        }
 
-.audio-processor-demo .downloads {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
+        // 重置按钮保持统一样式
+        button {
+            grid-column: 1 / -1;
+            justify-self: start;
+            height: 36px;
+            padding: 0 14px;
+            border-radius: 6px;
+            border: 1px solid #d9d9d9;
+            background: #fafafa;
+            color: $text;
+            cursor: pointer;
+            transition: all 0.15s ease;
 
-.audio-processor-demo .downloads h4 {
-    color: #eee;
-    margin: 0 0 10px 0;
-    font-size: 16px;
-    font-weight: 500;
-}
+            &:hover {
+                background: #f0f0f0;
+            }
+        }
+    }
 
-.audio-processor-demo .downloads button {
-    background-color: #27ae60;
-}
+    // 分割线
+    .divider {
+        height: 1px;
+        width: 100%;
+        background: $border;
+        margin: 16px 0;
+    }
 
-.audio-processor-demo .downloads button:hover {
-    background-color: #229954;
+    // 控制区：固定两列，左右各一组
+    .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 16px;
+        padding-top: 16px;
+        border-top: 1px solid $border;
+
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+
+            h4 {
+                width: 100%;
+                margin: 0 0 8px 0;
+                font-size: 14px;
+                font-weight: 600;
+                color: $text;
+            }
+        }
+    }
+
+    // 统一按钮样式（固定，不随响应式变化）
+    button {
+        height: 36px;
+        padding: 0 14px;
+        border: 1px solid #d9d9d9;
+        border-radius: 6px;
+        background: #f5f5f5;
+        color: #333;
+        font-size: 14px;
+        line-height: 36px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        min-width: 88px;
+
+        &:hover {
+            background: #eee;
+        }
+
+        &:active {
+            transform: translateY(0.5px);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            color: #999;
+            background: #f2f2f2;
+            border-color: #e5e5e5;
+            box-shadow: none;
+            opacity: 0.8;
+        }
+
+        &.stop {
+            background: $danger;
+            border-color: $danger;
+            color: #fff;
+
+            &:hover {
+                background: color.adjust($danger, $lightness: -4%);
+                border-color: color.adjust($danger, $lightness: -4%);
+            }
+        }
+    }
+
+    // 三项大号统计：固定三列
+    .display-info {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(140px, 1fr));
+        gap: 24px;
+        text-align: center;
+        padding: 20px 0;
+        border-top: 1px solid $border;
+        border-bottom: 1px solid $border;
+        margin-top: 16px;
+
+        >div {
+            span {
+                display: block;
+                font-size: 56px;
+                font-weight: 600;
+                line-height: 1.1;
+                color: $text;
+                margin-bottom: 6px;
+            }
+
+            p {
+                margin: 0;
+                color: $muted;
+                font-size: 13px;
+            }
+        }
+    }
+
+    // 下载分区
+    .downloads {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 16px;
+        border-top: 1px solid $border;
+
+        h4 {
+            margin: 0 0 6px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: $text;
+        }
+
+        button {
+            background: $text;
+            border-color: $text;
+            color: #fff;
+
+            &:hover {
+                background: #000;
+                border-color: #000;
+            }
+        }
+    }
+
+    // 其他音频格式分区
+    .other-formats {
+        padding-top: 16px;
+        border-top: 1px solid $border;
+
+        h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: $text;
+        }
+
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    // 外部音频分区
+    .external-audio {
+        padding-top: 16px;
+        border-top: 1px solid $border;
+
+        h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: $text;
+        }
+
+        input[type="file"] {
+            height: 36px;
+            padding: 6px 8px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            background: #fff;
+            color: $text;
+        }
+    }
+
+    // 波形画布
+    canvas {
+        width: 100%;
+        height: 120px;
+        border-radius: 8px;
+        background: #1a1a1a;
+        display: block;
+        margin-top: 12px;
+    }
 }

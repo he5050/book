@@ -1,0 +1,251 @@
+// 作用域外层，避免全局污染
+.audio-demo {
+  // 设计变量
+  $primary: #1677ff;
+  $danger: #ff4d4f;
+  $text: #1f2329;
+  $muted: #8c8c8c;
+  $border: #eaeaea;
+  $bg: #ffffff;
+  $btn-bg: #f5f5f5;
+  $btn-border: #d9d9d9;
+  $btn-text: #333;
+  $btn-text-weak: #666;
+
+  // 基础排版
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: $text;
+  background: $bg;
+
+  // 通用间距工具
+  .mt-8 {
+    margin-top: 8px;
+  }
+
+  .mt-16 {
+    margin-top: 16px;
+  }
+
+  .mt-24 {
+    margin-top: 24px;
+  }
+
+  .mb-8 {
+    margin-bottom: 8px;
+  }
+
+  .mb-16 {
+    margin-bottom: 16px;
+  }
+
+  .mb-24 {
+    margin-bottom: 24px;
+  }
+
+  // 顶部表单区域
+  .head-form {
+    padding: 12px 0 8px;
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 240px));
+      gap: 16px;
+      align-items: end;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+
+      .form-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        label {
+          font-size: 12px;
+          color: $btn-text-weak;
+        }
+
+        select {
+          height: 36px;
+          padding: 0 10px;
+          border: 1px solid $btn-border;
+          border-radius: 6px;
+          background: #fff;
+          color: $btn-text;
+          outline: none;
+
+          &:focus {
+            border-color: $primary;
+            box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.15);
+          }
+        }
+      }
+    }
+
+    .checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: $btn-text-weak;
+
+      input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        accent-color: $primary;
+      }
+    }
+  }
+
+  // 工具栏：重置与录音控制
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    padding: 12px 0;
+
+    .btn-group {
+      display: inline-flex;
+      gap: 10px;
+    }
+  }
+
+  // 统一按钮风格
+  .btn {
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid $btn-border;
+    border-radius: 6px;
+    background: $btn-bg;
+    color: $btn-text;
+    font-size: 14px;
+    line-height: 36px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: #eee;
+    }
+
+    &:active {
+      transform: translateY(0.5px);
+    }
+
+    &.btn-primary {
+      background: $primary;
+      border-color: $primary;
+      color: #fff;
+
+      &:hover {
+        background: darken($primary, 4%);
+        border-color: darken($primary, 4%);
+      }
+    }
+
+    &.btn-danger {
+      background: $danger;
+      border-color: $danger;
+      color: #fff;
+
+      &:hover {
+        background: darken($danger, 4%);
+        border-color: darken($danger, 4%);
+      }
+    }
+
+    &.btn-dark {
+      background: #111;
+      border-color: #111;
+      color: #fff;
+
+      &:hover {
+        background: #000;
+        border-color: #000;
+      }
+    }
+
+    &.icon-btn {
+      width: 36px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    &.is-disabled,
+    &:disabled {
+      cursor: not-allowed;
+      color: #999;
+      background: #f2f2f2;
+      border-color: #e5e5e5;
+      box-shadow: none;
+      opacity: 0.8;
+    }
+  }
+
+  // 分割线
+  .divider {
+    height: 1px;
+    width: 100%;
+    background: $border;
+    margin: 12px 0 20px;
+  }
+
+  // 指标区（3 列居中）
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(140px, 1fr));
+    gap: 24px;
+    text-align: center;
+    padding: 16px 0 24px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .stat {
+      .value {
+        font-size: 56px;
+        font-weight: 600;
+        line-height: 1.1;
+        color: $text;
+        margin-bottom: 6px;
+      }
+
+      .label {
+        color: $muted;
+        font-size: 13px;
+      }
+    }
+  }
+
+  // 分区模块
+  .section {
+    padding: 10px 0 16px;
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: $text;
+      margin-bottom: 10px;
+    }
+
+    .subtext {
+      font-size: 13px;
+      color: $btn-text-weak;
+      margin-bottom: 8px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+  }
+}
