@@ -189,8 +189,8 @@
     // 三项大号统计：固定三列
     .display-info {
         display: grid;
-        grid-template-columns: repeat(3, minmax(140px, 1fr));
-        gap: 24px;
+        grid-template-columns: repeat(4, minmax(120px, 1fr));
+        gap: 16px;
         text-align: center;
         padding: 20px 0;
         border-top: 1px solid $border;
@@ -200,8 +200,7 @@
         >div {
             span {
                 display: block;
-                font-size: 56px;
-                font-weight: 600;
+                font-size: 16px;
                 line-height: 1.1;
                 color: $text;
                 margin-bottom: 6px;

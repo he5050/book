@@ -180,7 +180,7 @@ class AudioProcessor extends Recorder {
 
 		this.onPlay?.();
 		// 注意：onPlayEnd 回调已在构造函数中统一处理
-		this.player.play(wavData.buffer);
+		this.player.play(wavData.buffer as ArrayBuffer);
 	}
 
 	/**
@@ -275,7 +275,7 @@ class AudioProcessor extends Recorder {
 	 * @returns {Blob} - PCM格式的Blob数据。
 	 */
 	public getPCMBlob(): Blob {
-		return new Blob([this.getPCM()]);
+		return new Blob([this.getPCM().buffer as ArrayBuffer]);
 	}
 
 	/**
@@ -308,7 +308,7 @@ class AudioProcessor extends Recorder {
 	 * @returns {Blob} - WAV格式的Blob数据。
 	 */
 	public getWAVBlob(): Blob {
-		return new Blob([this.getWAV()], { type: 'audio/wav' });
+		return new Blob([this.getWAV().buffer as ArrayBuffer], { type: 'audio/wav' });
 	}
 
 	/**
@@ -367,6 +367,48 @@ class AudioProcessor extends Recorder {
 		}
 
 		return result;
+	}
+
+	/**
+	 * 获取当前录音时长（秒）。
+	 * 录音进行中该值持续增长；停止后为最终时长。
+	 * @returns {number} 录音时长（秒）
+	 */
+	public getDuration(): number {
+		return this.duration;
+	}
+
+	/**
+	 * 获取当前录音的累计大小（字节）。
+	 * 注意：该值在录音进行中实时增长；停止录音后为最终大小。
+	 * @returns {number} 录音字节数
+	 */
+	public getRecordingSize(): number {
+		return this.fileSize;
+	}
+
+	/**
+	 * 获取当前录音音量的百分比（0-100）。
+	 * 通过时域数据的 RMS 计算，未在录音时返回 0。
+	 * @returns {number} 音量百分比
+	 */
+	public getVolumePercentage(): number {
+		// 仅在录音过程中计算（保持与 Demo 预期一致）
+		if (!this.isRecording) return 0;
+
+		const data = this.getTimeDomainData();
+		const len = data?.length ?? 0;
+		if (!len) return 0;
+
+		let sumSquares = 0;
+		for (let i = 0; i < len; i++) {
+			const v = (data[i] - 128) / 128; // 转为 -1..1
+			sumSquares += v * v;
+		}
+		const rms = Math.sqrt(sumSquares / len);
+		const percent = Math.round(rms * 100);
+		// 保护边界
+		return Math.max(0, Math.min(100, percent));
 	}
 }
 

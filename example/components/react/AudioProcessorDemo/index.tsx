@@ -9,6 +9,20 @@ const formatTime = (time: number): string => {
 	return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
 
+// Helper to format bytes with dynamic units
+const formatBytes = (bytes: number): string => {
+	if (!Number.isFinite(bytes) || bytes < 0) return "0 B";
+	const units = ["B", "KB", "MB", "GB", "TB"];
+	let i = 0;
+	let val = bytes;
+	while (val >= 1024 && i < units.length - 1) {
+		val = val / 1024;
+		i++;
+	}
+	const fixed = i === 0 ? 0 : 2; // 字节不保留小数，其他保留两位
+	return `${val.toFixed(fixed)} ${units[i]}`;
+};
+
 const AudioProcessorDemo: React.FC = () => {
 	const audioProcessorRef = useRef<AudioProcessor | null>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -293,15 +307,19 @@ const AudioProcessorDemo: React.FC = () => {
 				{/* Display Information */}
 				<div className="display-info">
 					<div>
-						<span>{recordTime}</span>
+						<span>{Number.isFinite(recordTime) ? recordTime.toFixed(2) : "0.00"}</span>
 						<p>录音时长(秒)</p>
 					</div>
 					<div>
-						<span>{recordSize}</span>
-						<p>录音大小(字节)</p>
+						<span>{Number.isFinite(playTime) ? playTime.toFixed(2) : "0.00"}</span>
+						<p>播放时长(秒)</p>
 					</div>
 					<div>
-						<span>{volumePercentage}</span>
+						<span>{formatBytes(recordSize)}</span>
+						<p>录音大小</p>
+					</div>
+					<div>
+						<span>{`${Number.isFinite(volumePercentage) ? volumePercentage.toFixed(2) : "0.00"}%`}</span>
 						<p>当前录音音量百分比(%)</p>
 					</div>
 				</div>
