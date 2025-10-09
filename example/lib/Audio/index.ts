@@ -3,7 +3,7 @@ import { compress, encodePCM, encodeWAV, encodeMP3 } from './transform';
 import { SpeechProcessor, SpeechRecognizer, SpeechSynthesizer } from './speech';
 import Player from './player';
 import Recorder from './recorder';
-
+// https://github.com/2fps
 /**
  * 录音器配置接口
  */
