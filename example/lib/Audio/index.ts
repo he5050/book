@@ -350,7 +350,15 @@ class AudioProcessor extends Recorder {
 	 * @param {string} type - 文件类型。
 	 */
 	public downloadBlob(blob: Blob, name: string, type: string): void {
-		const clean = this.sanitizeName(name, type.startsWith('audio/wav') ? '.wav' : type.startsWith('audio/mpeg') ? '.mp3' : '');
+		let extension: '.wav' | '.pcm' | '.mp3';
+		if (type.startsWith('audio/wav')) {
+			extension = '.wav';
+		} else if (type.startsWith('audio/mpeg') || type.startsWith('audio/mp3')) {
+			extension = '.mp3';
+		} else {
+			extension = '.pcm'; // 默认
+		}
+		const clean = this.sanitizeName(name, extension);
 		download(blob, clean, type);
 	}
 
@@ -480,7 +488,7 @@ class AudioProcessor extends Recorder {
 	public downloadMP3(name: string = 'recorder', bitrateKbps: number = 128): void {
 		const mp3Blob = this.getMP3Blob(bitrateKbps);
 		const clean = this.sanitizeName(name, '.mp3');
-		this.downloadBlob(mp3Blob, clean, 'audio/mpeg');
+		download(mp3Blob, clean, 'mp3');
 	}
 
 	/**
