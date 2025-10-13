@@ -1,0 +1,337 @@
+.image-mosaic-container {
+  width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  .upload-area {
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 20px;
+
+    &:hover {
+      border-color: #07c160;
+      background-color: #f9fff9;
+    }
+
+    &.active {
+      border-color: #07c160;
+      background-color: #f0f9f4;
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      color: #07c160;
+      margin-bottom: 10px;
+    }
+
+    .upload-text {
+      color: #666;
+      font-size: 14px;
+    }
+  }
+
+  .preview-container {
+    display: none;
+    margin-bottom: 20px;
+    text-align: center;
+
+    &.visible {
+      display: block;
+    }
+
+    .canvas-container {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 15px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: crosshair;
+
+      canvas {
+        display: block;
+        max-width: 100%;
+      }
+    }
+
+    .selection-rect {
+      position: absolute;
+      border: 2px dashed #07c160;
+      background-color: rgba(7, 193, 96, 0.1);
+      pointer-events: none;
+      display: none;
+
+      &.visible {
+        display: block;
+      }
+    }
+
+    .mosaic-area {
+      position: absolute;
+      border: 2px solid #fa5151;
+      background-color: rgba(250, 81, 81, 0.1);
+      cursor: move;
+      display: none;
+
+      &.visible {
+        display: block;
+      }
+
+      .resize-handle {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-color: #fa5151;
+        border: 2px solid #fff;
+        border-radius: 2px;
+        z-index: 10;
+
+        &.resize-nw {
+          top: -6px;
+          left: -6px;
+          cursor: nw-resize;
+        }
+
+        &.resize-ne {
+          top: -6px;
+          right: -6px;
+          cursor: ne-resize;
+        }
+
+        &.resize-sw {
+          bottom: -6px;
+          left: -6px;
+          cursor: sw-resize;
+        }
+
+        &.resize-se {
+          bottom: -6px;
+          right: -6px;
+          cursor: se-resize;
+        }
+      }
+
+      .delete-btn {
+        position: absolute;
+        top: -25px;
+        right: -25px;
+        width: 20px;
+        height: 20px;
+        background-color: #fa5151;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+
+        &:hover {
+          background-color: #e04040;
+        }
+      }
+    }
+
+    .tools {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+
+      .tool-group {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &.btn-primary {
+          background-color: #07c160;
+          color: white;
+
+          &:hover {
+            background-color: #06a451;
+          }
+        }
+
+        &.btn-default {
+          background-color: #f0f0f0;
+          color: #333;
+
+          &:hover {
+            background-color: #e0e0e0;
+          }
+        }
+
+        &.btn-danger {
+          background-color: #fa5151;
+          color: white;
+
+          &:hover {
+            background-color: #e04040;
+          }
+        }
+      }
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+
+      .slider-label {
+        margin-right: 10px;
+        font-size: 14px;
+        color: #666;
+        min-width: 80px;
+      }
+
+      input[type="range"] {
+        flex: 1;
+        height: 4px;
+        -webkit-appearance: none;
+        background: #e0e0e0;
+        border-radius: 2px;
+        outline: none;
+
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #07c160;
+          cursor: pointer;
+        }
+      }
+
+      .size-indicator {
+        margin-left: 10px;
+        font-size: 14px;
+        color: #333;
+        min-width: 40px;
+        text-align: center;
+      }
+    }
+
+    .instructions {
+      background-color: #f9f9f9;
+      border-left: 3px solid #07c160;
+      padding: 12px 15px;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #666;
+
+      h3 {
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      ul {
+        padding-left: 20px;
+        text-align: left;
+
+        li {
+          margin-bottom: 5px;
+        }
+      }
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #666;
+
+      .mode-indicator {
+        display: inline-block;
+        padding: 4px 8px;
+        background-color: #07c160;
+        color: white;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 10px;
+      }
+    }
+  }
+
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    color: #666;
+
+    &.visible {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #07c160;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    }
+  }
+
+  .result-container {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+
+    &.visible {
+      display: block;
+    }
+
+    .result-image {
+      max-width: 100%;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .download-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #07c160;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #06a451;
+      }
+    }
+  }
+}
