@@ -1,0 +1,129 @@
+.core-web-vitals {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  &-header {
+    text-align: center;
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 0 0 8px 0;
+      color: #333;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+  }
+
+  &-metrics {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+
+    .metric-card {
+      flex: 1;
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #e9ecef;
+
+      &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        h4 {
+          margin: 0;
+          color: #495057;
+          font-size: 16px;
+          font-weight: 600;
+        }
+
+        .metric-status {
+          font-size: 12px;
+          font-weight: 500;
+          text-transform: uppercase;
+        }
+      }
+
+      .metric-value {
+        margin-bottom: 10px;
+
+        .value {
+          display: block;
+          font-size: 24px;
+          font-weight: 700;
+          color: #212529;
+          line-height: 1.2;
+        }
+
+        .target {
+          font-size: 12px;
+          color: #6c757d;
+        }
+      }
+
+      .metric-description {
+        margin-top: auto;
+
+        p {
+          margin: 2px 0;
+          font-size: 12px;
+          color: #495057;
+
+          &:first-child {
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  &-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+
+    p {
+      margin: 0;
+      color: #6c757d;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    padding: 15px;
+
+    &-metrics {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    &-header {
+      h3 {
+        font-size: 18px;
+      }
+    }
+  }
+}

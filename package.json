@@ -38,7 +38,8 @@
     "snapdom": "^0.1.2",
     "vitepress": "^1.6.3",
     "vitepress-plugin-legend": "^1.1.0",
-    "vue-flip-motion": "^0.0.9"
+    "vue-flip-motion": "^0.0.9",
+    "web-vitals": "^5.1.0"
   },
   "devDependencies": {
     "@types/howler": "^2.2.12",
