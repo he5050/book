@@ -47,6 +47,9 @@ importers:
       liquid-glass-react:
         specifier: ^1.1.1
         version: 1.1.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      localforage:
+        specifier: ^1.10.0
+        version: 1.10.0
       pinyin-pro:
         specifier: ^3.27.0
         version: 3.27.0
@@ -3794,6 +3797,9 @@ packages:
   imagesloaded@5.0.0:
     resolution: {integrity: sha512-/0JGSubc1MTCoDKVmonLHgbifBWHdyLkun+R/151E1c5n79hiSxcd7cB7mPXFgojYu8xnRZv7GYxzKoxW8BetQ==}
 
+  immediate@3.0.6:
+    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
+
   immer@10.1.3:
     resolution: {integrity: sha512-tmjF/k8QDKydUlm3mZU+tjM6zeq9/fFpPqH9SzWmBnVVKsPBg/V66qsMwb3/Bo90cgUN+ghdVBess+hPsxUyRw==}
 
@@ -4094,6 +4100,9 @@ packages:
   leader-line-vue@2.1.1:
     resolution: {integrity: sha512-ZfNoDcwgfHESNLErfPBdJ4I/1tbXLBUFwGfbqAZvTcOghcm7UtUm7mUPZVAOThlO3q75n8pZmDTGtM/Gwfx+xA==}
 
+  lie@3.1.1:
+    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
+
   lightgallery@2.8.3:
     resolution: {integrity: sha512-s67Z7KZAhIu/io7qs2yIM+8+hUyDQ1ufRtCQwhFnmHVzRQ8cKlxf53CxS/DpJ0sDGOWHNx5L6Y3PfACQxiH+8A==}
     engines: {node: '>=6.0.0'}
@@ -4125,6 +4134,9 @@ packages:
   local-pkg@1.1.2:
     resolution: {integrity: sha512-arhlxbFRmoQHl33a0Zkle/YWlmNwoyt6QNZEIJcqNbdrsix5Lvc4HyyI3EnwxTYlZYc32EbYrQ8SzEZ7dqgg9A==}
     engines: {node: '>=14'}
+
+  localforage@1.10.0:
+    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
 
   lodash-es@4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
@@ -10651,6 +10663,8 @@ snapshots:
     dependencies:
       ev-emitter: 2.1.2
 
+  immediate@3.0.6: {}
+
   immer@10.1.3: {}
 
   immutable@5.1.2: {}
@@ -10893,6 +10907,10 @@ snapshots:
 
   leader-line-vue@2.1.1: {}
 
+  lie@3.1.1:
+    dependencies:
+      immediate: 3.0.6
+
   lightgallery@2.8.3: {}
 
   lilconfig@3.1.3: {}
@@ -10940,6 +10958,10 @@ snapshots:
       mlly: 1.8.0
       pkg-types: 2.3.0
       quansync: 0.2.11
+
+  localforage@1.10.0:
+    dependencies:
+      lie: 3.1.1
 
   lodash-es@4.17.21: {}
 

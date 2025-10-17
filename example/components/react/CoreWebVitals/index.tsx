@@ -9,8 +9,6 @@ interface Metric {
 }
 
 interface CoreWebVitalsProps {
-	width?: number;
-	height?: number;
 	lcpValue?: number;
 	inpValue?: number;
 	clsValue?: number;
@@ -19,8 +17,6 @@ interface CoreWebVitalsProps {
 }
 
 const CoreWebVitals: React.FC<CoreWebVitalsProps> = ({
-	width = 500,
-	height = 300,
 	lcpValue,
 	inpValue,
 	clsValue,
@@ -120,7 +116,7 @@ const CoreWebVitals: React.FC<CoreWebVitalsProps> = ({
 	};
 
 	return (
-		<div className={`core-web-vitals ${className}`} style={{ width, height }}>
+		<div className={`core-web-vitals ${className}`}>
 			<div className="core-web-vitals-header">
 				<h3>Core Web Vitals 指标</h3>
 				<p>实时监控页面性能指标</p>

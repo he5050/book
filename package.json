@@ -20,6 +20,7 @@
     "html2canvas": "^1.4.1",
     "lamejs": "^1.2.1",
     "liquid-glass-react": "^1.1.1",
+    "localforage": "^1.10.0",
     "pinyin-pro": "^3.27.0",
     "pinyinjs": "^2.2.1",
     "rc-virtual-list": "^3.19.2",
