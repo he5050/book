@@ -47,7 +47,7 @@ flowchart TD
 
 ### 基本使用
 
-``vue
+```vue
 <template>
 <Flip :mutation="list">
 <div v-for="item in list" :key="item.id">
@@ -71,7 +71,7 @@ const list = ref([
 
 ### 高级使用
 
-``vue
+```vue
 <template>
 	<Flip
 		:mutation="list"
@@ -118,7 +118,7 @@ const onAnimationFinish = element => {
 
 FlipMotion 组件支持嵌套使用，可以实现更复杂的动画效果：
 
-``vue
+```vue
 <template>
 <Flip
 :mutation="list"
@@ -150,7 +150,7 @@ selector=".item"
 
 通过 `selector` 属性可以精确控制需要动画的元素：
 
-``vue
+```vue
 <template>
 <Flip
 :mutation="list"
@@ -173,7 +173,7 @@ selector=".animated-item"
 
 在列表过滤场景中，FlipMotion 可以自动处理元素的进入和离开动画：
 
-``vue
+```vue
 <template>
 <Flip
 :mutation="filteredList"
