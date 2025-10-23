@@ -1,0 +1,96 @@
+.mobile-adaptation-rem {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+
+  .demo-container {
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    color: #333;
+  }
+
+  .demo-title {
+    text-align: center;
+    font-size: 24px;
+    margin: 0 0 24px 0;
+    font-weight: 600;
+  }
+
+  .demo-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .block {
+    flex: 1;
+    min-width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    .inner {
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+
+  .block-1 {
+    background: linear-gradient(45deg, #ff9a9e, #fecfef);
+
+    .inner {
+      color: #333;
+    }
+  }
+
+  .block-2 {
+    background: linear-gradient(45deg, #a1c4fd, #c2e9fb);
+
+    .inner {
+      color: #333;
+    }
+  }
+
+  .block-3 {
+    background: linear-gradient(45deg, #ffecd2, #fcb69f);
+
+    .inner {
+      color: #333;
+    }
+  }
+
+  .config-info {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    padding: 16px;
+
+    p {
+      margin: 8px 0;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // REM适配使用相对单位，不需要固定样式
+}
