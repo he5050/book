@@ -1,0 +1,38 @@
+.eye-tracking-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: radial-gradient(#f2761e, #ef4921);
+
+  .eye-box {
+    display: flex;
+  }
+
+  .eye {
+    position: relative;
+    display: block;
+    margin: 0 20px;
+    border-radius: 50%;
+    border: 2px solid #333;
+
+    .eye-pupil {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      box-sizing: border-box;
+      transition: transform 0.1s ease-out;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .eye-tracking-container {
+    .eye {
+      margin: 0 10px;
+    }
+  }
+}
