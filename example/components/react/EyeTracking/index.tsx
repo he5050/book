@@ -16,12 +16,12 @@ interface EyeTrackingProps {
 const EyeTracking: React.FC<EyeTrackingProps> = ({
 	eyeSize = 120,
 	pupilSize = 45,
-	eyeColor = '#ffffff',
-	pupilColor = '#000000',
-	borderColor = '#f2761e',
+	eyeColor = '#f0f0f0',
+	pupilColor = '#333333',
+	borderColor = '#cccccc',
 	pupilBorderWidth = 10,
-	pupilBorderColor = '#2196f3',
-	shadowColor = 'rgba(0,0,0,0.2)',
+	pupilBorderColor = '#999999',
+	shadowColor = 'rgba(0,0,0,0.1)',
 	containerClass = ''
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null);

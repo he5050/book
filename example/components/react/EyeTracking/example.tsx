@@ -17,11 +17,11 @@ const EyeTrackingExample: React.FC = () => {
 			<EyeTracking
 				eyeSize={100}
 				pupilSize={35}
-				eyeColor="#ffffff"
-				pupilColor="#000000"
-				borderColor="#f2761e"
+				eyeColor="#f8f8f8"
+				pupilColor="#333333"
+				borderColor="#cccccc"
 				pupilBorderWidth={8}
-				pupilBorderColor="#2196f3"
+				pupilBorderColor="#999999"
 			/>
 		</div>
 	);

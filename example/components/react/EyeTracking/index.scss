@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: radial-gradient(#f2761e, #ef4921);
+  background: radial-gradient(#e0e0e0, #c0c0c0);
 
   .eye-box {
     display: flex;
@@ -14,7 +14,7 @@
     display: block;
     margin: 0 20px;
     border-radius: 50%;
-    border: 2px solid #333;
+    border: 2px solid #999999;
 
     .eye-pupil {
       position: absolute;
