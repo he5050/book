@@ -3,20 +3,20 @@ import MovieSeatSelection from './index';
 
 const MovieSeatSelectionExample: React.FC = () => {
 	const handleSeatSelect = (seats: any[]) => {
-		console.log('选中座位:', seats);
+		console.log('选中的座位:', seats);
 	};
 
 	return (
-		<div
-			className="movie-seat-selection-demo"
-			style={{ width: '600px', height: '500px', margin: '0 auto' }}
-		>
-			<MovieSeatSelection
-				width={600}
-				height={500}
-				onSeatSelect={handleSeatSelect}
-				userId="user123"
-			/>
+		<div style={{ padding: '20px' }}>
+			<h2>电影选座示例</h2>
+			<div style={{ width: '100%', height: '500px' }}>
+				<MovieSeatSelection
+					width={800}
+					height={500}
+					onSeatSelect={handleSeatSelect}
+					userId="currentUser"
+				/>
+			</div>
 		</div>
 	);
 };

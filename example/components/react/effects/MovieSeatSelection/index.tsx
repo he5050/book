@@ -5,7 +5,7 @@ interface Seat {
 	id: string;
 	row: number;
 	seat: number;
-	status: 'available' | 'selected' | 'occupied' | 'selectedByOther';
+	status: 'available' | 'selected' | 'occupied';
 	selectedBy?: string;
 }
 
@@ -26,7 +26,7 @@ interface MovieSeatSelectionProps {
 // 座位颜色配置
 const SEAT_COLORS = {
 	available: '#4CAF50', // 可选 - 绿色
-	selected: '#2196F3', // 已选 - 蓝色
+	selected: '#2196F3', // 我选的 - 蓝色
 	occupied: '#F44336', // 已售 - 红色
 	selectedByOther: '#FF9800', // 他人已选 - 橙色
 	hover: '#81C784' // 悬停 - 浅绿色
@@ -43,7 +43,7 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 	width = 600,
 	height = 400,
 	onSeatSelect,
-	userId = Math.random().toString(36).substr(2, 9),
+	userId = 'currentUser',
 	className = ''
 }) => {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -61,13 +61,36 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 		for (let row = 0; row < rows; row++) {
 			for (let seat = 0; seat < seatsPerRow; seat++) {
 				const seatId = `${row}-${seat}`;
-				seats[seatId] = {
-					id: seatId,
-					row,
-					seat,
-					status: Math.random() > 0.7 ? 'occupied' : 'available',
-					selectedBy: undefined
-				};
+				// 模拟不同状态的座位
+				const random = Math.random();
+				if (random > 0.7) {
+					// 已售座位
+					seats[seatId] = {
+						id: seatId,
+						row,
+						seat,
+						status: 'occupied',
+						selectedBy: undefined
+					};
+				} else if (random > 0.5) {
+					// 他人选中的座位
+					seats[seatId] = {
+						id: seatId,
+						row,
+						seat,
+						status: 'selected',
+						selectedBy: 'otherUser' + Math.floor(Math.random() * 100)
+					};
+				} else {
+					// 可选座位
+					seats[seatId] = {
+						id: seatId,
+						row,
+						seat,
+						status: 'available',
+						selectedBy: undefined
+					};
+				}
 			}
 		}
 
@@ -87,6 +110,11 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 			setSelectedSeats(selected);
 		}
 	}, [seatData, userId]);
+
+	// 监听selectedSeats变化
+	useEffect(() => {
+		// 空的useEffect，仅用于触发重新渲染
+	}, [selectedSeats]);
 
 	// 设备像素比适配
 	const drawSeatMap = useCallback(() => {
@@ -143,7 +171,7 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 			const y = CANVAS_PADDING + 60 + row * ROW_SPACING + SEAT_SIZE / 2 + 5;
 			ctx.fillText(`${row + 1}`, CANVAS_PADDING / 2, y);
 		}
-	}, [seatData, hoveredSeat, selectedSeats]);
+	}, [seatData, hoveredSeat, selectedSeats, userId]);
 
 	// 绘制圆角矩形
 	const drawRoundedRect = (
@@ -184,7 +212,7 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 		if (seatInfo.status === 'occupied') {
 			color = SEAT_COLORS.occupied;
 		} else if (seatInfo.status === 'selected') {
-			// 确保当前用户选中的座位显示蓝色
+			// 确保当前用户选中的座位显示蓝色，其他用户选中的显示橙色
 			color = seatInfo.selectedBy === userId ? SEAT_COLORS.selected : SEAT_COLORS.selectedByOther;
 		} else if (seatInfo.status === 'available' && hoveredSeat === seatId) {
 			color = SEAT_COLORS.hover;
@@ -204,17 +232,22 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 		// 显示座位号，已选座位也显示座位号而不是"已选"文字
 		if (seatInfo.status === 'occupied') {
 			ctx.fillText('已售', x + SEAT_SIZE / 2, y + SEAT_SIZE / 2);
+		} else if (seatInfo.status === 'selected' && seatInfo.selectedBy === userId) {
+			// 我选的座位显示特殊标记
+			ctx.fillText('我选', x + SEAT_SIZE / 2, y + SEAT_SIZE / 2);
+		} else if (seatInfo.status === 'selected' && seatInfo.selectedBy !== userId) {
+			// 他人选的座位显示特殊标记
+			ctx.fillText('他选', x + SEAT_SIZE / 2, y + SEAT_SIZE / 2);
 		} else {
-			// 所有可选和已选座位都显示座位号
+			// 可选座位显示座位号
 			ctx.fillText(`${row + 1}-${seat + 1}`, x + SEAT_SIZE / 2, y + SEAT_SIZE / 2);
 		}
 	};
 
 	// 重绘座位图
 	useEffect(() => {
-		console.log('重绘座位图，selectedSeats:', selectedSeats);
 		drawSeatMap();
-	}, [seatData, hoveredSeat, selectedSeats, drawSeatMap]);
+	}, [seatData, hoveredSeat, selectedSeats, drawSeatMap, userId]);
 
 	// 窗口大小变化时重绘
 	useEffect(() => {
@@ -245,6 +278,7 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 					const seatId = `${row}-${seat}`;
 					const seatInfo = seatData.seats[seatId];
 
+					// 只有可选和当前用户选中的座位才能操作
 					if (seatInfo && seatInfo.status !== 'occupied') {
 						// 切换选择状态
 						const newSeatData = { ...seatData };
@@ -263,19 +297,17 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 								status: 'available',
 								selectedBy: undefined
 							};
-						} else if (seatInfo.status === 'selected' && seatInfo.selectedBy !== userId) {
-							// 其他用户选择的座位，不允许操作
-							return;
 						}
+
+						// 更新座位数据
 						setSeatData(newSeatData);
 
-						// 更新座位数据，选中座位列表会通过 useEffect 自动更新
-						setSeatData(newSeatData);
-						onSeatSelect?.(
-							Object.values(newSeatData.seats).filter(
-								s => s.status === 'selected' && s.selectedBy === userId
-							)
+						// 更新选中座位列表
+						const updatedSelectedSeats = Object.values(newSeatData.seats).filter(
+							s => s.status === 'selected' && s.selectedBy === userId
 						);
+						setSelectedSeats(updatedSelectedSeats);
+						onSeatSelect?.(updatedSelectedSeats);
 					}
 					return;
 				}
@@ -373,7 +405,7 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 					</div>
 					<div className="legend-item">
 						<div className="legend-color selected"></div>
-						<span>已选</span>
+						<span>我选的</span>
 					</div>
 					<div className="legend-item">
 						<div className="legend-color occupied"></div>
@@ -397,20 +429,27 @@ const MovieSeatSelection: React.FC<MovieSeatSelectionProps> = ({
 			</div>
 			<div className="selection-info">
 				<div className="selected-seats">
-					已选座位: {selectedSeats.map(s => `${s.row + 1}排${s.seat + 1}座`).join(', ') || '无'}
+					已选座位:{' '}
+					<span className="highlight">
+						{selectedSeats.length > 0
+							? selectedSeats.map(s => `${s.row + 1}排${s.seat + 1}座`).join(', ')
+							: '无'}
+					</span>
 				</div>
-				<button
-					className="confirm-button"
-					disabled={selectedSeats.length === 0}
-					onClick={handleConfirmSeats}
-				>
-					确认选座
-				</button>
-				{confirmedSeats.length > 0 && (
-					<button className="reset-button" onClick={handleResetSeats}>
-						重置选座
+				<div>
+					<button
+						className="confirm-button"
+						disabled={selectedSeats.length === 0}
+						onClick={handleConfirmSeats}
+					>
+						确认选座
 					</button>
-				)}
+					{confirmedSeats.length > 0 && (
+						<button className="reset-button" onClick={handleResetSeats}>
+							重置选座
+						</button>
+					)}
+				</div>
 			</div>
 		</div>
 	);

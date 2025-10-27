@@ -78,11 +78,17 @@
     .selected-seats {
       flex: 1;
       font-size: 14px;
-      color: #666;
+      color: #333;
+      font-weight: bold;
       margin-right: 16px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+
+      span.highlight {
+        color: #2196F3;
+        font-weight: bold;
+      }
     }
 
     .confirm-button {
