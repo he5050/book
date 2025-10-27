@@ -1,0 +1,190 @@
+.id-card-recognition {
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  .recognition-header {
+    padding: 16px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+
+    h3 {
+      margin: 0 0 8px 0;
+      color: #333;
+      font-size: 18px;
+    }
+
+    .status {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+  }
+
+  .recognition-content {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f2f5;
+
+    .upload-area {
+      width: 100%;
+      height: 200px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+
+      .upload-placeholder {
+        text-align: center;
+        color: #999;
+
+        .upload-icon {
+          font-size: 48px;
+          margin-bottom: 8px;
+        }
+
+        p {
+          margin: 0;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .result-container {
+      text-align: center;
+      width: 100%;
+
+      .result-image {
+        max-width: 100%;
+        max-height: 200px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      p {
+        margin: 8px 0 0 0;
+        color: #666;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .recognition-controls {
+    padding: 16px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+
+    .upload-button {
+      padding: 10px 20px;
+      background: #007aff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+
+      &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      &:hover:not(:disabled) {
+        background: #0056cc;
+      }
+    }
+
+    .reset-button {
+      padding: 10px 20px;
+      background: #ff9500;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+
+      &:hover {
+        background: #cc7700;
+      }
+    }
+  }
+
+  .recognition-info {
+    padding: 16px;
+    background: #eef5ff;
+    border-top: 1px solid #d0dfff;
+
+    h4 {
+      margin: 0 0 8px 0;
+      color: #333;
+      font-size: 16px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+
+      li {
+        margin-bottom: 4px;
+        color: #555;
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .id-card-recognition {
+    .recognition-header {
+      padding: 12px;
+
+      h3 {
+        font-size: 16px;
+      }
+
+      .status {
+        font-size: 12px;
+      }
+    }
+
+    .recognition-content {
+      padding: 12px;
+    }
+
+    .recognition-controls {
+      padding: 12px;
+      flex-direction: column;
+
+      .upload-button,
+      .reset-button {
+        width: 100%;
+      }
+    }
+
+    .recognition-info {
+      padding: 12px;
+
+      h4 {
+        font-size: 14px;
+      }
+
+      ul {
+        li {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
