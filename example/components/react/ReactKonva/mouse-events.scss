@@ -1,19 +1,26 @@
 .mouse-events {
-  .status {
-    margin-bottom: 15px;
-
-    p {
-      margin: 5px 0;
-      padding: 8px;
-      background-color: #f0f0f0;
-      border-radius: 4px;
-      font-weight: 500;
-    }
-  }
-
-  .demo-stage {
-    border: 1px solid #eee;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-  }
+	.react-konva-demo-container {
+		padding: 20px;
+		
+		.status {
+			margin-bottom: 15px;
+			
+			p {
+				margin: 5px 0;
+				padding: 10px 15px;
+				background-color: #e9f5ff;
+				border-radius: 6px;
+				font-weight: 500;
+				color: #2c5282;
+				border-left: 4px solid #4361ee;
+			}
+		}
+		
+		.demo-stage {
+			border: 1px solid #e0e0e0;
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+			border-radius: 10px;
+			background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+		}
+	}
 }

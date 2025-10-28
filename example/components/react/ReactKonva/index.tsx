@@ -5,6 +5,7 @@ import ComplexAnimation from './ComplexAnimation';
 import RotatableRect from './RotatableRect';
 import MouseEvents from './MouseEvents';
 import ConfigurableDemo from './ConfigurableDemo';
+import EnhancedConfigurator from './EnhancedConfigurator';
 import './index.scss';
 
 const ReactKonvaDemo: React.FC = () => {
@@ -46,7 +47,7 @@ const ReactKonvaDemo: React.FC = () => {
 				<h3>6. 可配置参数示例</h3>
 				<p>展示如何通过参数配置控制图形的外观和行为。</p>
 				<ConfigurableDemo
-					width={500}
+					width={600}
 					height={300}
 					rectCount={8}
 					fillColor="#ff6b6b"
@@ -54,6 +55,12 @@ const ReactKonvaDemo: React.FC = () => {
 					strokeWidth={2}
 					draggable={true}
 				/>
+			</div>
+
+			<div className="demo-section">
+				<h3>7. 增强配置器</h3>
+				<p>功能丰富的配置器，支持实时调整画布和图形属性。</p>
+				<EnhancedConfigurator />
 			</div>
 		</div>
 	);
