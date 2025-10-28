@@ -34,7 +34,8 @@ const teekConfig = defineTeekConfig({
 				'.vscode',
 				'docs',
 				'模板.md',
-				'README.md'
+				'README.md',
+				'other-demo'
 			]
 		},
 		sidebarOption: {
@@ -48,7 +49,8 @@ const teekConfig = defineTeekConfig({
 				'.vscode',
 				'docs',
 				'模板.md',
-				'README.md'
+				'README.md',
+				'other-demo'
 			],
 			initItems: false,
 			restart: false
