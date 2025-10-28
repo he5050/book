@@ -1,0 +1,25 @@
+.react-konva-demo {
+  padding: 20px;
+
+  .demo-section {
+    margin-bottom: 30px;
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #666;
+    }
+  }
+
+  .react-konva-demo-container {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+}

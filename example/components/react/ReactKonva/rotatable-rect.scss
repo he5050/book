@@ -1,0 +1,22 @@
+.rotatable-rect {
+  .controls {
+    margin-bottom: 15px;
+
+    label {
+      display: inline-block;
+      margin-right: 10px;
+      font-weight: 500;
+    }
+
+    .rotation-slider {
+      width: 200px;
+      vertical-align: middle;
+    }
+  }
+
+  .demo-stage {
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+}

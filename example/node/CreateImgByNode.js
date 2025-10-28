@@ -339,7 +339,7 @@ async function runExample() {
 		['#8338EC', '#FFBE0B'],
 		'一次生成多种格式的缩略图',
 		'效率工具',
-		'🚀',
+		'',
 		{ createMultipleFormats: true, quality: 90 }
 	);
 	console.log(result3);

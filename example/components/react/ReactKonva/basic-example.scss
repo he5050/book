@@ -1,0 +1,26 @@
+.react-konva-demo-container {
+  .controls {
+    margin-bottom: 15px;
+
+    .control-button {
+      padding: 8px 16px;
+      margin-right: 10px;
+      background-color: #4169e1;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+
+      &:hover {
+        background-color: #3456c0;
+      }
+    }
+  }
+
+  .demo-stage {
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+}

@@ -30,7 +30,7 @@ const CardFlip3DExample: React.FC = () => {
 			>
 				<CardFlip3D />
 				<CardFlip3D
-					frontIcon="🚀"
+					frontIcon=""
 					frontTitle="极致性能"
 					frontContent="体验卓越的性能表现"
 					backTitle="性能优化"

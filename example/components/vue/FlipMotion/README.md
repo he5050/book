@@ -19,8 +19,8 @@ FlipMotion 是一个基于 FLIP (First Last Invert Play) 动画技术封装的 V
 
 - 🌟 FLIP 动画技术实现
 - 📏 支持位置、尺寸、颜色等多种属性动画
-- ⚙️ 可自定义动画参数（时长、缓动函数等）
-- 🎯 支持自定义选择器和嵌套动画
+- 可自定义动画参数（时长、缓动函数等）
+- 支持自定义选择器和嵌套动画
 - 📱 响应式设计，适配不同屏幕尺寸
 
 ## 工作原理
@@ -49,11 +49,11 @@ flowchart TD
 
 ```vue
 <template>
-<Flip :mutation="list">
-<div v-for="item in list" :key="item.id">
-{{ item.name }}
-</div>
-</Flip>
+	<Flip :mutation="list">
+		<div v-for="item in list" :key="item.id">
+			{{ item.name }}
+		</div>
+	</Flip>
 </template>
 
 <script setup>
@@ -66,7 +66,6 @@ const list = ref([
 	{ id: 3, name: '项目 C' }
 ]);
 </script>
-
 ```
 
 ### 高级使用
@@ -112,7 +111,7 @@ const onAnimationFinish = element => {
 </script>
 ```
 
-## 🚀 高级用法
+## 高级用法
 
 ### 嵌套动画
 
@@ -120,29 +119,22 @@ FlipMotion 组件支持嵌套使用，可以实现更复杂的动画效果：
 
 ```vue
 <template>
-<Flip
-:mutation="list"
-:animate-option="{duration: 800}"
-:styles="['position-x','position-y']"
-selector=".item"
-
->
-
-    <div class="container">
-      <div v-for="item in list" :key="item.id" class="item">
-        <Flip
-          :mutation="item"
-          :styles="['backgroundColor']"
-          :animate-option="{duration: 500}"
-        >
-          <div :style="{backgroundColor: item.color}">
-            {{ item.name }}
-          </div>
-        </Flip>
-      </div>
-    </div>
-
-  </Flip>
+	<Flip
+		:mutation="list"
+		:animate-option="{ duration: 800 }"
+		:styles="['position-x', 'position-y']"
+		selector=".item"
+	>
+		<div class="container">
+			<div v-for="item in list" :key="item.id" class="item">
+				<Flip :mutation="item" :styles="['backgroundColor']" :animate-option="{ duration: 500 }">
+					<div :style="{ backgroundColor: item.color }">
+						{{ item.name }}
+					</div>
+				</Flip>
+			</div>
+		</div>
+	</Flip>
 </template>
 ```
 
@@ -152,20 +144,13 @@ selector=".item"
 
 ```vue
 <template>
-<Flip
-:mutation="list"
-selector=".animated-item"
-:animate-option="{duration: 500}"
-
->
-
-    <div class="wrapper">
-      <div class="animated-item" v-for="item in list" :key="item.id">
-        {{ item.text }}
-      </div>
-    </div>
-
-  </Flip>
+	<Flip :mutation="list" selector=".animated-item" :animate-option="{ duration: 500 }">
+		<div class="wrapper">
+			<div class="animated-item" v-for="item in list" :key="item.id">
+				{{ item.text }}
+			</div>
+		</div>
+	</Flip>
 </template>
 ```
 
@@ -175,28 +160,21 @@ selector=".animated-item"
 
 ```vue
 <template>
-<Flip
-:mutation="filteredList"
-:animate-option="{duration: 500}"
-:styles="['position-x', 'position-y', 'opacity']"
-
->
-
-    <div class="list-container">
-      <div
-        v-for="item in filteredList"
-        :key="item.id"
-        :style="{opacity: 1}"
-      >
-        {{ item.name }}
-      </div>
-    </div>
-
-  </Flip>
+	<Flip
+		:mutation="filteredList"
+		:animate-option="{ duration: 500 }"
+		:styles="['position-x', 'position-y', 'opacity']"
+	>
+		<div class="list-container">
+			<div v-for="item in filteredList" :key="item.id" :style="{ opacity: 1 }">
+				{{ item.name }}
+			</div>
+		</div>
+	</Flip>
 </template>
 ```
 
-## 🎯 应用场景
+## 应用场景
 
 ### 1. 网格布局动画
 
