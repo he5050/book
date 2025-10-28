@@ -318,7 +318,7 @@ async function runExample() {
 		['#FF6B6B', '#4ECDC4'],
 		'如何用 Node.JS 和 Canvas 自动生成精美的文章缩略图',
 		'技术教程',
-		'🎨'
+		''
 	);
 	console.log(result1);
 
@@ -328,7 +328,7 @@ async function runExample() {
 		['#3A86FF', '#FF006E'],
 		'WebP格式的图片体积更小，加载更快',
 		'性能优化',
-		'⚡',
+		'',
 		{ format: 'webp', quality: 85 }
 	);
 	console.log(result2);

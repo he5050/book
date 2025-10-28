@@ -347,7 +347,7 @@ export const CardClockDemo: React.FC = () => {
 
 							{/* 主题选择 */}
 							<div>
-								<h3 style={{ marginBottom: '16px', color: '#333' }}>🎨 主题选择</h3>
+								<h3 style={{ marginBottom: '16px', color: '#333' }}> 主题选择</h3>
 								<div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 									{(['light', 'dark', 'gradient'] as const).map(t => (
 										<label
@@ -412,7 +412,7 @@ export const CardClockDemo: React.FC = () => {
 								overflow: 'auto'
 							}}
 						>
-							<h4 style={{ marginBottom: '12px', color: '#333' }}>📝 当前配置代码：</h4>
+							<h4 style={{ marginBottom: '12px', color: '#333' }}> 当前配置代码：</h4>
 							<pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
 								{`<CardClock
   ${customDate ? `customDate="${customDate}"` : '// 实时时间'}

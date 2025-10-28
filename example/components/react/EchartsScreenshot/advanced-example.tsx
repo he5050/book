@@ -321,7 +321,7 @@ const AdvancedEchartsScreenshot: React.FC = () => {
 			{/* 操作按钮 */}
 			<div className="advanced-echarts-controls">
 				<button onClick={updateChartData} disabled={isLoading} className="update-data-btn">
-					🔄 更新图表数据
+					更新图表数据
 				</button>
 			</div>
 

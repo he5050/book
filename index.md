@@ -29,7 +29,7 @@ features:
   - icon: 🎇
     title: 示例
     details: 记录日常使用的示例
-  - icon: 📝
+  - icon:
     title: 收藏
     details: 记录日常使用的收藏
 ---
