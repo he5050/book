@@ -23,6 +23,8 @@ const teekConfig = defineTeekConfig({
 	articleShare: { enabled: true },
 	vitePlugins: {
 		autoFrontmatter: true,
+		mdH1: true,
+		fileContentLoaderIgnore: ['other-demo'],
 		permalinkOption: {
 			ignoreList: [
 				'.vitepress',
@@ -35,7 +37,7 @@ const teekConfig = defineTeekConfig({
 				'docs',
 				'模板.md',
 				'README.md',
-				'other-demo'
+				'.local'
 			]
 		},
 		sidebarOption: {
@@ -50,7 +52,7 @@ const teekConfig = defineTeekConfig({
 				'docs',
 				'模板.md',
 				'README.md',
-				'other-demo'
+				'.local'
 			],
 			initItems: false,
 			restart: false
@@ -70,6 +72,7 @@ export default withMermaid(
 		title: '点滴',
 		description: '点滴-笔记',
 		lastUpdated: true,
+		srcExclude: ['other-demo/**/*'],
 		head: [
 			['link', { rel: 'icon', type: 'image/svg+xml', href: '/teek-logo-mini.svg' }],
 			['link', { rel: 'icon', type: 'image/png', href: '/teek-logo-mini.png' }],
@@ -93,6 +96,18 @@ export default withMermaid(
 			plugins: [react(), unocss(unoConfig), codeInspectorPlugin({ bundler: 'vite' })],
 			optimizeDeps: {
 				include: ['mermaid'] // ✅ Mermaid 需要
+			},
+			server: {
+				watch: {
+					// 开发环境下忽略监听这些文件夹（避免不必要的热更新）
+					ignored: ['**/other-demo/**']
+				}
+			},
+			build: {
+				rollupOptions: {
+					// 构建时将这些文件夹排除在打包外
+					external: ['**/other-demo/**']
+				}
 			}
 		},
 		themeConfig: {
