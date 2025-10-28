@@ -1,12 +1,12 @@
 .complex-animation {
-	.react-konva-demo-container {
-		padding: 20px;
-		
-		.demo-stage {
-			border: 1px solid #e0e0e0;
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-			border-radius: 12px;
-			background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-		}
-	}
+  .react-konva-demo-container {
+    padding: 20px;
+
+    .demo-stage {
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+  }
 }

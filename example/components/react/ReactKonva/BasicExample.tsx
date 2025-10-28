@@ -34,10 +34,10 @@ const BasicExample: React.FC = () => {
 		{ x: 200, y: 50, width: 120, height: 70, color: COLOR_SCHEMES.modern.secondary },
 		{ x: 350, y: 50, width: 80, height: 80, color: COLOR_SCHEMES.modern.accent }
 	]);
-	
+
 	// 状态：记录当前是否在拖拽矩形
 	const [isDragging, setIsDragging] = useState(false);
-	
+
 	// 状态：当前配色方案
 	const [colorScheme, setColorScheme] = useState('modern');
 
@@ -45,8 +45,9 @@ const BasicExample: React.FC = () => {
 	const addRectangle = () => {
 		const colors = COLOR_SCHEMES[colorScheme as keyof typeof COLOR_SCHEMES];
 		const colorKeys = Object.keys(colors);
-		const randomColor = colors[colorKeys[Math.floor(Math.random() * colorKeys.length)] as keyof typeof colors];
-		
+		const randomColor =
+			colors[colorKeys[Math.floor(Math.random() * colorKeys.length)] as keyof typeof colors];
+
 		setRectangles([
 			...rectangles,
 			{
@@ -82,10 +83,12 @@ const BasicExample: React.FC = () => {
 	const handleColorSchemeChange = (scheme: string) => {
 		setColorScheme(scheme);
 		const colors = COLOR_SCHEMES[scheme as keyof typeof COLOR_SCHEMES];
-		setRectangles(rectangles.map((rect, index) => ({
-			...rect,
-			color: Object.values(colors)[index % Object.values(colors).length]
-		})));
+		setRectangles(
+			rectangles.map((rect, index) => ({
+				...rect,
+				color: Object.values(colors)[index % Object.values(colors).length]
+			}))
+		);
 	};
 
 	// 清空所有矩形
@@ -106,9 +109,9 @@ const BasicExample: React.FC = () => {
 				{/* 配色方案选择 */}
 				<div className="color-scheme-selector">
 					<label>配色方案:</label>
-					<select 
-						value={colorScheme} 
-						onChange={(e) => handleColorSchemeChange(e.target.value)}
+					<select
+						value={colorScheme}
+						onChange={e => handleColorSchemeChange(e.target.value)}
 						className="scheme-select"
 					>
 						<option value="modern">现代</option>
@@ -144,13 +147,13 @@ const BasicExample: React.FC = () => {
 							shadowOffsetY={2}
 							// 鼠标悬停时显示指针
 							onMouseOver={e => {
-								e.target.setAttrs({ 
+								e.target.setAttrs({
 									stroke: '#ff0', // 悬停时边框变黄
 									shadowBlur: 10
 								});
 							}}
 							onMouseOut={e => {
-								e.target.setAttrs({ 
+								e.target.setAttrs({
 									stroke: '#fff', // 离开时恢复边框颜色
 									shadowBlur: 5
 								});

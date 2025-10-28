@@ -52,7 +52,7 @@ const MouseEvents: React.FC = () => {
 						shadowOffsetY={3}
 						cornerRadius={8}
 					/>
-					
+
 					{/* 圆形 - 支持点击和悬停 */}
 					<Circle
 						x={positions.circle1.x}
@@ -69,7 +69,7 @@ const MouseEvents: React.FC = () => {
 						shadowOffsetX={3}
 						shadowOffsetY={3}
 					/>
-					
+
 					{/* 绿色矩形 - 支持点击和拖拽 */}
 					<Rect
 						x={positions.rect2.x}
@@ -91,7 +91,7 @@ const MouseEvents: React.FC = () => {
 						shadowOffsetX={3}
 						shadowOffsetY={3}
 					/>
-					
+
 					{/* 状态文本 */}
 					{clicked && (
 						<Text
@@ -103,15 +103,7 @@ const MouseEvents: React.FC = () => {
 							fontStyle="bold"
 						/>
 					)}
-					{hovered && (
-						<Text
-							text={`悬停在: ${hovered}`}
-							x={30}
-							y={370}
-							fontSize={14}
-							fill="#666"
-						/>
-					)}
+					{hovered && <Text text={`悬停在: ${hovered}`} x={30} y={370} fontSize={14} fill="#666" />}
 				</Layer>
 			</Stage>
 		</div>

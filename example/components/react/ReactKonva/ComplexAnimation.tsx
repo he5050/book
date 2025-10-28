@@ -47,23 +47,11 @@ const ComplexAnimation: React.FC = () => {
 					{/* 背景网格 */}
 					{Array.from({ length: 20 }).map((_, i) => (
 						<React.Fragment key={i}>
-							<Rect
-								x={i * 30}
-								y={0}
-								width={1}
-								height={300}
-								fill="rgba(200, 200, 200, 0.3)"
-							/>
-							<Rect
-								x={0}
-								y={i * 30}
-								width={600}
-								height={1}
-								fill="rgba(200, 200, 200, 0.3)"
-							/>
+							<Rect x={i * 30} y={0} width={1} height={300} fill="rgba(200, 200, 200, 0.3)" />
+							<Rect x={0} y={i * 30} width={600} height={1} fill="rgba(200, 200, 200, 0.3)" />
 						</React.Fragment>
 					))}
-					
+
 					{/* 移动的矩形 */}
 					<Rect
 						x={positions.rect1.x}
@@ -82,7 +70,7 @@ const ComplexAnimation: React.FC = () => {
 						shadowOffsetY={4}
 						cornerRadius={10}
 					/>
-					
+
 					{/* 移动的圆形 */}
 					<Circle
 						x={positions.circle1.x}
@@ -96,7 +84,7 @@ const ComplexAnimation: React.FC = () => {
 						shadowOffsetX={4}
 						shadowOffsetY={4}
 					/>
-					
+
 					{/* 旋转的矩形 */}
 					<Rect
 						x={positions.rect2.x}
@@ -114,7 +102,7 @@ const ComplexAnimation: React.FC = () => {
 						shadowOffsetX={4}
 						shadowOffsetY={4}
 					/>
-					
+
 					{/* 标题文本 */}
 					<Text
 						text="复杂动画演示"
@@ -126,15 +114,9 @@ const ComplexAnimation: React.FC = () => {
 						shadowColor="rgba(0, 0, 0, 0.2)"
 						shadowBlur={4}
 					/>
-					
+
 					{/* 时间显示 */}
-					<Text
-						text={`时间: ${time.toFixed(2)}s`}
-						x={20}
-						y={260}
-						fontSize={16}
-						fill="#666"
-					/>
+					<Text text={`时间: ${time.toFixed(2)}s`} x={20} y={260} fontSize={16} fill="#666" />
 				</Layer>
 			</Stage>
 		</div>

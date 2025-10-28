@@ -17,10 +17,10 @@ const AnimatedRect: React.FC = () => {
 				if (prev <= 0.8) setGrowing(true);
 				return growing ? prev + 0.01 : prev - 0.01;
 			});
-			
+
 			// 旋转动画
 			setRotation(prev => (prev + 2) % 360);
-			
+
 			// 位置动画（轻微摆动）
 			setPosition(prev => ({
 				x: 100 + Math.sin(Date.now() / 1000) * 20,

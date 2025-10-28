@@ -134,7 +134,7 @@ const EnhancedConfigurator: React.FC<ConfiguratorProps> = ({
 		<div className="enhanced-configurator react-konva-demo-container">
 			<div className="config-panel">
 				<h3>配置面板</h3>
-				
+
 				<div className="config-section">
 					<h4>画布设置</h4>
 					<div className="config-row">
@@ -175,7 +175,9 @@ const EnhancedConfigurator: React.FC<ConfiguratorProps> = ({
 						<label>类型:</label>
 						<select
 							value={newShapeConfig.type}
-							onChange={e => setNewShapeConfig({ ...newShapeConfig, type: e.target.value as 'rect' | 'circle' })}
+							onChange={e =>
+								setNewShapeConfig({ ...newShapeConfig, type: e.target.value as 'rect' | 'circle' })
+							}
 						>
 							<option value="rect">矩形</option>
 							<option value="circle">圆形</option>
@@ -190,7 +192,9 @@ const EnhancedConfigurator: React.FC<ConfiguratorProps> = ({
 									min="20"
 									max="200"
 									value={newShapeConfig.width}
-									onChange={e => setNewShapeConfig({ ...newShapeConfig, width: parseInt(e.target.value) })}
+									onChange={e =>
+										setNewShapeConfig({ ...newShapeConfig, width: parseInt(e.target.value) })
+									}
 								/>
 								<span>{newShapeConfig.width}px</span>
 							</div>
@@ -201,7 +205,9 @@ const EnhancedConfigurator: React.FC<ConfiguratorProps> = ({
 									min="20"
 									max="200"
 									value={newShapeConfig.height}
-									onChange={e => setNewShapeConfig({ ...newShapeConfig, height: parseInt(e.target.value) })}
+									onChange={e =>
+										setNewShapeConfig({ ...newShapeConfig, height: parseInt(e.target.value) })
+									}
 								/>
 								<span>{newShapeConfig.height}px</span>
 							</div>
@@ -215,7 +221,9 @@ const EnhancedConfigurator: React.FC<ConfiguratorProps> = ({
 								min="10"
 								max="100"
 								value={newShapeConfig.radius}
-								onChange={e => setNewShapeConfig({ ...newShapeConfig, radius: parseInt(e.target.value) })}
+								onChange={e =>
+									setNewShapeConfig({ ...newShapeConfig, radius: parseInt(e.target.value) })
+								}
 							/>
 							<span>{newShapeConfig.radius}px</span>
 						</div>
@@ -243,7 +251,9 @@ const EnhancedConfigurator: React.FC<ConfiguratorProps> = ({
 							min="0"
 							max="10"
 							value={newShapeConfig.strokeWidth}
-							onChange={e => setNewShapeConfig({ ...newShapeConfig, strokeWidth: parseInt(e.target.value) })}
+							onChange={e =>
+								setNewShapeConfig({ ...newShapeConfig, strokeWidth: parseInt(e.target.value) })
+							}
 						/>
 						<span>{newShapeConfig.strokeWidth}px</span>
 					</div>
@@ -313,13 +323,7 @@ const EnhancedConfigurator: React.FC<ConfiguratorProps> = ({
 							}
 							return null;
 						})}
-						<Text
-							text="双击形状可删除"
-							x={10}
-							y={10}
-							fontSize={14}
-							fill="#666"
-						/>
+						<Text text="双击形状可删除" x={10} y={10} fontSize={14} fill="#666" />
 					</Layer>
 				</Stage>
 			</div>

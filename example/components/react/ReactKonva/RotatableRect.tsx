@@ -8,14 +8,7 @@ const RotatableRect: React.FC = () => {
 	const [color, setColor] = useState('#4361ee'); // 颜色
 
 	// 预定义颜色方案
-	const colorSchemes = [
-		'#4361ee',
-		'#3f37c9',
-		'#4cc9f0',
-		'#f72585',
-		'#2a9d8f',
-		'#e9c46a'
-	];
+	const colorSchemes = ['#4361ee', '#3f37c9', '#4cc9f0', '#f72585', '#2a9d8f', '#e9c46a'];
 
 	return (
 		<div className="rotatable-rect react-konva-demo-container">
@@ -32,7 +25,7 @@ const RotatableRect: React.FC = () => {
 						className="rotation-slider"
 					/>
 				</div>
-				
+
 				<div className="control-group">
 					<label>缩放比例：{scale.toFixed(1)}</label>
 					<input
@@ -45,7 +38,7 @@ const RotatableRect: React.FC = () => {
 						className="scale-slider"
 					/>
 				</div>
-				
+
 				<div className="color-controls">
 					<label>颜色选择：</label>
 					<div className="color-palette">
