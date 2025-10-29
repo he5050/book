@@ -57,7 +57,7 @@ const ExplodingPixelCard: React.FC<ExplodingPixelCardProps> = ({
   const finalConfig = { ...defaultConfig, ...config };
   const cardRef = useRef<HTMLDivElement>(null);
   const pixelContainerRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
+  
 
   const generatePixelGrid = () => {
     if (!pixelContainerRef.current || !cardRef.current) return;
@@ -91,7 +91,6 @@ const ExplodingPixelCard: React.FC<ExplodingPixelCardProps> = ({
         pixel.style.setProperty('--tx', `${tx}px`);
         pixel.style.setProperty('--ty', `${ty}px`);
         pixel.style.transitionDelay = `${delay}s`;
-        pixel.style.transitionDuration = `${finalConfig.animationDuration}s`;
         
         fragment.appendChild(pixel);
       }
@@ -124,21 +123,24 @@ const ExplodingPixelCard: React.FC<ExplodingPixelCardProps> = ({
     height: finalConfig.cardHeight,
     backgroundColor: finalConfig.backgroundColor,
     color: finalConfig.textColor,
+    ...style
+  };
+
+  const cssVariables = {
     '--clr': finalConfig.themeColor,
-    '--border-opacity': finalConfig.borderOpacity,
+    '--border-opacity': finalConfig.borderOpacity.toString(),
     '--title-size': finalConfig.titleSize,
     '--content-padding': `${finalConfig.contentPadding}px`,
-    '--animation-duration': `${finalConfig.animationDuration}s`,
-    ...style
-  } as React.CSSProperties & Record<string, string>;
+    '--animation-duration': `${finalConfig.animationDuration}s`
+  } as React.CSSProperties;
+
+  const combinedStyle = { ...cardStyle, ...cssVariables };
 
   return (
     <div
       ref={cardRef}
-      className={`exploding-card ${className} ${isHovered ? 'hovered' : ''}`}
-      style={cardStyle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`exploding-card ${className}`}
+      style={combinedStyle}
       onClick={handleCardClick}
     >
       <div ref={pixelContainerRef} className="pixel-container"></div>
