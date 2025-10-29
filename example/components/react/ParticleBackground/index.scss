@@ -1,0 +1,323 @@
+.particle-background-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  .particle-background-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      label {
+        font-size: 14px;
+        color: #495057;
+        font-weight: 500;
+      }
+
+      .toggle-btn {
+        padding: 8px 16px;
+        border: 2px solid #007bff;
+        background: #fff;
+        color: #007bff;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #007bff;
+          color: #fff;
+        }
+
+        &.active {
+          background: #007bff;
+          color: #fff;
+        }
+      }
+
+      .clear-btn {
+        padding: 8px 16px;
+        border: 2px solid #dc3545;
+        background: #fff;
+        color: #dc3545;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #dc3545;
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  .particle-config-panel {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+    padding: 16px;
+    margin-bottom: 16px;
+
+    .config-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .config-item {
+      flex: 1;
+      min-width: 150px;
+
+      label {
+        display: block;
+        font-size: 12px;
+        color: #495057;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 4px;
+        border-radius: 2px;
+        background: #e1e5e9;
+        outline: none;
+        -webkit-appearance: none;
+
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #007bff;
+          cursor: pointer;
+          border: 2px solid #fff;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        &::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #007bff;
+          cursor: pointer;
+          border: 2px solid #fff;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+      }
+
+      input[type="color"] {
+        width: 100%;
+        height: 32px;
+        border: 1px solid #e1e5e9;
+        border-radius: 4px;
+        cursor: pointer;
+        background: none;
+
+        &::-webkit-color-swatch-wrapper {
+          padding: 0;
+        }
+
+        &::-webkit-color-swatch {
+          border: none;
+          border-radius: 3px;
+        }
+      }
+
+      .range-inputs {
+        display: flex;
+        gap: 8px;
+
+        input[type="range"] {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  .particle-background-canvas {
+    position: relative;
+    background: linear-gradient(135deg, #00040d 0%, #001122 50%, #00040d 100%);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: crosshair;
+    transition: all 0.3s ease;
+    border: 2px solid #1235f4;
+
+    &.active {
+      box-shadow: 
+        0 0 20px rgba(18, 53, 244, 0.3),
+        inset 0 0 20px rgba(18, 53, 244, 0.1);
+    }
+
+    .canvas-hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 16px;
+      text-align: center;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1;
+    }
+
+    &.active .canvas-hint {
+      opacity: 0.3;
+    }
+
+    &:hover .canvas-hint {
+      opacity: 0.1;
+    }
+  }
+
+  .particle-background-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    animation: particle-animate linear forwards;
+  }
+}
+
+@keyframes particle-animate {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--move-x), var(--move-y)) scale(0.5);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .particle-background-container {
+    padding: 16px;
+
+    .particle-background-controls {
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+
+      .control-group {
+        justify-content: center;
+      }
+    }
+
+    .particle-config-panel {
+      .config-row {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .config-item {
+        min-width: auto;
+
+        .range-inputs {
+          flex-direction: column;
+          gap: 6px;
+        }
+      }
+    }
+
+    .particle-background-canvas {
+      .canvas-hint {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+/* 深色主题支持 */
+@media (prefers-color-scheme: dark) {
+  .particle-background-container {
+    background: #1a1a1a;
+
+    .particle-background-controls {
+      background: #2d2d2d;
+      border-color: #404040;
+
+      label {
+        color: #e9ecef;
+      }
+
+      .toggle-btn {
+        border-color: #0d6efd;
+        color: #0d6efd;
+        background: #2d2d2d;
+
+        &:hover,
+        &.active {
+          background: #0d6efd;
+          color: #fff;
+        }
+      }
+
+      .clear-btn {
+        border-color: #dc3545;
+        color: #dc3545;
+        background: #2d2d2d;
+
+        &:hover {
+          background: #dc3545;
+          color: #fff;
+        }
+      }
+    }
+
+    .particle-config-panel {
+      background: #2d2d2d;
+      border-color: #404040;
+
+      .config-item {
+        label {
+          color: #e9ecef;
+        }
+
+        input[type="range"] {
+          background: #404040;
+
+          &::-webkit-slider-thumb {
+            background: #0d6efd;
+          }
+
+          &::-moz-range-thumb {
+            background: #0d6efd;
+          }
+        }
+
+        input[type="color"] {
+          border-color: #404040;
+        }
+      }
+    }
+  }
+}
