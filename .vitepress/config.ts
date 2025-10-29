@@ -99,8 +99,9 @@ export default withMermaid(
 			},
 			server: {
 				watch: {
-					// 开发环境下忽略监听这些文件夹（避免不必要的热更新）
-					ignored: ['**/other-demo/**']
+					usePolling: true,
+					interval: 100, // 检测间隔(ms)
+					ignored: ['!**/*.md'] // 只监听 markdown 文件变化
 				}
 			},
 			build: {
