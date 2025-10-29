@@ -1,4 +1,4 @@
-.water-drop-demo {
+.pixel-button-demo {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
@@ -24,24 +24,11 @@
       justify-content: center;
       align-items: center;
       min-height: 300px;
-      background: #f8f9fa;
+      background: #1a1a1a;
       border-radius: 12px;
       border: 2px dashed #e9ecef;
       position: relative;
       overflow: hidden;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: 
-          radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-          radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.1) 0%, transparent 50%);
-        pointer-events: none;
-      }
     }
   }
 
@@ -73,6 +60,21 @@
         color: #555;
         font-weight: 500;
         font-size: 14px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 8px 12px;
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #495057;
+        outline: none;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          border-color: #007bff;
+        }
       }
 
       input[type="range"] {
@@ -111,19 +113,39 @@
         }
       }
 
-      select {
+      input[type="color"] {
         width: 100%;
-        padding: 8px 12px;
+        height: 40px;
         border: 2px solid #e9ecef;
         border-radius: 6px;
-        background: white;
-        font-size: 14px;
-        color: #495057;
+        cursor: pointer;
         outline: none;
         transition: border-color 0.2s ease;
 
         &:focus {
           border-color: #007bff;
+        }
+      }
+
+      .theme-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+
+        .theme-btn {
+          padding: 8px 12px;
+          border: none;
+          border-radius: 6px;
+          color: white;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
         }
       }
     }
@@ -178,54 +200,59 @@
   }
 }
 
-.water-drop-container {
-  display: inline-block;
-  
-  .water-drop {
+.pixel-button {
+  position: relative;
+  border: none;
+  font-size: 1.5em;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  .button-text {
     position: relative;
-    border-radius: 50%;
-    transform: translateZ(0);
-    will-change: transform;
-    transition: all 0.3s ease;
+    z-index: 2;
+    pointer-events: none;
+  }
 
-    &:hover {
-      transform: translateZ(0) scale(1.05);
-    }
+  .pixel-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
 
-    .water-drop-highlight {
-      content: '';
+    .pixel {
       position: absolute;
-      border-radius: 50%;
-      transform: translateZ(0);
       pointer-events: none;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      transform: translateZ(0);
+      will-change: transform, opacity;
     }
   }
-}
 
-// 动画效果
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
+  &.hovered .pixel-container .pixel {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) translateZ(0);
   }
 }
 
 // 响应式优化
 @media (max-width: 480px) {
-  .water-drop-demo {
+  .pixel-button-demo {
     padding: 15px;
 
     .demo-container {
@@ -238,6 +265,29 @@
 
     .controls-section .control-group {
       margin-bottom: 15px;
+    }
+
+    .pixel-button {
+      font-size: 1.2em;
+    }
+  }
+}
+
+// 性能优化
+.pixel-button * {
+  transform: translateZ(0);
+}
+
+// 无障碍支持
+@media (prefers-reduced-motion: reduce) {
+  .pixel-button {
+    .pixel {
+      transition: none !important;
+    }
+    
+    &.hovered .pixel-container .pixel {
+      opacity: 0.5 !important;
+      transform: none !important;
     }
   }
 }

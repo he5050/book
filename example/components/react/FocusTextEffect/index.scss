@@ -6,14 +6,9 @@
 
   .demo-container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 30px;
     margin-bottom: 30px;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
   }
 
   .preview-section {
@@ -41,8 +36,19 @@
       font-weight: 600;
     }
 
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+
+      @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+    }
+
     .control-group {
-      margin-bottom: 20px;
+      margin-bottom: 0;
 
       label {
         display: block;

@@ -148,97 +148,99 @@ const FocusTextDemo: React.FC = () => {
 				<div className="controls-section">
 					<h3>参数配置</h3>
 
-					<div className="control-group">
-						<label>文本内容:</label>
-						<input
-							type="text"
-							value={config.text}
-							onChange={e => updateConfig('text', e.target.value)}
-							placeholder="输入文本内容"
-						/>
-					</div>
-
-					<div className="control-group">
-						<label>聚焦半径: {config.focusRadius}px</label>
-						<input
-							type="range"
-							min="20"
-							max="300"
-							value={config.focusRadius}
-							onChange={e => updateConfig('focusRadius', Number(e.target.value))}
-						/>
-					</div>
-
-					<div className="control-group">
-						<label>模糊强度: {config.blurIntensity}px</label>
-						<input
-							type="range"
-							min="5"
-							max="30"
-							value={config.blurIntensity}
-							onChange={e => updateConfig('blurIntensity', Number(e.target.value))}
-						/>
-					</div>
-
-					<div className="control-group">
-						<label>字体大小: {config.fontSize}em</label>
-						<input
-							type="range"
-							min="4"
-							max="12"
-							step="0.5"
-							value={config.fontSize}
-							onChange={e => updateConfig('fontSize', Number(e.target.value))}
-						/>
-					</div>
-
-					<div className="control-group">
-						<label>文字偏移: {config.textOffset}</label>
-						<input
-							type="range"
-							min="10"
-							max="50"
-							value={config.textOffset}
-							onChange={e => updateConfig('textOffset', Number(e.target.value))}
-						/>
-					</div>
-
-					<div className="control-group">
-						<label>文字颜色:</label>
-						<input
-							type="color"
-							value={config.textColor}
-							onChange={e => updateConfig('textColor', e.target.value)}
-						/>
-					</div>
-
-					<div className="control-group">
-						<label>背景颜色:</label>
-						<input
-							type="color"
-							value={config.backgroundColor}
-							onChange={e => updateConfig('backgroundColor', e.target.value)}
-						/>
-					</div>
-
-					<div className="control-group">
-						<label>圆圈颜色:</label>
-						<input
-							type="color"
-							value={config.circleColor}
-							onChange={e => updateConfig('circleColor', e.target.value)}
-						/>
-					</div>
-
-					<div className="control-group">
-						<label>
+					<div className="controls-grid">
+						<div className="control-group">
+							<label>文本内容:</label>
 							<input
-								type="checkbox"
-								checked={config.circleVisible}
-								onChange={e => updateConfig('circleVisible', e.target.checked)}
+								type="text"
+								value={config.text}
+								onChange={e => updateConfig('text', e.target.value)}
+								placeholder="输入文本内容"
 							/>
-							显示跟随圆圈
-						</label>
+						</div>
+
+						<div className="control-group">
+							<label>聚焦半径: {config.focusRadius}px</label>
+							<input
+								type="range"
+								min="20"
+								max="300"
+								value={config.focusRadius}
+								onChange={e => updateConfig('focusRadius', Number(e.target.value))}
+							/>
+						</div>
+
+						<div className="control-group">
+							<label>模糊强度: {config.blurIntensity}px</label>
+							<input
+								type="range"
+								min="5"
+								max="30"
+								value={config.blurIntensity}
+								onChange={e => updateConfig('blurIntensity', Number(e.target.value))}
+							/>
+						</div>
+
+						<div className="control-group">
+							<label>字体大小: {config.fontSize}em</label>
+							<input
+								type="range"
+								min="4"
+								max="12"
+								step="0.5"
+								value={config.fontSize}
+								onChange={e => updateConfig('fontSize', Number(e.target.value))}
+							/>
+						</div>
+
+						<div className="control-group">
+							<label>文字偏移: {config.textOffset}</label>
+							<input
+								type="range"
+								min="10"
+								max="50"
+								value={config.textOffset}
+								onChange={e => updateConfig('textOffset', Number(e.target.value))}
+							/>
+						</div>
+
+						<div className="control-group">
+							<label>文字颜色:</label>
+							<input
+								type="color"
+								value={config.textColor}
+								onChange={e => updateConfig('textColor', e.target.value)}
+							/>
+						</div>
+
+						<div className="control-group">
+							<label>背景颜色:</label>
+							<input
+								type="color"
+								value={config.backgroundColor}
+								onChange={e => updateConfig('backgroundColor', e.target.value)}
+							/>
+						</div>
+
+						<div className="control-group">
+							<label>圆圈颜色:</label>
+							<input
+								type="color"
+								value={config.circleColor}
+								onChange={e => updateConfig('circleColor', e.target.value)}
+							/>
+						</div>
+
+						<div className="control-group">
+							<label>
+								<input
+									type="checkbox"
+									checked={config.circleVisible}
+									onChange={e => updateConfig('circleVisible', e.target.checked)}
+								/>
+								显示跟随圆圈
+							</label>
+						</div>
 					</div>
 
 					<div className="control-actions">

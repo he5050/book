@@ -126,63 +126,65 @@ const WaterDropDemo: React.FC = () => {
         <div className="controls-section">
           <h3>参数配置</h3>
           
-          <div className="control-group">
-            <label>主题选择:</label>
-            <select 
-              value={selectedTheme} 
-              onChange={(e) => setSelectedTheme(e.target.value)}
-            >
-              {Object.keys(themes).map(theme => (
-                <option key={theme} value={theme}>
-                  {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
+          <div className="controls-grid">
+            <div className="control-group">
+              <label>主题选择:</label>
+              <select 
+                value={selectedTheme} 
+                onChange={(e) => setSelectedTheme(e.target.value)}
+              >
+                {Object.keys(themes).map(theme => (
+                  <option key={theme} value={theme}>
+                    {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div className="control-group">
-            <label>尺寸: {config.size}px</label>
-            <input
-              type="range"
-              min="50"
-              max="400"
-              value={config.size}
-              onChange={(e) => updateConfig('size', Number(e.target.value))}
-            />
-          </div>
+            <div className="control-group">
+              <label>尺寸: {config.size}px</label>
+              <input
+                type="range"
+                min="50"
+                max="400"
+                value={config.size}
+                onChange={(e) => updateConfig('size', Number(e.target.value))}
+              />
+            </div>
 
-          <div className="control-group">
-            <label>阴影强度: {config.shadowIntensity}</label>
-            <input
-              type="range"
-              min="0.05"
-              max="0.3"
-              step="0.01"
-              value={config.shadowIntensity}
-              onChange={(e) => updateConfig('shadowIntensity', Number(e.target.value))}
-            />
-          </div>
+            <div className="control-group">
+              <label>阴影强度: {config.shadowIntensity}</label>
+              <input
+                type="range"
+                min="0.05"
+                max="0.3"
+                step="0.01"
+                value={config.shadowIntensity}
+                onChange={(e) => updateConfig('shadowIntensity', Number(e.target.value))}
+              />
+            </div>
 
-          <div className="control-group">
-            <label>高光大小: {config.highlightSize}px</label>
-            <input
-              type="range"
-              min="5"
-              max="50"
-              value={config.highlightSize}
-              onChange={(e) => updateConfig('highlightSize', Number(e.target.value))}
-            />
-          </div>
+            <div className="control-group">
+              <label>高光大小: {config.highlightSize}px</label>
+              <input
+                type="range"
+                min="5"
+                max="50"
+                value={config.highlightSize}
+                onChange={(e) => updateConfig('highlightSize', Number(e.target.value))}
+              />
+            </div>
 
-          <div className="control-group">
-            <label>模糊半径: {config.blurRadius}px</label>
-            <input
-              type="range"
-              min="2"
-              max="15"
-              value={config.blurRadius}
-              onChange={(e) => updateConfig('blurRadius', Number(e.target.value))}
-            />
+            <div className="control-group">
+              <label>模糊半径: {config.blurRadius}px</label>
+              <input
+                type="range"
+                min="2"
+                max="15"
+                value={config.blurRadius}
+                onChange={(e) => updateConfig('blurRadius', Number(e.target.value))}
+              />
+            </div>
           </div>
 
           <div className="control-actions">
