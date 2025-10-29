@@ -43,18 +43,20 @@ const PixelButtonEffect: React.FC<PixelButtonEffectProps> = ({
   const finalConfig = { ...defaultConfig, ...config };
   const buttonRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
+  
 
   const generatePixelGrid = () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !buttonRef.current) return;
 
     const container = containerRef.current;
     container.innerHTML = '';
 
-    const { pixelSize, buttonWidth, buttonHeight, pixelColor, scatterRange, maxDelay } = finalConfig;
+    const pixSize = 10; // 固定像素大小，与原始效果一致
+    const btnWidth = buttonRef.current.offsetWidth;
+    const btnHeight = buttonRef.current.offsetHeight;
     
-    const cols = Math.floor(buttonWidth / pixelSize);
-    const rows = Math.floor(buttonHeight / pixelSize);
+    const cols = Math.floor(btnWidth / pixSize);
+    const rows = Math.floor(btnHeight / pixSize);
     
     const fragment = document.createDocumentFragment();
     
@@ -63,24 +65,18 @@ const PixelButtonEffect: React.FC<PixelButtonEffectProps> = ({
         const pixel = document.createElement('div');
         pixel.className = 'pixel';
         
-        // 设置位置
-        pixel.style.left = `${col * pixelSize}px`;
-        pixel.style.top = `${row * pixelSize}px`;
-        pixel.style.width = `${pixelSize}px`;
-        pixel.style.height = `${pixelSize}px`;
+        // 设置位置 - 与原始代码完全一致
+        pixel.style.left = `${col * pixSize}px`;
+        pixel.style.top = `${row * pixSize}px`;
         
-        // 设置颜色
-        pixel.style.backgroundColor = pixelColor;
+        // 随机散落参数 - 与原始代码完全一致
+        const tx = (Math.random() - 0.5) * 100;
+        const ty = (Math.random() - 0.5) * 100;
+        const delay = Math.random() * 0.5;
         
-        // 随机散落参数
-        const tx = (Math.random() - 0.5) * scatterRange;
-        const ty = (Math.random() - 0.5) * scatterRange;
-        const delay = Math.random() * maxDelay;
-        
+        pixel.style.transitionDelay = `${delay}s`;
         pixel.style.setProperty('--tx', `${tx}px`);
         pixel.style.setProperty('--ty', `${ty}px`);
-        pixel.style.transitionDelay = `${delay}s`;
-        pixel.style.transitionDuration = `${finalConfig.animationDuration}s`;
         
         fragment.appendChild(pixel);
       }
@@ -101,17 +97,19 @@ const PixelButtonEffect: React.FC<PixelButtonEffectProps> = ({
     ...style
   };
 
+  const containerStyle: React.CSSProperties = {
+    '--clr': finalConfig.pixelColor
+  } as React.CSSProperties & { '--clr': string };
+
   return (
     <button
       ref={buttonRef}
-      className={`pixel-button ${className} ${isHovered ? 'hovered' : ''}`}
+      className={`pixel-btn ${className}`}
       style={buttonStyle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <span className="button-text">{finalConfig.buttonText}</span>
-      <div ref={containerRef} className="pixel-container"></div>
+      <span>{finalConfig.buttonText}</span>
+      <div ref={containerRef} className="pixel-container" style={containerStyle}></div>
     </button>
   );
 };

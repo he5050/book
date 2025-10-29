@@ -200,7 +200,7 @@
   }
 }
 
-.pixel-button {
+.pixel-btn {
   position: relative;
   border: none;
   font-size: 1.5em;
@@ -208,21 +208,10 @@
   text-transform: uppercase;
   cursor: pointer;
   outline: none;
-  overflow: hidden;
-  transition: all 0.2s ease;
 
-  &:hover {
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  .button-text {
+  span {
     position: relative;
     z-index: 2;
-    pointer-events: none;
   }
 
   .pixel-container {
@@ -233,20 +222,20 @@
     height: 100%;
     pointer-events: none;
     z-index: 1;
-    overflow: hidden;
 
     .pixel {
       position: absolute;
+      width: 10px;
+      height: 10px;
       pointer-events: none;
+      background: var(--clr);
       transition: transform 0.5s ease, opacity 0.5s ease;
-      transform: translateZ(0);
-      will-change: transform, opacity;
     }
   }
 
-  &.hovered .pixel-container .pixel {
+  &:hover .pixel-container .pixel {
     opacity: 0;
-    transform: translate(var(--tx), var(--ty)) translateZ(0);
+    transform: translate(var(--tx), var(--ty));
   }
 }
 
@@ -267,25 +256,25 @@
       margin-bottom: 15px;
     }
 
-    .pixel-button {
+    .pixel-btn {
       font-size: 1.2em;
     }
   }
 }
 
 // 性能优化
-.pixel-button * {
+.pixel-btn * {
   transform: translateZ(0);
 }
 
 // 无障碍支持
 @media (prefers-reduced-motion: reduce) {
-  .pixel-button {
+  .pixel-btn {
     .pixel {
       transition: none !important;
     }
     
-    &.hovered .pixel-container .pixel {
+    &:hover .pixel-container .pixel {
       opacity: 0.5 !important;
       transform: none !important;
     }
