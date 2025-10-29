@@ -1,0 +1,132 @@
+.rain-lightning-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 680px;
+  padding-top: 140px;
+  background: var(--bg-color);
+  margin: 0 auto;
+  overflow: hidden;
+
+  .rain-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .rain-cloud {
+      position: relative;
+      width: var(--cloud-width);
+      height: var(--cloud-height);
+      border-radius: 100px;
+      filter: drop-shadow(8px 8px 0 #0005);
+      transform: translateZ(0);
+      will-change: filter;
+
+      &.lightning-enabled {
+        animation: lightning-flash var(--lightning-interval) steps(1) infinite;
+        animation-play-state: var(--lightning-enabled);
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        left: 40px;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: var(--cloud-color);
+        box-shadow: 90px -10px 0 30px var(--cloud-color);
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--cloud-color);
+        border-radius: 100px;
+        z-index: 1000;
+      }
+
+      .rain-drop {
+        position: absolute;
+        top: 40px;
+        background: #05a2eb;
+        width: 2px;
+        height: 10px;
+        animation: rain-fall 2s linear infinite;
+        transform-origin: bottom;
+      }
+    }
+  }
+
+  @keyframes lightning-flash {
+    0% {
+      filter: drop-shadow(8px 8px 0 #0001) drop-shadow(0 0 0 #fff) brightness(1);
+    }
+
+    95% {
+      filter: drop-shadow(8px 8px 0 #0001) drop-shadow(0 0 50px #fff5) brightness(10);
+    }
+
+    100% {
+      filter: drop-shadow(8px 8px 0 #0001) drop-shadow(0 0 0 #fff) brightness(1);
+    }
+  }
+
+  @keyframes rain-fall {
+    0% {
+      transform: translateY(0) scaleY(1);
+    }
+
+    70% {
+      transform: translateY(360px) scaleY(1);
+    }
+
+    80% {
+      transform: translateY(360px) scaleY(0.2);
+    }
+
+    100% {
+      transform: translateY(360px) scaleY(0) scaleX(15);
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .rain-lightning-container {
+    height: 300px;
+
+    .rain-container .rain-cloud {
+      width: min(var(--cloud-width), 280px);
+
+      &::before {
+        left: 30px;
+        width: 90px;
+        height: 90px;
+        box-shadow: 70px -8px 0 25px var(--cloud-color);
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .rain-lightning-container {
+    height: 250px;
+
+    .rain-container .rain-cloud {
+      width: min(var(--cloud-width), 200px);
+
+      &::before {
+        left: 20px;
+        width: 70px;
+        height: 70px;
+        box-shadow: 50px -6px 0 20px var(--cloud-color);
+      }
+    }
+  }
+}
