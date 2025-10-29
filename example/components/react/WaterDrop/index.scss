@@ -1,0 +1,237 @@
+.water-drop-demo {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  .demo-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  .preview-section {
+    h3 {
+      margin: 0 0 20px 0;
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .preview-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 2px dashed #e9ecef;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+          radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+      }
+    }
+  }
+
+  .controls-section {
+    h3 {
+      margin: 0 0 20px 0;
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #e9ecef;
+        outline: none;
+        -webkit-appearance: none;
+
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #007bff;
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: #0056b3;
+            transform: scale(1.1);
+          }
+        }
+
+        &::-moz-range-thumb {
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #007bff;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+        }
+      }
+
+      select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        background: white;
+        font-size: 14px;
+        color: #495057;
+        outline: none;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          border-color: #007bff;
+        }
+      }
+    }
+
+    .control-actions {
+      margin-top: 30px;
+
+      .reset-btn {
+        width: 100%;
+        padding: 12px;
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #5a6268;
+          transform: translateY(-1px);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+
+  .code-section {
+    h3 {
+      margin: 0 0 15px 0;
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .code-block {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #495057;
+      overflow-x: auto;
+      white-space: pre;
+    }
+  }
+}
+
+.water-drop-container {
+  display: inline-block;
+  
+  .water-drop {
+    position: relative;
+    border-radius: 50%;
+    transform: translateZ(0);
+    will-change: transform;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateZ(0) scale(1.05);
+    }
+
+    .water-drop-highlight {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      transform: translateZ(0);
+      pointer-events: none;
+    }
+  }
+}
+
+// 动画效果
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// 响应式优化
+@media (max-width: 480px) {
+  .water-drop-demo {
+    padding: 15px;
+
+    .demo-container {
+      gap: 15px;
+    }
+
+    .preview-section .preview-area {
+      min-height: 200px;
+    }
+
+    .controls-section .control-group {
+      margin-bottom: 15px;
+    }
+  }
+}
