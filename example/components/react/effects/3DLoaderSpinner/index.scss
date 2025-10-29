@@ -1,0 +1,275 @@
+.d3-loader-spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  position: relative;
+  
+  // 点击控制时的鼠标样式
+  &[role="button"] {
+    cursor: pointer;
+    
+    &:hover .loader {
+      transform: scale(1.02);
+      transition: transform 0.2s ease;
+    }
+    
+    &:active .loader {
+      transform: scale(0.98);
+    }
+  }
+
+  .loader {
+    border-radius: 50px;
+    box-shadow: 30px 30px 30px -10px rgba(0, 0, 0, 0.15),
+      inset 15px 15px 10px rgba(255, 255, 255, 0.75),
+      -15px -15px 35px rgba(255, 255, 255, 0.55),
+      inset -1px -1px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 100px;
+    min-height: 100px;
+    max-width: min(400px, 100%);
+    max-height: min(400px, 100%);
+    transition: transform 0.2s ease;
+  }
+
+  .circle {
+    position: absolute;
+    inset: 35px;
+    background: #acbaca;
+    border-radius: 50%;
+    box-shadow: 5px 5px 15px #152b4a66,
+      inset 5px 5px 5px rgba(255, 255, 255, 0.55),
+      -6px -6px 10px rgba(255, 255, 255, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .gradient-circle {
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      animation: animate var(--animation-duration, 2s) linear infinite;
+      will-change: transform;
+    }
+
+    .blur-circle {
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      animation: animate var(--animation-duration, 2s) linear infinite;
+      filter: blur(var(--blur-intensity, 20px));
+      z-index: 1000;
+      mix-blend-mode: var(--blend-mode, plus-lighter);
+      will-change: transform, filter;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 35px;
+      background: #acbaca;
+      border-radius: 50%;
+    }
+  }
+
+  // 进度环样式
+  .progress-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+
+    .progress-svg {
+      transform: rotate(-90deg);
+      overflow: visible;
+    }
+
+    .progress-circle {
+      transition: stroke-dashoffset 0.3s ease;
+      filter: drop-shadow(0 0 3px currentColor);
+    }
+  }
+
+  // 进度文本样式
+  .progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    text-align: center;
+    pointer-events: none;
+    color: var(--primary-color, #2196f3);
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+
+    .progress-number {
+      font-size: max(1.2rem, min(2rem, calc(var(--spinner-size, 300px) * 0.08)));
+      display: block;
+      line-height: 1;
+    }
+
+    .progress-percent {
+      font-size: max(0.8rem, min(1.2rem, calc(var(--spinner-size, 300px) * 0.05)));
+      opacity: 0.8;
+    }
+  }
+
+  // 控制状态指示器
+  .control-indicator {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    z-index: 30;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+
+    .pause-icon, .play-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 1);
+    }
+  }
+
+  // 基础动画定义
+  @keyframes animate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  // 动画状态控制
+  &.paused {
+    .gradient-circle,
+    .blur-circle {
+      animation-play-state: paused;
+    }
+  }
+
+  &.stopped {
+    .gradient-circle,
+    .blur-circle {
+      animation: none;
+    }
+  }
+
+  // 响应式适配
+  @media (max-width: 768px) {
+    .loader {
+      max-width: min(250px, 90vw);
+      max-height: min(250px, 90vw);
+    }
+
+    .progress-text {
+      .progress-number {
+        font-size: max(1rem, calc(var(--spinner-size, 250px) * 0.08));
+      }
+      .progress-percent {
+        font-size: max(0.7rem, calc(var(--spinner-size, 250px) * 0.05));
+      }
+    }
+
+    .control-indicator {
+      width: 20px;
+      height: 20px;
+      font-size: 8px;
+      bottom: 4px;
+      right: 4px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .loader {
+      max-width: min(200px, 80vw);
+      max-height: min(200px, 80vw);
+    }
+
+    .progress-text {
+      .progress-number {
+        font-size: max(0.9rem, calc(var(--spinner-size, 200px) * 0.08));
+      }
+      .progress-percent {
+        font-size: max(0.6rem, calc(var(--spinner-size, 200px) * 0.05));
+      }
+    }
+  }
+
+  // 混合模式预设效果
+  &.blend-screen .blur-circle {
+    mix-blend-mode: screen;
+  }
+
+  &.blend-overlay .blur-circle {
+    mix-blend-mode: overlay;
+  }
+
+  &.blend-color-dodge .blur-circle {
+    mix-blend-mode: color-dodge;
+  }
+
+  &.blend-hard-light .blur-circle {
+    mix-blend-mode: hard-light;
+  }
+
+  &.blend-soft-light .blur-circle {
+    mix-blend-mode: soft-light;
+  }
+
+  &.blend-difference .blur-circle {
+    mix-blend-mode: difference;
+  }
+
+  &.blend-exclusion .blur-circle {
+    mix-blend-mode: exclusion;
+  }
+
+  &.blend-multiply .blur-circle {
+    mix-blend-mode: multiply;
+  }
+
+  &.blend-normal .blur-circle {
+    mix-blend-mode: normal;
+  }
+}
+
+// 确保组件样式隔离，避免与外部样式冲突
+.d3-loader-spinner-wrapper * {
+  box-sizing: border-box;
+}
+
+// 性能优化
+.d3-loader-spinner-wrapper .gradient-circle,
+.d3-loader-spinner-wrapper .blur-circle {
+  transform: translateZ(0); // 启用硬件加速
+  backface-visibility: hidden; // 优化动画性能
+}
