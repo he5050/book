@@ -1,0 +1,113 @@
+.keyboard-manager {
+  width: 600px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .shortcut-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .shortcut-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+    }
+  }
+
+  .shortcut-keys {
+    display: flex;
+    gap: 6px;
+  }
+
+  .shortcut-description {
+    color: #495057;
+    font-size: 14px;
+  }
+
+  .key-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    background: #e9ecef;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #495057;
+    text-transform: uppercase;
+
+    &.active {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+  }
+
+  .pressed-keys {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    &-label {
+      font-weight: 600;
+      color: #212529;
+      font-size: 14px;
+    }
+
+    &-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 16px;
+
+    .shortcut-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .shortcut-keys {
+      order: 1;
+    }
+
+    .shortcut-description {
+      order: 2;
+    }
+  }
+}

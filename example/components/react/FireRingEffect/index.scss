@@ -1,0 +1,141 @@
+.fire-ring-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  height: 600px;
+  aspect-ratio: 1;
+  background-color: #000;
+  overflow: hidden;
+  margin: 0 auto;
+
+  .fire-ring-circle {
+    position: relative;
+    width: min(var(--ring-size), 350px);
+    height: min(var(--ring-size), 350px);
+    transform: translateZ(0);
+    will-change: filter, box-shadow;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: calc(min(var(--ring-size), 350px) * 0.2);
+      left: calc(min(var(--ring-size), 350px) * 0.2);
+      right: calc(min(var(--ring-size), 350px) * 0.2);
+      bottom: calc(min(var(--ring-size), 350px) * 0.2);
+      border: var(--ring-width) solid #fff;
+      border-radius: 50%;
+      box-shadow:
+        0 0 50px var(--glow-color),
+        inset 0 0 50px var(--glow-color);
+      -webkit-box-reflect: var(--enable-reflection);
+      animation: fire-ring-animate var(--animation-duration) linear infinite;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: calc(min(var(--ring-size), 350px) * 0.2);
+      left: calc(min(var(--ring-size), 350px) * 0.2);
+      right: calc(min(var(--ring-size), 350px) * 0.2);
+      bottom: calc(min(var(--ring-size), 350px) * 0.2);
+      border: var(--ring-width) solid #fff;
+      border-radius: 50%;
+      box-shadow:
+        0 0 50px #fff,
+        inset 0 0 50px #fff;
+    }
+  }
+
+  .fire-ring-svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  @keyframes fire-ring-animate {
+    0% {
+      box-shadow:
+        0 0 50px var(--glow-color),
+        inset 0 0 50px var(--glow-color);
+      filter: hue-rotate(0deg);
+    }
+
+    20% {
+      box-shadow:
+        0 0 40px var(--glow-color),
+        inset 0 0 60px var(--glow-color);
+    }
+
+    40% {
+      box-shadow:
+        0 0 40px var(--glow-color),
+        inset 0 0 80px var(--glow-color);
+    }
+
+    60% {
+      box-shadow:
+        0 0 80px var(--glow-color),
+        inset 0 0 80px var(--glow-color);
+    }
+
+    80% {
+      box-shadow:
+        0 0 100px var(--glow-color),
+        inset 0 0 100px var(--glow-color);
+    }
+
+    100% {
+      box-shadow:
+        0 0 50px var(--glow-color),
+        inset 0 0 50px var(--glow-color);
+      filter: hue-rotate(360deg);
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .fire-ring-container {
+    width: 400px;
+    height: 400px;
+    max-width: 400px;
+
+    .fire-ring-circle {
+      width: min(var(--ring-size), 280px);
+      height: min(var(--ring-size), 280px);
+
+      &::before,
+      &::after {
+        top: calc(min(var(--ring-size), 280px) * 0.2);
+        left: calc(min(var(--ring-size), 280px) * 0.2);
+        right: calc(min(var(--ring-size), 280px) * 0.2);
+        bottom: calc(min(var(--ring-size), 280px) * 0.2);
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .fire-ring-container {
+    width: 300px;
+    height: 300px;
+    max-width: 300px;
+
+    .fire-ring-circle {
+      width: min(var(--ring-size), 200px);
+      height: min(var(--ring-size), 200px);
+
+      &::before,
+      &::after {
+        top: calc(min(var(--ring-size), 200px) * 0.2);
+        left: calc(min(var(--ring-size), 200px) * 0.2);
+        right: calc(min(var(--ring-size), 200px) * 0.2);
+        bottom: calc(min(var(--ring-size), 200px) * 0.2);
+      }
+    }
+  }
+}
