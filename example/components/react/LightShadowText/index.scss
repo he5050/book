@@ -10,6 +10,7 @@
   background: #333;
   border-radius: 12px;
   overflow: hidden;
+  /* 允许光源超出容器边界 */
   cursor: none;
 
   .text-element {
@@ -24,12 +25,13 @@
   }
 
   .light-source {
-    position: fixed;
+    position: absolute;
     border-radius: 50%;
     pointer-events: none;
     transform: translate(-50%, -50%);
     z-index: 1;
-    transition: all 0.1s ease;
+    transition: none;
+    /* 移除过渡效果，确保实时跟随 */
   }
 
   .config-panel {
@@ -190,9 +192,11 @@
     0% {
       transform: translate(-50%, -50%) scale(1);
     }
+
     50% {
       transform: translate(-50%, -50%) scale(1.1);
     }
+
     100% {
       transform: translate(-50%, -50%) scale(1);
     }
@@ -209,11 +213,11 @@
   // 高对比度模式支持
   @media (prefers-contrast: high) {
     background: #000;
-    
+
     .text-element {
       color: #fff !important;
     }
-    
+
     .config-panel {
       background: rgba(0, 0, 0, 0.95);
       border: 2px solid #fff;
@@ -225,11 +229,11 @@
     .light-source {
       animation: none;
     }
-    
+
     .text-element {
       transition: none;
     }
-    
+
     &:hover .text-element {
       transform: none;
     }

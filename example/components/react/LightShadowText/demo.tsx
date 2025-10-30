@@ -10,7 +10,7 @@ export const LightShadowTextDemo: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'basic' | 'advanced' | 'custom'>('basic');
   const [config, setConfig] = useState({
     text: "Shadow",
-    fontSize: 10,
+    fontSize: 6, // 调整默认字体大小
     textColor: "#fff",
     shadowLayers: 200,
     shadowColor: "rgba(33,33,33,1)",
@@ -23,7 +23,7 @@ export const LightShadowTextDemo: React.FC = () => {
   const presetConfigs = {
     classic: {
       text: "SHADOW",
-      fontSize: 10,
+      fontSize: 6, // 调整适应容器
       textColor: "#fff",
       shadowLayers: 200,
       shadowColor: "rgba(33,33,33,1)",
@@ -33,7 +33,7 @@ export const LightShadowTextDemo: React.FC = () => {
     },
     neon: {
       text: "NEON",
-      fontSize: 8,
+      fontSize: 5.5,
       textColor: "#00ff88",
       shadowLayers: 150,
       shadowColor: "rgba(0,255,136,1)",
@@ -43,7 +43,7 @@ export const LightShadowTextDemo: React.FC = () => {
     },
     fire: {
       text: "FIRE",
-      fontSize: 9,
+      fontSize: 6.5,
       textColor: "#ff4444",
       shadowLayers: 180,
       shadowColor: "rgba(255,68,68,1)",
@@ -53,7 +53,7 @@ export const LightShadowTextDemo: React.FC = () => {
     },
     ice: {
       text: "ICE",
-      fontSize: 11,
+      fontSize: 7,
       textColor: "#4dd0e1",
       shadowLayers: 220,
       shadowColor: "rgba(77,208,225,1)",
@@ -167,7 +167,7 @@ export const LightShadowTextDemo: React.FC = () => {
                   <input
                     type="range"
                     min="2"
-                    max="20"
+                    max="12" 
                     step="0.5"
                     value={config.fontSize}
                     onChange={(e) => handleConfigChange('fontSize', parseFloat(e.target.value))}

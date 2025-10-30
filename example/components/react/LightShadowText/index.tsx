@@ -17,7 +17,7 @@ interface LightShadowTextConfig {
 
 const LightShadowText: React.FC<LightShadowTextConfig> = ({
   text = "Shadow",
-  fontSize = 10,
+  fontSize = 6, // 调整默认字体大小适应容器
   textColor = "#fff",
   shadowLayers = 200,
   shadowColor = "rgba(33,33,33,1)",
@@ -87,21 +87,31 @@ const LightShadowText: React.FC<LightShadowTextConfig> = ({
 
   // 处理鼠标移动
   const handleMouseMove = useCallback((event: MouseEvent) => {
+    if (!containerRef.current) return;
+    
+    const containerRect = containerRef.current.getBoundingClientRect();
     const mouseX = event.clientX;
     const mouseY = event.clientY;
     
-    setMousePos({ x: mouseX, y: mouseY });
+    // 计算相对于容器的鼠标位置
+    const relativeX = mouseX - containerRect.left;
+    const relativeY = mouseY - containerRect.top;
     
+    // 光源位置使用相对坐标
+    setMousePos({ x: relativeX, y: relativeY });
+    
+    // 阴影计算使用全局坐标
     const shadow = generateShadow(mouseX, mouseY);
     setTextShadow(shadow);
   }, [generateShadow]);
 
-  // 节流处理鼠标移动
+  // 移除节流，确保实时跟随
   const throttledMouseMove = useCallback((event: MouseEvent) => {
-    requestAnimationFrame(() => handleMouseMove(event));
+    handleMouseMove(event);
   }, [handleMouseMove]);
 
   useEffect(() => {
+    // 监听全局鼠标移动事件，确保光源跟随准确
     document.addEventListener('mousemove', throttledMouseMove);
     return () => {
       document.removeEventListener('mousemove', throttledMouseMove);
@@ -173,7 +183,7 @@ const LightShadowText: React.FC<LightShadowTextConfig> = ({
             <input
               type="range"
               min="2"
-              max="20"
+              max="12"
               step="0.5"
               value={internalConfig.fontSize}
               onChange={(e) => handleConfigChange('fontSize', parseFloat(e.target.value))}
