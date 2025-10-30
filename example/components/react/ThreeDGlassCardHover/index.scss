@@ -1,0 +1,171 @@
+.three-d-glass-card {
+  position: relative;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  // 眩光效果
+  .glare-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border-radius: inherit;
+    transform: rotate(180deg) translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    z-index: 2;
+  }
+
+  .card-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    transform-style: preserve-3d;
+    z-index: 1;
+  }
+
+  .img-bx {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    border-radius: 8px;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: all 0.5s ease;
+    z-index: 1;
+    
+    .card-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+      transform: scale(1);
+      
+      &.loaded {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  .content {
+    position: absolute;
+    bottom: -60px;
+    left: 20px;
+    right: 20px;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.5s ease;
+    transform: translateY(100px);
+    opacity: 0;
+    z-index: 3;
+  }
+
+  &:hover .content {
+    bottom: 20px;
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  // Light主题
+  &.light {
+    .card-container {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .content {
+      background: rgba(255, 255, 255, 0.3);
+      color: #333;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  // Dark主题
+  &.dark {
+    .card-container {
+      background: rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .content {
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+// 眩光效果样式
+.js-tilt-glare {
+  border-radius: 8px !important;
+}
+
+.js-tilt-glare-inner {
+  border-radius: 50% !important;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .three-d-glass-card {
+    width: 280px !important;
+    height: 240px !important;
+    
+    .img-bx {
+      height: 240px;
+    }
+    
+    .content {
+      left: 15px;
+      right: 15px;
+      padding: 15px;
+      bottom: -50px;
+    }
+    
+    &:hover .content {
+      bottom: 15px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .three-d-glass-card {
+    width: 260px !important;
+    height: 220px !important;
+    
+    .img-bx {
+      height: 220px;
+    }
+    
+    .content {
+      left: 10px;
+      right: 10px;
+      padding: 10px;
+      bottom: -40px;
+      font-size: 0.9em;
+    }
+    
+    &:hover .content {
+      bottom: 10px;
+    }
+  }
+}
