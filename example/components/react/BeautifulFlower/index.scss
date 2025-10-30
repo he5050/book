@@ -1,0 +1,560 @@
+.beautiful-flower {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  min-height: 800px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+
+  .flower-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background-color: var(--bg-color, #000);
+    perspective: 1000px;
+    padding: 50px 0;
+
+    &.not-loaded * {
+      animation-play-state: paused !important;
+    }
+  }
+
+  .night {
+    position: fixed;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    filter: blur(0.1vmin);
+  }
+
+  .flowers {
+    position: relative;
+    transform: scale(0.6);
+    /* 缩放以适应容器 */
+  }
+
+  .flower {
+    position: absolute;
+    bottom: 10vmin;
+    transform-origin: bottom center;
+    z-index: 10;
+    --fl-speed: calc(0.8s / var(--animation-speed, 1));
+
+    &--1 {
+      animation: moving-flower-1 calc(4s / var(--animation-speed, 1)) linear infinite;
+
+      .flower__line {
+        height: 70vmin;
+        animation-delay: calc(0.3s / var(--animation-speed, 1));
+      }
+    }
+
+    &--2 {
+      left: 50%;
+      transform: rotate(20deg);
+      animation: moving-flower-2 calc(4s / var(--animation-speed, 1)) linear infinite;
+
+      .flower__line {
+        height: 60vmin;
+        animation-delay: calc(0.6s / var(--animation-speed, 1));
+      }
+    }
+
+    &--3 {
+      left: 50%;
+      transform: rotate(-15deg);
+      animation: moving-flower-3 calc(4s / var(--animation-speed, 1)) linear infinite;
+
+      .flower__line {
+        animation-delay: calc(0.9s / var(--animation-speed, 1));
+      }
+    }
+  }
+
+  .flower__leafs {
+    position: relative;
+    animation: blooming-flower calc(2s / var(--animation-speed, 1)) backwards;
+
+    &--1 {
+      animation-delay: calc(1.1s / var(--animation-speed, 1));
+    }
+
+    &--2 {
+      animation-delay: calc(1.4s / var(--animation-speed, 1));
+    }
+
+    &--3 {
+      animation-delay: calc(1.7s / var(--animation-speed, 1));
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -100%);
+      width: 8vmin;
+      height: 8vmin;
+      background-color: var(--light-color-2, #6bf0ff);
+      filter: blur(10vmin);
+    }
+  }
+
+  .flower__leaf {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 8vmin;
+    height: 11vmin;
+    border-radius: 51% 49% 47% 53%/44% 45% 55% 69%;
+    background-color: var(--flower-color-1, #a7ffee);
+    background-image: linear-gradient(to top, var(--flower-color-2, #54b8aa), var(--flower-color-1, #a7ffee));
+    transform-origin: bottom center;
+    opacity: 0.9;
+    box-shadow: inset 0 0 2vmin rgba(255, 255, 255, 0.5);
+
+    &--1 {
+      transform: translate(-10%, 1%) rotateY(40deg) rotateX(-50deg);
+    }
+
+    &--2 {
+      transform: translate(-50%, -4%) rotateX(40deg);
+    }
+
+    &--3 {
+      transform: translate(-90%, 0%) rotateY(45deg) rotateX(50deg);
+    }
+
+    &--4 {
+      width: 8vmin;
+      height: 8vmin;
+      transform-origin: bottom left;
+      border-radius: 4vmin 10vmin 4vmin 4vmin;
+      transform: translate(0%, 18%) rotateX(70deg) rotate(-43deg);
+      background-image: linear-gradient(to top, var(--flower-color-2, #39c6d6), var(--flower-color-1, #a7ffee));
+      z-index: 1;
+      opacity: 0.8;
+    }
+  }
+
+  .flower__white-circle {
+    position: absolute;
+    left: -3.5vmin;
+    top: -3vmin;
+    width: 9vmin;
+    height: 4vmin;
+    border-radius: 50%;
+    background-color: #fff;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%);
+      width: 60%;
+      height: 60%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgb(255, 235, 18), rgb(255, 206, 0));
+    }
+  }
+
+  .flower__line {
+    height: 55vmin;
+    width: 1.5vmin;
+    background-image:
+      linear-gradient(to left, rgba(0, 0, 0, 0.2), transparent, rgba(255, 255, 255, 0.2)),
+      linear-gradient(to top, transparent 10%, var(--stem-color, #14757a), var(--stem-color, #39c6d6));
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
+    animation: grow-flower-tree calc(4s / var(--animation-speed, 1)) backwards;
+  }
+
+  .flower__line__leaf {
+    --w: 7vmin;
+    --h: calc(var(--w) + 2vmin);
+    position: absolute;
+    top: 20%;
+    left: 90%;
+    width: var(--w);
+    height: var(--h);
+    border-top-right-radius: var(--h);
+    border-bottom-left-radius: var(--h);
+    background-image: linear-gradient(to top, rgba(20, 117, 122, 0.4), var(--stem-color, #39c6d6));
+
+    &--1 {
+      transform: rotate(70deg) rotateY(30deg);
+      animation: blooming-leaf-right var(--fl-speed) calc(1.6s / var(--animation-speed, 1)) backwards;
+    }
+
+    &--2 {
+      top: 45%;
+      transform: rotate(70deg) rotateY(30deg);
+      animation: blooming-leaf-right var(--fl-speed) calc(1.4s / var(--animation-speed, 1)) backwards;
+    }
+
+    &--3,
+    &--4,
+    &--6 {
+      border-top-right-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-left-radius: var(--h);
+      border-bottom-right-radius: var(--h);
+      left: -460%;
+      top: 12%;
+      transform: rotate(-70deg) rotateY(30deg);
+    }
+
+    &--3 {
+      animation: blooming-leaf-left var(--fl-speed) calc(1.2s / var(--animation-speed, 1)) backwards;
+    }
+
+    &--4 {
+      top: 40%;
+      animation: blooming-leaf-left var(--fl-speed) calc(1s / var(--animation-speed, 1)) backwards;
+    }
+
+    &--5 {
+      top: 0;
+      transform-origin: left;
+      transform: rotate(70deg) rotateY(30deg) scale(0.6);
+      animation: blooming-leaf-right var(--fl-speed) calc(1.8s / var(--animation-speed, 1)) backwards;
+    }
+
+    &--6 {
+      top: -2%;
+      left: -450%;
+      transform-origin: right;
+      transform: rotate(-70deg) rotateY(30deg) scale(0.6);
+      animation: blooming-leaf-left var(--fl-speed) calc(2s / var(--animation-speed, 1)) backwards;
+    }
+  }
+
+  .flower__light {
+    position: absolute;
+    bottom: 0vmin;
+    width: 1vmin;
+    height: 1vmin;
+    background-color: var(--light-color-1, rgb(255, 251, 0));
+    border-radius: 50%;
+    filter: blur(0.2vmin);
+    animation: light-ans calc(4s / var(--animation-speed, 1)) linear infinite backwards;
+
+    &:nth-child(odd) {
+      background-color: var(--light-color-2, #23f0ff);
+    }
+
+    &--1 {
+      left: -2vmin;
+      animation-delay: calc(1s / var(--animation-speed, 1));
+    }
+
+    &--2 {
+      left: 3vmin;
+      animation-delay: calc(0.5s / var(--animation-speed, 1));
+    }
+
+    &--3 {
+      left: -6vmin;
+      animation-delay: calc(0.3s / var(--animation-speed, 1));
+    }
+
+    &--4 {
+      left: 6vmin;
+      animation-delay: calc(0.9s / var(--animation-speed, 1));
+    }
+
+    &--5 {
+      left: -1vmin;
+      animation-delay: calc(1.5s / var(--animation-speed, 1));
+    }
+
+    &--6 {
+      left: -4vmin;
+      animation-delay: calc(3s / var(--animation-speed, 1));
+    }
+
+    &--7 {
+      left: 3vmin;
+      animation-delay: calc(2s / var(--animation-speed, 1));
+    }
+
+    &--8 {
+      left: -6vmin;
+      animation-delay: calc(3.5s / var(--animation-speed, 1));
+    }
+  }
+
+  // 草地相关样式
+  .flower__grass {
+    --c: var(--grass-color, #159faa);
+    --line-w: 1.5vmin;
+    position: absolute;
+    bottom: 12vmin;
+    left: -7vmin;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    z-index: 20;
+    transform-origin: bottom center;
+    transform: rotate(-48deg) rotateY(40deg);
+
+    &--1 {
+      animation: moving-grass calc(2s / var(--animation-speed, 1)) linear infinite;
+    }
+
+    &--2 {
+      left: 2vmin;
+      bottom: 10vmin;
+      transform: scale(0.5) rotate(75deg) rotateX(10deg) rotateY(-200deg);
+      opacity: 0.8;
+      z-index: 0;
+      animation: moving-grass--2 calc(1.5s / var(--animation-speed, 1)) linear infinite;
+    }
+  }
+
+  .flower__grass--top {
+    width: 7vmin;
+    height: 10vmin;
+    border-top-right-radius: 100%;
+    border-right: var(--line-w) solid var(--c);
+    transform-origin: bottom center;
+    transform: rotate(-2deg);
+  }
+
+  .flower__grass--bottom {
+    margin-top: -2px;
+    width: var(--line-w);
+    height: 25vmin;
+    background-image: linear-gradient(to top, transparent, var(--c));
+  }
+
+  // 配置面板样式
+  .config-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 280px;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 8px;
+    padding: 20px;
+    color: #fff;
+    font-size: 14px;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    h3 {
+      margin: 0 0 15px 0;
+      color: #fff;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .config-item {
+      margin-bottom: 15px;
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #ccc;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #555;
+        outline: none;
+        -webkit-appearance: none;
+
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #4a90e2;
+          cursor: pointer;
+          transition: background 0.3s ease;
+
+          &:hover {
+            background: #357abd;
+          }
+        }
+      }
+
+      input[type="color"] {
+        width: 50px;
+        height: 30px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background: transparent;
+      }
+
+      input[type="checkbox"] {
+        margin-right: 8px;
+        transform: scale(1.2);
+      }
+    }
+
+    .effect-info {
+      background: #444;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 15px;
+
+      div {
+        color: #ccc;
+        margin-bottom: 6px;
+        font-size: 11px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // 动画定义
+  @keyframes moving-flower-1 {
+
+    0%,
+    100% {
+      transform: rotate(2deg);
+    }
+
+    50% {
+      transform: rotate(-2deg);
+    }
+  }
+
+  @keyframes moving-flower-2 {
+
+    0%,
+    100% {
+      transform: rotate(18deg);
+    }
+
+    50% {
+      transform: rotate(14deg);
+    }
+  }
+
+  @keyframes moving-flower-3 {
+
+    0%,
+    100% {
+      transform: rotate(-18deg);
+    }
+
+    50% {
+      transform: rotate(-20deg) rotateY(-10deg);
+    }
+  }
+
+  @keyframes blooming-leaf-right {
+    0% {
+      transform-origin: left;
+      transform: rotate(70deg) rotateY(30deg) scale(0);
+    }
+  }
+
+  @keyframes blooming-leaf-left {
+    0% {
+      transform-origin: right;
+      transform: rotate(-70deg) rotateY(30deg) scale(0);
+    }
+  }
+
+  @keyframes grow-flower-tree {
+    0% {
+      height: 0;
+      border-radius: 1vmin;
+    }
+  }
+
+  @keyframes blooming-flower {
+    0% {
+      transform: scale(0);
+    }
+  }
+
+  @keyframes light-ans {
+    0% {
+      opacity: 0;
+      transform: translateY(0vmin);
+    }
+
+    25% {
+      opacity: 1;
+      transform: translateY(-5vmin) translateX(-2vmin);
+    }
+
+    50% {
+      opacity: 1;
+      transform: translateY(-15vmin) translateX(2vmin);
+      filter: blur(0.2vmin);
+    }
+
+    75% {
+      transform: translateY(-20vmin) translateX(-2vmin);
+      filter: blur(0.2vmin);
+    }
+
+    100% {
+      transform: translateY(-30vmin);
+      opacity: 0;
+      filter: blur(1vmin);
+    }
+  }
+
+  @keyframes moving-grass {
+
+    0%,
+    100% {
+      transform: rotate(-48deg) rotateY(40deg);
+    }
+
+    50% {
+      transform: rotate(-50deg) rotateY(40deg);
+    }
+  }
+
+  @keyframes moving-grass--2 {
+
+    0%,
+    100% {
+      transform: scale(0.5) rotate(75deg) rotateX(10deg) rotateY(-200deg);
+    }
+
+    50% {
+      transform: scale(0.5) rotate(79deg) rotateX(10deg) rotateY(-200deg);
+    }
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    height: 300px;
+
+    .flowers {
+      transform: scale(0.4);
+    }
+
+    .config-panel {
+      position: relative;
+      top: auto;
+      right: auto;
+      width: 100%;
+      margin-top: 20px;
+    }
+  }
+}
