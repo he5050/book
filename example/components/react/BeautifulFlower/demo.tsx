@@ -128,7 +128,10 @@ export const BeautifulFlowerDemo: React.FC = () => {
             <div className="demo-showcase">
               <BeautifulFlower
                 {...config}
-                onConfigChange={handleEffectChange}
+                showConfigPanel={true}
+                onConfigChange={(newConfig) => {
+                  setConfig(prev => ({ ...prev, ...newConfig }));
+                }}
               />
             </div>
             <div className="usage-tip">
@@ -230,7 +233,10 @@ export const BeautifulFlowerDemo: React.FC = () => {
             <div className="demo-showcase">
               <BeautifulFlower
                 {...config}
-                onConfigChange={handleEffectChange}
+                showConfigPanel={true}
+                onConfigChange={(newConfig) => {
+                  setConfig(prev => ({ ...prev, ...newConfig }));
+                }}
               />
             </div>
           </div>

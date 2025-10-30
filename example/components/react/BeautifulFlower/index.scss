@@ -2,7 +2,7 @@
   position: relative;
   width: 100%;
   max-width: 600px;
-  min-height: 800px;
+  height: 800px;
   margin: 0 auto;
   border-radius: 12px;
   overflow: hidden;
@@ -337,9 +337,11 @@
   // 配置面板样式
   .config-panel {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 10px;
+    right: 10px;
     width: 280px;
+    max-height: 150px;
+    overflow-y: auto;
     background: rgba(0, 0, 0, 0.9);
     border-radius: 8px;
     padding: 20px;
@@ -554,6 +556,7 @@
       top: auto;
       right: auto;
       width: 100%;
+      max-height: none;
       margin-top: 20px;
     }
   }
