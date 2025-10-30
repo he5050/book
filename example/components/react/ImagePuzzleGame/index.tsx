@@ -121,54 +121,135 @@ const ImagePuzzleGame: React.FC<ImagePuzzleGameProps> = ({
 	};
 
 	// 放置到拼图板
-	const handleDropToBoard = (e: React.DragEvent, targetIndex: number) => {
-		e.preventDefault();
-		const pieceId = e.dataTransfer.getData('text/plain');
-		const piece = pieces.find(p => p.id === pieceId);
-
-		if (piece && !boardPieces[targetIndex]) {
-			// 从原始区域移除
-			setPieces(prev => prev.filter(p => p.id !== pieceId));
-
-			// 添加到拼图板
-			setBoardPieces(prev => {
-				const newBoard = [...prev];
-				newBoard[targetIndex] = piece;
-				return newBoard;
-			});
-
-			setMoves(prev => prev + 1);
-		}
-		setDraggedPiece(null);
-	};
+  const handleDropToBoard = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    const pieceId = e.dataTransfer.getData('text/plain');
+    
+    // 检查是否从原始区域拖拽
+    const pieceFromOriginal = pieces.find(p => p.id === pieceId);
+    
+    if (pieceFromOriginal && !boardPieces[targetIndex]) {
+      // 从原始区域移除
+      setPieces(prev => prev.filter(p => p.id !== pieceId));
+      
+      // 添加到拼图板
+      setBoardPieces(prev => {
+        const newBoard = [...prev];
+        newBoard[targetIndex] = pieceFromOriginal;
+        return newBoard;
+      });
+      
+      setMoves(prev => prev + 1);
+    } else {
+      // 检查是否从拼图板内部拖拽（交换位置）
+      const sourceIndex = boardPieces.findIndex(p => p?.id === pieceId);
+      if (sourceIndex !== -1 && sourceIndex !== targetIndex) {
+        setBoardPieces(prev => {
+          const newBoard = [...prev];
+          const sourcePiece = newBoard[sourceIndex];
+          const targetPiece = newBoard[targetIndex];
+          
+          // 交换位置
+          newBoard[sourceIndex] = targetPiece;
+          newBoard[targetIndex] = sourcePiece;
+          
+          return newBoard;
+        });
+        
+        setMoves(prev => prev + 1);
+      }
+    }
+    setDraggedPiece(null);
+  };
 
 	// 放置回原始区域
-	const handleDropToPuzzle = (e: React.DragEvent) => {
-		e.preventDefault();
-		const pieceId = e.dataTransfer.getData('text/plain');
-
-		// 从拼图板找到并移除
-		const boardIndex = boardPieces.findIndex(p => p?.id === pieceId);
-		if (boardIndex !== -1) {
-			const piece = boardPieces[boardIndex];
-			if (piece) {
-				setBoardPieces(prev => {
-					const newBoard = [...prev];
-					newBoard[boardIndex] = null;
-					return newBoard;
-				});
-
-				setPieces(prev => [...prev, piece]);
-				setMoves(prev => prev + 1);
-			}
-		}
-		setDraggedPiece(null);
-	};
+  const handleDropToPuzzle = (e: React.DragEvent) => {
+    e.preventDefault();
+    const pieceId = e.dataTransfer.getData('text/plain');
+    
+    // 只允许从拼图板移回原始区域
+    const boardIndex = boardPieces.findIndex(p => p?.id === pieceId);
+    if (boardIndex !== -1) {
+      const piece = boardPieces[boardIndex];
+      if (piece) {
+        setBoardPieces(prev => {
+          const newBoard = [...prev];
+          newBoard[boardIndex] = null;
+          return newBoard;
+        });
+        
+        setPieces(prev => [...prev, piece]);
+        setMoves(prev => prev + 1);
+      }
+    }
+    setDraggedPiece(null);
+  };
 
 	// 重置游戏
-	const resetGame = () => {
-		initializePuzzle();
-	};
+  const resetGame = () => {
+    // 重新生成图片URL，确保获取新的随机图片
+    const newImageUrl = imageUrl.includes('picsum.photos') 
+      ? imageUrl.split('?')[0] + '?random=' + Date.now()
+      : imageUrl;
+    
+    // 清空当前的实际图片URL和游戏状态
+    setActualImageUrl('');
+    setPieces([]);
+    setBoardPieces([]);
+    setMoves(0);
+    setStartTime(Date.now());
+    setIsCompleted(false);
+    
+    // 创建新的图片元素来预加载
+    const newImg = new Image();
+    newImg.crossOrigin = 'anonymous';
+    newImg.onload = () => {
+      // 图片预加载完成后，更新状态并初始化
+      setActualImageUrl(newImg.src);
+      
+      // 更新预览图
+      if (previewImageRef.current) {
+        previewImageRef.current.src = newImg.src;
+      }
+      
+      // 延迟初始化确保状态更新
+      setTimeout(() => {
+        const totalPieces = gridSize * gridSize;
+        const newPieces: PuzzlePiece[] = [];
+        
+        for (let i = 0; i < totalPieces; i++) {
+          newPieces.push({
+            id: `piece-${i}`,
+            correctPosition: i,
+            currentPosition: i,
+            imageUrl: newImg.src
+          });
+        }
+
+        if (autoShuffle) {
+          // 随机打乱
+          for (let i = newPieces.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newPieces[i], newPieces[j]] = [newPieces[j], newPieces[i]];
+            newPieces[i].currentPosition = i;
+            newPieces[j].currentPosition = j;
+          }
+        }
+
+        setPieces(newPieces);
+        setBoardPieces(new Array(totalPieces).fill(null));
+      }, 50);
+    };
+    
+    newImg.onerror = () => {
+      console.error('图片加载失败，使用原始URL');
+      setActualImageUrl(newImageUrl);
+      initializePuzzle();
+    };
+    
+    // 开始加载新图片
+    newImg.src = newImageUrl;
+  };
 
 	const containerStyles = {
 		'--grid-size': gridSize,
@@ -271,16 +352,16 @@ const ImagePuzzleGame: React.FC<ImagePuzzleGameProps> = ({
 			</div>
 
 			{/* 完成提示 */}
-			{isCompleted && (
-				<div className="completion-modal">
-					<div className="modal-content">
-						<h2>🎉 恭喜完成!</h2>
-						<p>移动次数: {moves}</p>
-						<p>用时: {Math.floor((Date.now() - startTime) / 1000)}秒</p>
-						<button onClick={resetGame}>再玩一次</button>
-					</div>
-				</div>
-			)}
+      {isCompleted && (
+        <div className="completion-modal">
+          <div className="modal-content">
+            <h2>🎉 恭喜完成!</h2>
+            <p>移动次数: {moves}</p>
+            <p>用时: {Math.floor((Date.now() - startTime) / 1000)}秒</p>
+            <button onClick={resetGame}>再玩一次</button>
+          </div>
+        </div>
+      )}
 		</div>
 	);
 };
