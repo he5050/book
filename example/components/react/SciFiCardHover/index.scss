@@ -1,0 +1,299 @@
+.sci-fi-card-hover-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #000815;
+  border-radius: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  .sci-fi-config-panel {
+    background: rgba(2, 13, 30, 0.8);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px;
+    margin-bottom: 16px;
+
+    .config-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .config-item {
+      flex: 1;
+      min-width: 150px;
+
+      label {
+        display: block;
+        font-size: 12px;
+        color: #fff;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        outline: none;
+        -webkit-appearance: none;
+
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #007bff;
+          cursor: pointer;
+          border: 2px solid #fff;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        &::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #007bff;
+          cursor: pointer;
+          border: 2px solid #fff;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+  }
+
+  .sci-fi-cards-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding: 40px 20px;
+    margin-bottom: 16px;
+    background: #000815;
+    border-radius: 8px;
+
+    .sci-fi-card {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--clr);
+      box-shadow: 0 0 15px #0009, 0 25px 55px var(--clr);
+      cursor: pointer;
+
+      h2 {
+        position: relative;
+        color: #020d1e;
+        font-size: 4em;
+        text-align: center;
+        line-height: 1.2em;
+        transform: scale(0);
+        transition: 0.5s;
+        transition-delay: 0s;
+        filter: blur(10px);
+        margin: 0;
+
+        small {
+          display: block;
+          font-size: 0.35em;
+          text-transform: uppercase;
+          font-weight: 500;
+          margin-top: 8px;
+        }
+      }
+
+      &:hover h2 {
+        transform: scale(1);
+        transition-delay: 0.5s;
+        filter: blur(0);
+      }
+
+      .card-icon {
+        position: absolute;
+        font-size: 4em;
+        transition: 0.5s;
+        transition-delay: 0s;
+        opacity: 0;
+        transform: translateY(100px);
+      }
+
+      &:hover .card-icon {
+        transform: translateY(0);
+        transition-delay: 1s;
+        opacity: 1;
+      }
+
+      .clip {
+        position: absolute;
+        inset: 20px;
+        box-shadow: 0 0 0 18px #020d1e;
+
+        span {
+          position: absolute;
+          inset: 0;
+          background: #020d1e;
+          transition: 0.25s;
+
+          &:nth-child(1) {
+            clip-path: polygon(0 0, 50% 40%, 100% 0);
+            transition-delay: 0s;
+          }
+
+          &:nth-child(2) {
+            clip-path: polygon(0 0, 40% 50%, 50% 100%, 0% 100%);
+            transition-delay: 0.25s;
+          }
+
+          &:nth-child(3) {
+            clip-path: polygon(60% 50%, 100% 0, 100% 100%, 50% 100%);
+            transition-delay: 0.5s;
+          }
+        }
+      }
+
+      &:hover .clip span:nth-child(1) {
+        clip-path: polygon(0 0, 50% 0%, 100% 0);
+      }
+
+      &:hover .clip span:nth-child(2) {
+        clip-path: polygon(0 0, 0% 100%, 50% 100%, 0% 100%);
+      }
+
+      &:hover .clip span:nth-child(3) {
+        clip-path: polygon(100% 100%, 100% 0, 100% 100%, 50% 100%);
+      }
+    }
+  }
+
+  .card-edit-panel {
+    background: rgba(2, 13, 30, 0.8);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px;
+
+    h4 {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .card-editor {
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .editor-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        label {
+          min-width: 60px;
+          font-size: 12px;
+          color: #fff;
+          font-weight: 500;
+        }
+
+        input[type="text"] {
+          flex: 1;
+          padding: 4px 8px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+          background: rgba(0, 0, 0, 0.3);
+          color: #fff;
+          font-size: 12px;
+        }
+
+        input[type="color"] {
+          width: 40px;
+          height: 30px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        input[type="range"] {
+          width: 80px;
+          height: 4px;
+          border-radius: 2px;
+          background: rgba(255, 255, 255, 0.1);
+          outline: none;
+          -webkit-appearance: none;
+
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sci-fi-card-hover-container {
+    padding: 16px;
+
+    .sci-fi-config-panel,
+    .card-edit-panel {
+      .config-row {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .config-item {
+        min-width: auto;
+      }
+    }
+
+    .sci-fi-cards-container {
+      gap: 20px;
+      padding: 20px 10px;
+
+      .sci-fi-card {
+        h2 {
+          font-size: 3em;
+        }
+
+        .card-icon {
+          font-size: 3em;
+        }
+      }
+    }
+
+    .card-edit-panel {
+      .card-editor .editor-row {
+        flex-wrap: wrap;
+        gap: 6px;
+
+        label {
+          min-width: auto;
+          width: 100%;
+        }
+
+        input[type="range"] {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
