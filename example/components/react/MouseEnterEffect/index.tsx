@@ -29,6 +29,17 @@ const MouseEnterEffect: React.FC<MouseEnterEffectProps> = ({
 	const [boxes, setBoxes] = useState<Array<{ x: number; y: number }>>(
 		Array(boxCount).fill({ x: 0, y: 0 })
 	);
+
+	// 添加配置状态管理
+	const [config, setConfig] = useState({
+		boxCount,
+		boxWidth,
+		boxHeight,
+		backgroundColor,
+		effectColor,
+		borderRadius
+	});
+
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const handleMouseMove = (index: number, e: React.MouseEvent<HTMLDivElement>) => {
@@ -55,8 +66,24 @@ const MouseEnterEffect: React.FC<MouseEnterEffectProps> = ({
 
 	// 初始化盒子数组
 	useEffect(() => {
-		setBoxes(Array(boxCount).fill({ x: 0, y: 0 }));
-	}, [boxCount]);
+		setBoxes(Array(config.boxCount).fill({ x: 0, y: 0 }));
+	}, [config.boxCount]);
+
+	// 更新配置的处理函数
+	const updateConfig = (newConfig: Partial<typeof config>) => {
+		// 先更新配置状态
+		const updatedConfig = { ...config, ...newConfig };
+		setConfig(updatedConfig);
+
+		// 然后更新CSS变量
+		if (containerRef.current) {
+			containerRef.current.style.setProperty('--box-width', `${updatedConfig.boxWidth}px`);
+			containerRef.current.style.setProperty('--box-height', `${updatedConfig.boxHeight}px`);
+			containerRef.current.style.setProperty('--bg-color', updatedConfig.backgroundColor);
+			containerRef.current.style.setProperty('--effect-color', updatedConfig.effectColor);
+			containerRef.current.style.setProperty('--border-radius', `${updatedConfig.borderRadius}px`);
+		}
+	};
 
 	return (
 		<div
@@ -65,11 +92,11 @@ const MouseEnterEffect: React.FC<MouseEnterEffectProps> = ({
 			style={
 				{
 					...style,
-					'--box-width': `${boxWidth}px`,
-					'--box-height': `${boxHeight}px`,
-					'--bg-color': backgroundColor,
-					'--effect-color': effectColor,
-					'--border-radius': `${borderRadius}px`
+					'--box-width': `${config.boxWidth}px`,
+					'--box-height': `${config.boxHeight}px`,
+					'--bg-color': config.backgroundColor,
+					'--effect-color': config.effectColor,
+					'--border-radius': `${config.borderRadius}px`
 				} as React.CSSProperties
 			}
 		>
@@ -95,47 +122,43 @@ const MouseEnterEffect: React.FC<MouseEnterEffectProps> = ({
 			<div className="config-panel">
 				<h3>鼠标移入移出效果配置</h3>
 				<div className="config-item">
-					<label>盒子数量: {boxCount}</label>
+					<label>盒子数量: {config.boxCount}</label>
 					<input
 						type="range"
 						min="1"
 						max="5"
-						value={boxCount}
+						value={config.boxCount}
 						onChange={e => {
 							const count = parseInt(e.target.value);
+							// 更新配置状态和boxes数组
+							setConfig(prev => ({ ...prev, boxCount: count }));
 							setBoxes(Array(count).fill({ x: 0, y: 0 }));
 						}}
 					/>
 				</div>
 
 				<div className="config-item">
-					<label>盒子宽度: {boxWidth}px</label>
+					<label>盒子宽度: {config.boxWidth}px</label>
 					<input
 						type="range"
 						min="200"
 						max="500"
-						value={boxWidth}
+						value={config.boxWidth}
 						onChange={e => {
-							// 更新CSS变量
-							if (containerRef.current) {
-								containerRef.current.style.setProperty('--box-width', `${e.target.value}px`);
-							}
+							updateConfig({ boxWidth: parseInt(e.target.value) });
 						}}
 					/>
 				</div>
 
 				<div className="config-item">
-					<label>盒子高度: {boxHeight}px</label>
+					<label>盒子高度: {config.boxHeight}px</label>
 					<input
 						type="range"
 						min="300"
 						max="600"
-						value={boxHeight}
+						value={config.boxHeight}
 						onChange={e => {
-							// 更新CSS变量
-							if (containerRef.current) {
-								containerRef.current.style.setProperty('--box-height', `${e.target.value}px`);
-							}
+							updateConfig({ boxHeight: parseInt(e.target.value) });
 						}}
 					/>
 				</div>
@@ -144,12 +167,9 @@ const MouseEnterEffect: React.FC<MouseEnterEffectProps> = ({
 					<label>背景颜色:</label>
 					<input
 						type="color"
-						value={backgroundColor}
+						value={config.backgroundColor}
 						onChange={e => {
-							// 更新CSS变量
-							if (containerRef.current) {
-								containerRef.current.style.setProperty('--bg-color', e.target.value);
-							}
+							updateConfig({ backgroundColor: e.target.value });
 						}}
 					/>
 				</div>
@@ -158,29 +178,22 @@ const MouseEnterEffect: React.FC<MouseEnterEffectProps> = ({
 					<label>效果颜色:</label>
 					<input
 						type="color"
-						value={effectColor}
+						value={config.effectColor}
 						onChange={e => {
-							// 更新CSS变量
-							if (containerRef.current) {
-								containerRef.current.style.setProperty('--effect-color', e.target.value);
-							}
+							updateConfig({ effectColor: e.target.value });
 						}}
 					/>
 				</div>
 
 				<div className="config-item">
-					<label>圆角大小: {borderRadius}px</label>
+					<label>圆角大小: {config.borderRadius}px</label>
 					<input
 						type="range"
 						min="0"
 						max="50"
-						value={borderRadius}
+						value={config.borderRadius}
 						onChange={e => {
-							const radius = parseInt(e.target.value);
-							// 更新CSS变量
-							if (containerRef.current) {
-								containerRef.current.style.setProperty('--border-radius', `${radius}px`);
-							}
+							updateConfig({ borderRadius: parseInt(e.target.value) });
 						}}
 					/>
 				</div>
