@@ -1,0 +1,156 @@
+.animated-text-trail-container {
+  position: relative;
+  width: 600px;
+  height: 800px;
+  background: #222;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Courier New', Courier, monospace;
+  border-radius: 12px;
+  cursor: crosshair;
+
+  .cursor {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .text-char {
+    position: absolute;
+    font-size: var(--font-size, 2em);
+    color: var(--text-color, #00ff9a);
+    text-shadow: 
+      0 0 var(--glow-intensity, 15px) var(--text-color, #00ff9a),
+      0 0 calc(var(--glow-intensity, 15px) * 3) var(--text-color, #00ff9a);
+    text-transform: uppercase;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    user-select: none;
+    will-change: transform;
+  }
+
+  .control-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 20;
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+
+    .control-button {
+      padding: 8px 16px;
+      background: rgba(0, 255, 154, 0.2);
+      border: 1px solid rgba(0, 255, 154, 0.5);
+      border-radius: 6px;
+      color: #00ff9a;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      font-family: inherit;
+
+      &:hover {
+        background: rgba(0, 255, 154, 0.3);
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .hint-text {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    text-align: center;
+    z-index: 20;
+    pointer-events: none;
+    animation: fadeInOut 3s ease-in-out infinite;
+  }
+}
+
+// 提示文字动画
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .animated-text-trail-container {
+    width: 100%;
+    max-width: 400px;
+    height: 600px;
+
+    .text-char {
+      font-size: 1.5em !important;
+    }
+
+    .control-panel {
+      padding: 10px 15px;
+      
+      .control-button {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+    }
+
+    .hint-text {
+      font-size: 12px;
+      top: 20px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .animated-text-trail-container {
+    height: 500px;
+
+    .text-char {
+      font-size: 1.2em !important;
+    }
+
+    .control-panel {
+      bottom: 15px;
+      padding: 8px 12px;
+      gap: 8px;
+      
+      .control-button {
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+// 性能优化
+.text-char {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+// 禁用文本选择
+.animated-text-trail-container * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
