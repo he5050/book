@@ -24,6 +24,7 @@
     will-change: transform;
     transform: translateZ(0);
     backface-visibility: hidden;
+    box-shadow: none !important;
 
     &.ring-1 {
       &.animating {
@@ -115,6 +116,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -125,6 +127,7 @@
   0% {
     transform: rotate(360deg);
   }
+
   100% {
     transform: rotate(0deg);
   }
@@ -149,7 +152,7 @@
 
     .control-panel {
       padding: 10px 15px;
-      
+
       .control-button {
         padding: 6px 12px;
         font-size: 12px;
@@ -175,7 +178,7 @@
     .control-panel {
       bottom: 20px;
       padding: 8px 12px;
-      
+
       .control-button {
         padding: 5px 10px;
         font-size: 11px;
