@@ -60,7 +60,9 @@ const MultiRingLoading: React.FC<MultiRingLoadingProps> = ({
   // 第一个环样式（青色，顺时针）
   const ring1Style: React.CSSProperties = {
     ...getRingBaseStyle(),
-    border: `${borderWidth}px solid ${ring1BackgroundColor}`,
+    border: ring1BackgroundColor !== 'transparent' 
+      ? `${borderWidth}px solid ${ring1BackgroundColor}`
+      : `${borderWidth}px solid transparent`,
     borderTop: `${borderWidth}px solid ${ring1Color}`,
     filter: enableGlow 
       ? `drop-shadow(0 0 10px ${ring1Color}) drop-shadow(0 0 ${glowIntensity}px ${ring1Color}) drop-shadow(0 0 ${glowIntensity * 1.5}px ${ring1Color})`
@@ -71,7 +73,9 @@ const MultiRingLoading: React.FC<MultiRingLoadingProps> = ({
   // 第二个环样式（绿色，逆时针）
   const ring2Style: React.CSSProperties = {
     ...getRingBaseStyle(),
-    border: `${borderWidth}px solid ${ring2BackgroundColor}`,
+    border: ring2BackgroundColor !== 'transparent' 
+      ? `${borderWidth}px solid ${ring2BackgroundColor}`
+      : `${borderWidth}px solid transparent`,
     borderLeft: `${borderWidth}px solid ${ring2Color}`,
     filter: enableGlow 
       ? `drop-shadow(0 0 10px ${ring2Color}) drop-shadow(0 0 ${glowIntensity}px ${ring2Color}) drop-shadow(0 0 ${glowIntensity * 1.5}px ${ring2Color})`
@@ -85,7 +89,9 @@ const MultiRingLoading: React.FC<MultiRingLoadingProps> = ({
     ...getRingBaseStyle(),
     position: 'absolute',
     top: `-${ring3Offset}px`,
-    border: `${borderWidth}px solid ${ring3BackgroundColor}`,
+    border: ring3BackgroundColor !== 'transparent' 
+      ? `${borderWidth}px solid ${ring3BackgroundColor}`
+      : `${borderWidth}px solid transparent`,
     borderLeft: `${borderWidth}px solid ${ring3Color}`,
     filter: enableGlow 
       ? `drop-shadow(0 0 10px ${ring3Color}) drop-shadow(0 0 ${glowIntensity}px ${ring3Color}) drop-shadow(0 0 ${glowIntensity * 1.5}px ${ring3Color})`
