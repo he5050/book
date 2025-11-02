@@ -1,0 +1,213 @@
+.colorful-glowing-liquid-bowl-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 600px;
+  height: 800px;
+  padding: 40px;
+  background-color: #121212;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+
+  .liquid-bowl-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    width: 100%;
+  }
+
+  .bowl {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border: 8px solid transparent;
+    transform-origin: bottom center;
+
+    &.animating {
+      animation: bowlAnimate var(--animation-duration, 5s) linear infinite;
+    }
+
+    &.paused {
+      animation-play-state: paused;
+    }
+
+    // 碗口装饰
+    &::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40%;
+      height: 30px;
+      border: 15px solid #444;
+      border-radius: 50%;
+      box-shadow: 0 10px #222;
+    }
+
+    // 高光效果
+    &::after {
+      content: '';
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      width: 150px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  .liquid {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-bottom-left-radius: 150px;
+    border-bottom-right-radius: 150px;
+    transform-origin: top center;
+
+    &.animating {
+      animation: liquidAnimate var(--animation-duration, 5s) linear infinite;
+    }
+
+    .liquid-surface {
+      position: absolute;
+      top: -10px;
+      width: 100%;
+      height: 20px;
+      border-radius: 50%;
+    }
+  }
+
+  .shadow {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 30px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+  }
+
+  .control-panel {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+
+    .control-button {
+      padding: 8px 16px;
+      background: rgba(65, 193, 251, 0.2);
+      border: 1px solid rgba(65, 193, 251, 0.5);
+      border-radius: 6px;
+      color: #41c1fb;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+
+      &:hover {
+        background: rgba(65, 193, 251, 0.3);
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// 碗体动画
+@keyframes bowlAnimate {
+  0% {
+    filter: hue-rotate(0deg);
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(var(--swing-angle, 15deg));
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(calc(-1 * var(--swing-angle, 15deg)));
+  }
+  100% {
+    filter: hue-rotate(var(--color-rotation, 360deg));
+    transform: rotate(0deg);
+  }
+}
+
+// 液体动画
+@keyframes liquidAnimate {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(calc(-1 * var(--liquid-swing-angle, 20deg)));
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(var(--liquid-swing-angle, 20deg));
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .colorful-glowing-liquid-bowl-container {
+    width: 100%;
+    max-width: 400px;
+    height: 600px;
+    padding: 20px;
+
+    .bowl {
+      width: 200px !important;
+      height: 200px !important;
+    }
+
+    .shadow {
+      width: 200px !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .colorful-glowing-liquid-bowl-container {
+    height: 500px;
+    padding: 15px;
+
+    .bowl {
+      width: 150px !important;
+      height: 150px !important;
+    }
+
+    .shadow {
+      width: 150px !important;
+    }
+
+    .control-panel {
+      padding: 15px;
+      
+      .control-button {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+    }
+  }
+}
