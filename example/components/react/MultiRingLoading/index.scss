@@ -1,0 +1,191 @@
+.multi-ring-loading-container {
+  position: relative;
+  width: 600px;
+  height: 800px;
+  background: #111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+
+  .loading-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ring {
+    position: relative;
+    border-radius: 50%;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+
+    &.ring-1 {
+      &.animating {
+        animation: rotate-clockwise var(--animation-duration, 4s) linear infinite;
+      }
+    }
+
+    &.ring-2 {
+      &.animating {
+        animation: rotate-counter-clockwise var(--animation-duration, 4s) linear infinite;
+        animation-delay: -1s;
+      }
+    }
+
+    &.ring-3 {
+      &.animating {
+        animation: rotate-counter-clockwise var(--animation-duration, 4s) linear infinite;
+        animation-delay: -3s;
+      }
+    }
+
+    &.paused {
+      animation-play-state: paused;
+    }
+  }
+
+  .ring-icon {
+    position: absolute;
+    font-size: 2em;
+    font-weight: bold;
+    user-select: none;
+    pointer-events: none;
+
+    &.ring-icon-1 {
+      top: 10px;
+      right: -4px;
+      transform: rotate(90deg);
+    }
+
+    &.ring-icon-2 {
+      bottom: -6px;
+      left: 12px;
+      transform: rotate(45deg);
+    }
+
+    &.ring-icon-3 {
+      bottom: -6px;
+      left: 12px;
+      transform: rotate(135deg);
+    }
+  }
+
+  .control-panel {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+
+    .control-button {
+      padding: 8px 16px;
+      background: rgba(36, 236, 255, 0.2);
+      border: 1px solid rgba(36, 236, 255, 0.5);
+      border-radius: 6px;
+      color: #24ecff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+
+      &:hover {
+        background: rgba(36, 236, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// 顺时针旋转动画
+@keyframes rotate-clockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// 逆时针旋转动画
+@keyframes rotate-counter-clockwise {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .multi-ring-loading-container {
+    width: 100%;
+    max-width: 400px;
+    height: 600px;
+
+    .ring {
+      width: 100px !important;
+      height: 100px !important;
+      margin: -20px !important;
+    }
+
+    .ring-icon {
+      font-size: 1.5em !important;
+    }
+
+    .control-panel {
+      padding: 10px 15px;
+      
+      .control-button {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .multi-ring-loading-container {
+    height: 500px;
+
+    .ring {
+      width: 80px !important;
+      height: 80px !important;
+      margin: -15px !important;
+    }
+
+    .ring-icon {
+      font-size: 1.2em !important;
+    }
+
+    .control-panel {
+      bottom: 20px;
+      padding: 8px 12px;
+      
+      .control-button {
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+// 性能优化
+.ring {
+  transform: translateZ(0);
+  will-change: transform;
+}
