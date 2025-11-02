@@ -9,7 +9,6 @@
   align-items: center;
   font-family: 'Courier New', Courier, monospace;
   border-radius: 12px;
-  cursor: crosshair;
 
   .cursor {
     position: absolute;
@@ -28,8 +27,6 @@
       0 0 calc(var(--glow-intensity, 15px) * 3) var(--text-color, #00ff9a);
     text-transform: uppercase;
     transform: translate(-50%, -50%);
-    font-weight: bold;
-    letter-spacing: 0.1em;
     user-select: none;
     will-change: transform;
   }

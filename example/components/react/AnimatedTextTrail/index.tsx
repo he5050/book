@@ -54,22 +54,18 @@ const AnimatedTextTrail: React.FC<AnimatedTextTrailProps> = ({
 
   // 创建文本字符元素
   const createTextElements = () => {
-    if (!cursorRef.current || !containerRef.current) return;
+    if (!cursorRef.current) return;
     
     // 清空现有元素
     cursorRef.current.innerHTML = '';
     
-    // 获取容器中心位置
-    const rect = containerRef.current.getBoundingClientRect();
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    for (let i = 0; i < text.length; i++) {
+    // 与原始效果一致，循环到 textContent.length（包含最后一个字符）
+    for (let i = 0; i <= text.length; i++) {
       const span = document.createElement('span');
       span.classList.add('text-char');
       span.style.setProperty('--i', (i + 1).toString());
       span.style.left = `${i * charSpacing}em`;
-      span.textContent = text[i];
+      span.textContent = text[i] || ''; // 防止undefined
       span.style.filter = `hue-rotate(${i * hueStep}deg)`;
       
       if (!enableGlow) {
@@ -78,12 +74,6 @@ const AnimatedTextTrail: React.FC<AnimatedTextTrailProps> = ({
       
       cursorRef.current.appendChild(span);
     }
-    
-    // 初始化位置到容器中心
-    gsap.set('.text-char', {
-      x: centerX,
-      y: centerY
-    });
   };
 
   // 鼠标移动处理
@@ -95,34 +85,20 @@ const AnimatedTextTrail: React.FC<AnimatedTextTrailProps> = ({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
-    // 取消之前的动画
-    if (animationRef.current) {
-      animationRef.current.kill();
-    }
-    
-    // 创建新的动画
-    animationRef.current = gsap.to('.text-char', {
+    // 使用容器内的相对坐标
+    gsap.to('.text-char', {
       x: x,
       y: y,
-      stagger: staggerDelay,
-      duration: animationDuration,
-      ease: 'power2.out'
+      stagger: staggerDelay
     });
   };
 
-  // 节流处理
+  // 移除节流，与原始效果保持一致
   const throttledMouseMove = useRef<((e: MouseEvent) => void) | null>(null);
 
   useEffect(() => {
-    let lastCall = 0;
-    throttledMouseMove.current = (e: MouseEvent) => {
-      const now = Date.now();
-      if (now - lastCall >= 16) { // 约60fps
-        lastCall = now;
-        handleMouseMove(e);
-      }
-    };
-  }, [isActive, staggerDelay, animationDuration]);
+    throttledMouseMove.current = handleMouseMove;
+  }, [isActive, staggerDelay]);
 
   // 初始化和清理
   useEffect(() => {
@@ -153,13 +129,10 @@ const AnimatedTextTrail: React.FC<AnimatedTextTrailProps> = ({
 
   // 重置位置
   const resetPosition = () => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      gsap.set('.text-char', {
-        x: rect.width / 2,
-        y: rect.height / 2
-      });
-    }
+    gsap.set('.text-char', {
+      x: 0,
+      y: 0
+    });
   };
 
   return (
