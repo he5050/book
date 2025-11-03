@@ -1,0 +1,275 @@
+.scroll-reveal-animation-container {
+  position: relative;
+  width: 600px;
+  height: 800px;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  .title-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+
+    h2 {
+      color: #fff;
+      font-size: 4rem;
+      font-weight: 500;
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .elements-grid {
+    position: relative;
+    top: -200px;
+    display: grid;
+    margin-bottom: 200px;
+    padding: 20px;
+  }
+
+  .scroll-element {
+    position: relative;
+    top: 50vh;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.5s ease-out;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+    // 初始状态 - 左侧进入
+    &.left {
+      transform: translate(-400px, 0) scale(0);
+      opacity: 0;
+    }
+
+    // 初始状态 - 底部进入
+    &.bottom {
+      transform: translate(0, 400px) scale(0);
+      opacity: 0;
+    }
+
+    // 初始状态 - 右侧进入
+    &.right {
+      transform: translate(400px, 0) scale(0);
+      opacity: 0;
+    }
+
+    // 初始状态 - 顶部进入
+    &.top {
+      transform: translate(0, -400px) scale(0);
+      opacity: 0;
+    }
+
+    // 激活状态
+    &.active {
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+
+    // 悬停效果
+    &:hover {
+      transform: translate(0, 0) scale(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+  }
+
+  .control-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 100;
+
+    .control-button {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 6px;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .stats {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: #ccc;
+
+      span {
+        padding: 2px 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .scroll-reveal-animation-container {
+    width: 100%;
+    max-width: 400px;
+
+    .title-section h2 {
+      font-size: 2.5rem;
+    }
+
+    .elements-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 20px !important;
+      width: auto !important;
+      max-width: 350px;
+    }
+
+    .scroll-element {
+      width: 150px !important;
+      height: 150px !important;
+
+      &.left {
+        transform: translate(-300px, 0) scale(0);
+      }
+
+      &.bottom {
+        transform: translate(0, 300px) scale(0);
+      }
+
+      &.right {
+        transform: translate(300px, 0) scale(0);
+      }
+
+      &.top {
+        transform: translate(0, -300px) scale(0);
+      }
+    }
+
+    .control-panel {
+      bottom: 10px;
+      padding: 10px 15px;
+
+      .control-button {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .stats {
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .scroll-reveal-animation-container {
+    max-width: 320px;
+
+    .title-section h2 {
+      font-size: 2rem;
+    }
+
+    .elements-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 15px !important;
+      max-width: 280px;
+    }
+
+    .scroll-element {
+      width: 120px !important;
+      height: 120px !important;
+
+      &.left {
+        transform: translate(-250px, 0) scale(0);
+      }
+
+      &.bottom {
+        transform: translate(0, 250px) scale(0);
+      }
+
+      &.right {
+        transform: translate(250px, 0) scale(0);
+      }
+
+      &.top {
+        transform: translate(0, -250px) scale(0);
+      }
+    }
+  }
+}
+
+// 性能优化
+.scroll-element {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+// 滚动条样式
+.scroll-reveal-animation-container {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
+// 动画优化
+@media (prefers-reduced-motion: reduce) {
+  .scroll-element {
+    transition: none;
+    
+    &.left,
+    &.right,
+    &.bottom,
+    &.top {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+
+    &.active {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
