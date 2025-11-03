@@ -42,7 +42,6 @@ const ScrollRevealAnimation: React.FC<ScrollRevealAnimationProps> = ({
 	style = {}
 }) => {
 	const [elements, setElements] = useState<ElementData[]>([]);
-	const observerRef = useRef<IntersectionObserver | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	// 生成随机颜色
@@ -55,16 +54,17 @@ const ScrollRevealAnimation: React.FC<ScrollRevealAnimationProps> = ({
 		return color;
 	}, []);
 
-	// 获取动画方向
+	// 获取动画方向 - 按照原始效果的规律 (匹配CSS的:nth-child选择器)
 	const getAnimationDirection = useCallback(
 		(index: number): 'left' | 'right' | 'bottom' | 'top' => {
-			const position = index % columns;
-			if (position === 0) return 'left';
-			if (position === 1) return 'bottom';
-			if (position === 2) return 'right';
-			return 'top';
+			// 匹配CSS中的:nth-child(3n+1), :nth-child(3n+2), :nth-child(3n+3)
+			const position = (index + 1) % 3;
+			if (position === 1) return 'left';   // 3n+1 从左侧进入
+			if (position === 2) return 'bottom'; // 3n+2 从底部进入  
+			if (position === 0) return 'right';  // 3n+3 从右侧进入
+			return 'left';
 		},
-		[columns]
+		[]
 	);
 
 	// 初始化元素
@@ -78,50 +78,35 @@ const ScrollRevealAnimation: React.FC<ScrollRevealAnimationProps> = ({
 		setElements(newElements);
 	}, [elementCount, enableRandomColors, generateRandomColor, getAnimationDirection]);
 
-	// 创建Intersection Observer
-	useEffect(() => {
-		if (observerRef.current) {
-			observerRef.current.disconnect();
-		}
+	// 使用容器滚动触发逻辑
+		useEffect(() => {
+			const container = containerRef.current?.closest('.scroll-reveal-animation-container') as HTMLElement;
+			if (!container) return;
 
-		observerRef.current = new IntersectionObserver(
-			entries => {
-				entries.forEach(entry => {
-					const elementId = parseInt(entry.target.getAttribute('data-id') || '0');
+			const handleScroll = () => {
+					if (!containerRef.current) return;
 
-					setElements(prev =>
-						prev.map(el => (el.id === elementId ? { ...el, isVisible: entry.isIntersecting } : el))
-					);
-				});
-			},
-			{
-				threshold,
-				rootMargin
-			}
-		);
+					const elementNodes = containerRef.current.querySelectorAll('.scroll-element');
+					elementNodes.forEach((node, index) => {
+						const element = node as HTMLElement;
+						// 计算元素相对于容器内容的位置
+						const elementTop = element.offsetTop - container.offsetTop;
+						const scrollY = container.scrollTop;
 
-		return () => {
-			if (observerRef.current) {
-				observerRef.current.disconnect();
-			}
-		};
-	}, [threshold, rootMargin]);
+						setElements(prev =>
+							prev.map(el => (el.id === index ? { ...el, isVisible: elementTop < scrollY } : el))
+						);
+					});
+				};
 
-	// 观察元素
-	useEffect(() => {
-		if (!observerRef.current || !containerRef.current) return;
+			container.addEventListener('scroll', handleScroll);
+			// 初始检查
+			handleScroll();
 
-		const elementNodes = containerRef.current.querySelectorAll('.scroll-element');
-		elementNodes.forEach(node => {
-			observerRef.current?.observe(node);
-		});
-
-		return () => {
-			elementNodes.forEach(node => {
-				observerRef.current?.unobserve(node);
-			});
-		};
-	}, [elements]);
+			return () => {
+				container.removeEventListener('scroll', handleScroll);
+			};
+		}, [elements.length]);
 
 	// 重新生成颜色
 	const regenerateColors = () => {
@@ -139,21 +124,22 @@ const ScrollRevealAnimation: React.FC<ScrollRevealAnimationProps> = ({
 		...style
 	};
 
-	// 网格样式
+	// 网格样式 - 匹配原版700px容器的3列布局
 	const gridStyle: React.CSSProperties = {
-		gridTemplateColumns: `repeat(${columns}, 1fr)`,
+		gridTemplateColumns: '1fr 1fr 1fr', // 固定3列布局
 		gap: `${gap}px`,
-		width: `${columns * elementSize + (columns - 1) * gap}px`
+		width: '700px', // 匹配原版设计
+		maxWidth: '100%'
 	};
 
-	// 元素样式
+	// 元素样式 - 匹配原版200px固定尺寸
 	const getElementStyle = (element: ElementData): React.CSSProperties => {
 		return {
-			width: `${elementSize}px`,
-			height: `${elementSize}px`,
+			width: '200px', // 匹配原版固定尺寸
+			height: '200px',
 			backgroundColor: element.color,
 			borderRadius: `${borderRadius}px`,
-			transitionDuration: `${animationDuration}s`,
+			transition: `${animationDuration}s`,
 			transitionDelay: `${animationDelay}s`
 		};
 	};
