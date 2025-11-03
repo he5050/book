@@ -59,6 +59,9 @@ importers:
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
+      markdown-it:
+        specifier: ^14.1.0
+        version: 14.1.0
       ol:
         specifier: ^10.6.1
         version: 10.6.1
