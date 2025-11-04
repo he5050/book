@@ -1,0 +1,198 @@
+.glass-morphism-3d-container {
+  --loader-size: 300px;
+  --animation-duration: 4s;
+  --primary-color: #ff0080;
+  --secondary-color: #ff8c00;
+  --glass-opacity: 0.05;
+  --border-opacity: 0.25;
+  --blur-intensity: 24px;
+  --border-width: 2px;
+  --rotate-x: 35deg;
+  --rotate-z: 345deg;
+  --translate-z: 90px;
+  --hover-rotation: 360deg;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --gradient: linear-gradient(45deg, #ff0080, #ff8c00);
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background: #222;
+  padding: 40px;
+  border-radius: 8px;
+  perspective: 1000px;
+  overflow: hidden;
+}
+
+.glass-loader {
+  position: relative;
+  width: var(--loader-size);
+  height: var(--loader-size);
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rotate-x)) rotateZ(var(--rotate-z));
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  // 硬件加速优化
+  will-change: transform;
+  backface-visibility: hidden;
+  
+  &.animated {
+    animation: rotate3D var(--animation-duration) linear infinite;
+  }
+  
+  &.hovered {
+    .inner-element,
+    .glass-panel {
+      transform: rotateX(var(--hover-rotation));
+    }
+  }
+  
+  &:hover {
+    transform: rotateX(var(--rotate-x)) rotateZ(var(--rotate-z)) scale(1.05);
+  }
+}
+
+.glass-panel {
+  position: absolute;
+  inset: 0;
+  background: var(--glass-bg);
+  border: var(--border-width) solid var(--glass-border);
+  backdrop-filter: blur(var(--blur-intensity));
+  -webkit-backdrop-filter: blur(var(--blur-intensity));
+  border-radius: 8px;
+  transition: all 2.5s ease;
+  will-change: transform;
+  
+  // 降级方案
+  @supports not (backdrop-filter: blur(1px)) {
+    background: rgba(255, 255, 255, 0.1);
+    border: var(--border-width) solid rgba(255, 255, 255, 0.3);
+  }
+}
+
+.inner-element {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: all 2.5s ease;
+  will-change: transform;
+  
+  // 背景渐变层 (后层)
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 15px;
+    background: var(--gradient);
+    transform: translateZ(calc(var(--translate-z) * -1));
+    border-radius: 4px;
+  }
+  
+  // 前景玻璃层 (前层)
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: var(--border-width) solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transform: translateZ(var(--translate-z));
+    border-radius: 4px;
+    
+    // 降级方案
+    @supports not (backdrop-filter: blur(1px)) {
+      background: rgba(255, 255, 255, 0.15);
+      border: var(--border-width) solid rgba(255, 255, 255, 0.35);
+    }
+  }
+}
+
+// 主旋转动画
+@keyframes rotate3D {
+  0% {
+    transform: rotateX(var(--rotate-x)) rotateZ(0deg);
+  }
+  100% {
+    transform: rotateX(var(--rotate-x)) rotateZ(360deg);
+  }
+}
+
+
+
+// 响应式适配
+@media (max-width: 768px) {
+  .glass-morphism-3d-container {
+    --loader-size: 200px;
+    min-height: 300px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .glass-morphism-3d-container {
+    --loader-size: 150px;
+    min-height: 250px;
+    padding: 15px;
+  }
+  
+  .glass-panel,
+  .gradient-layer,
+  .glass-layer {
+    border-radius: 6px;
+  }
+  
+  .inner-element::before,
+  .inner-element::after {
+    inset: 10px;
+    border-radius: 3px;
+  }
+}
+
+// 性能优化
+@media (prefers-reduced-motion: reduce) {
+  .glass-loader.animated {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+  
+  .glass-panel,
+  .inner-element {
+    transition-duration: 0.01ms;
+  }
+  
+  
+}
+
+// 高对比度模式支持
+@media (prefers-contrast: high) {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .inner-element::after {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+// 暗色主题适配
+@media (prefers-color-scheme: dark) {
+  .glass-morphism-3d-container {
+    background: #111;
+  }
+}
+
+// 触摸设备优化
+@media (hover: none) and (pointer: coarse) {
+  .glass-loader:hover {
+    transform: rotateX(var(--rotate-x)) rotateZ(var(--rotate-z));
+  }
+  
+  .glass-loader {
+    cursor: default;
+  }
+}
