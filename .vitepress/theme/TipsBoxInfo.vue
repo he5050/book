@@ -120,12 +120,30 @@ import { calendar } from '../tools/calendar';
 const tips = ref('');
 const weather = ref([]);
 const today = ref({});
-// 使用指定的固定颜色值
-const colorOne = ref('rgba(189, 52, 254, 0.2)'); // #bd34fe 紫色
-const colorTwo = ref('rgba(228, 52, 152, 0.2)'); // #e43498 粉红色
-const colorThree = ref('rgba(52, 152, 219, 0.2)'); // #3498db 蓝色
+// 使用动态随机颜色（pastel），每 5 秒变更一次
+const colorOne = ref('');
+const colorTwo = ref('');
+const colorThree = ref('');
 const showWeatherDetail = ref(false);
-let timerId = null;
+// 定时器 id：区分天气重试与颜色更新，便于清理
+let weatherRetryTimerId = null;
+let colorIntervalId = null;
+
+// 产生柔和的随机 rgba 颜色（保证颜色偏浅）
+const randomPastelRGBA = (alpha = 0.2) => {
+	// 在 [100, 230] 范围内取值，避免太暗或太亮
+	const r = Math.floor(100 + Math.random() * 130);
+	const g = Math.floor(100 + Math.random() * 130);
+	const b = Math.floor(100 + Math.random() * 130);
+	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+// 更新三种颜色（可进一步调整保证色差）
+const updateColors = () => {
+	colorOne.value = randomPastelRGBA(0.18);
+	colorTwo.value = randomPastelRGBA(0.18);
+	colorThree.value = randomPastelRGBA(0.18);
+};
 
 const defaultTips = '民国最浪费的不是爱情，是走出黑暗的并肩同行。';
 let timeNow = calendar.solar2lunar();
@@ -177,12 +195,24 @@ onMounted(() => {
 	// 组件挂载后立即获取数据
 	init();
 	getWeather();
+
+	// 初始设置一次颜色并启动每 5 秒更新的定时器
+	updateColors();
+	colorIntervalId = setInterval(updateColors, 5000);
 });
 
 // 生命周期钩子：组件卸载前清理定时器
 onUnmounted(() => {
-	if (timerId) {
-		clearInterval(timerId);
+	// 清理天气重试定时器（如果存在）
+	if (weatherRetryTimerId) {
+		clearTimeout(weatherRetryTimerId);
+		weatherRetryTimerId = null;
+	}
+
+	// 清理颜色更新定时器
+	if (colorIntervalId) {
+		clearInterval(colorIntervalId);
+		colorIntervalId = null;
 	}
 });
 
@@ -246,8 +276,8 @@ const getWeather = async () => {
 		}
 	} catch (error) {
 		console.error('获取天气数据失败:', error);
-		// 如果获取失败，5秒后重试
-		setTimeout(() => {
+		// 如果获取失败，5秒后重试，并保存定时器 id 以便清理
+		weatherRetryTimerId = setTimeout(() => {
 			getWeather();
 		}, 5000);
 	}
