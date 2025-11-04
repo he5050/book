@@ -1,0 +1,256 @@
+.typing-animation-demo {
+  width: 600px;
+  height: 800px;
+  background: #000001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  box-sizing: border-box;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .demo-title {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    text-align: center;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: -0.02em;
+  }
+
+  .typing-demo-section {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    h3 {
+      color: #ffffff;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .typing-animation-container {
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+
+      .typing-text {
+        color: #ffffff;
+        font-size: 1.5rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+      }
+
+      .typing-cursor {
+        color: #00ff88;
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin-left: 2px;
+        animation: blink 1s step-end infinite;
+        text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+      }
+    }
+  }
+
+  .controls-section {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    h3 {
+      color: #ffffff;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .control-group {
+      margin-bottom: 1rem;
+
+      label {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        outline: none;
+        -webkit-appearance: none;
+
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #00ff88;
+          cursor: pointer;
+          box-shadow: 0 2px 6px rgba(0, 255, 136, 0.3);
+        }
+
+        &::-moz-range-thumb {
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #00ff88;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 6px rgba(0, 255, 136, 0.3);
+        }
+      }
+
+      .range-value {
+        color: #00ff88;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-top: 0.25rem;
+        text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        color: #ffffff;
+        font-size: 0.9rem;
+        outline: none;
+        transition: all 0.3s ease;
+        font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+
+        &:focus {
+          border-color: #00ff88;
+          box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.4);
+        }
+      }
+
+      textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        color: #ffffff;
+        font-size: 0.9rem;
+        outline: none;
+        resize: vertical;
+        font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+        transition: all 0.3s ease;
+
+        &:focus {
+          border-color: #00ff88;
+          box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.4);
+        }
+      }
+
+      .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+          accent-color: #00ff88;
+        }
+
+        label {
+          margin-bottom: 0;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .typing-animation-demo {
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+
+    .demo-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .typing-demo-section,
+    .controls-section {
+      max-width: 100%;
+      padding: 1.5rem;
+    }
+
+    .typing-animation-container {
+      .typing-text,
+      .typing-cursor {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
