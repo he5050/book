@@ -9,11 +9,7 @@
 							<span class="weather-city">{{ today.city }}</span>
 							<!-- <span class="weather-temp">{{ today.tem_day }}°C</span> -->
 							<div class="weather-desc">
-								<img
-									class="weather-icon-img"
-									:src="`/weather/cake/${today.wea_img || 'qing'}.png`"
-									:alt="today.wea"
-								/>
+								<img class="weather-icon-img" :src="`/weather/cake/${today.wea_img || 'qing'}.png`" :alt="today.wea" />
 								<span>{{ today.wea }}</span>
 							</div>
 						</div>
@@ -45,10 +41,7 @@
 					</div>
 				</div>
 			</div>
-			<p
-				class="footer"
-				:style="{ '--color-one': colorOne, '--color-two': colorTwo, '--color-three': colorThree }"
-			>
+			<p class="footer" :style="{ '--color-one': colorOne, '--color-two': colorTwo, '--color-three': colorThree }">
 				{{ tips || defaultTips }}
 			</p>
 		</div>
@@ -139,9 +132,8 @@ let timeNow = calendar.solar2lunar();
 
 // 计算属性：格式化日期显示
 const formattedDate = computed(() => {
-	return `${dayjs().format('YYYY-MM-DD')}(${timeNow.ncWeek}), 农历:${timeNow.Animal}年,${
-		timeNow.IMonthCn
-	}${timeNow.IDayCn}(${timeNow.gzYear}年${timeNow.gzMonth}月${timeNow.gzDay}日)`;
+	return `${dayjs().format('YYYY-MM-DD')}(${timeNow.ncWeek}), 农历:${timeNow.Animal}年,${timeNow.IMonthCn
+		}${timeNow.IDayCn}(${timeNow.gzYear}年${timeNow.gzMonth}月${timeNow.gzDay}日)`;
 });
 
 // 获取星期几
@@ -317,7 +309,8 @@ const getWeather = async () => {
 	width: 20px;
 	height: 20px;
 	margin-right: 5px;
-	background-color: #4a6fa1; /* 与弹窗中的图标背景一致 */
+	background-color: #4a6fa1;
+	/* 与弹窗中的图标背景一致 */
 	padding: 3px;
 	border-radius: 50%;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -396,19 +389,18 @@ const getWeather = async () => {
 	border-radius: 4px;
 	height: 28px;
 	line-height: 22px;
-	overflow: hidden; /* 确保内容不会溢出 */
+	overflow: hidden;
+	/* 确保内容不会溢出 */
 	/* 使用指定的三种颜色创建渐变背景 */
-	background-image: repeating-linear-gradient(
-		45deg,
-		#fff 0% 4%,
-		var(--color-one, rgba(189, 52, 254, 0.2)) 4% 8%,
-		#fff 8% 12%,
-		var(--color-two, rgba(228, 52, 152, 0.2)) 12% 16%,
-		#fff 16% 20%,
-		var(--color-three, rgba(52, 152, 219, 0.2)) 20% 24%
-	);
+	background-image: repeating-linear-gradient(45deg,
+			#fff 0% 4%,
+			var(--color-one, rgba(189, 52, 254, 0.2)) 4% 8%,
+			#fff 8% 12%,
+			var(--color-two, rgba(228, 52, 152, 0.2)) 12% 16%,
+			#fff 16% 20%,
+			var(--color-three, rgba(52, 152, 219, 0.2)) 20% 24%);
 	/* 调整背景尺寸，使其与动画距离匹配 */
-	background-size: 240px 240px;
+	background-size: 220px 240px;
 	/* 使用更慢的速度和更平滑的缓动函数 */
 	animation: up 20s infinite linear;
 	/* 使用 will-change 提高动画性能 */
@@ -420,7 +412,8 @@ const getWeather = async () => {
 /* 已在上面定义过 .weather-detail，这里移除重复定义 */
 
 #cat-iframe {
-	display: none; /* 隐藏iframe，原React组件中也可能不需要显示 */
+	display: none;
+	/* 隐藏iframe，原React组件中也可能不需要显示 */
 }
 
 /* 天气详情弹窗样式 */
@@ -474,7 +467,8 @@ const getWeather = async () => {
 	width: 24px;
 	height: 24px;
 	margin-right: 8px;
-	background-color: #4a6fa1; /* 添加深蓝色背景 */
+	background-color: #4a6fa1;
+	/* 添加深蓝色背景 */
 	padding: 4px;
 	border-radius: 50%;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -611,8 +605,9 @@ const getWeather = async () => {
 
 @keyframes up {
 	0% {
-		background-position: 0 0;
+		background-position: 0 30px;
 	}
+
 	100% {
 		background-position: 0 240px;
 	}

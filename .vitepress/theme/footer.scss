@@ -1,0 +1,62 @@
+.footer {
+  position: relative;
+  padding: 4px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 4px;
+  height: 28px;
+  line-height: 22px;
+  overflow: hidden;
+  /* 确保内容不会溢出 */
+  /* 保持文本在最上层 */
+  z-index: 1;
+}
+
+/* 使用伪元素承载重复背景并做 transform 动画，这样滚动更平滑且不会出现错位 */
+.footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* 左上右下都为 0，覆盖父容器 */
+  z-index: 0;
+  /* 放到文字后面 */
+  pointer-events: none;
+  /* 不阻塞鼠标事件 */
+  /* 下面是与之前相同的 repeating-linear-gradient 配置 */
+  background-image: repeating-linear-gradient(45deg,
+      #fff 0% 4%,
+      var(--color-one, rgba(189, 52, 254, 0.2)) 4% 8%,
+      #fff 8% 12%,
+      var(--color-two, rgba(228, 52, 152, 0.2)) 12% 16%,
+      #fff 16% 20%,
+      var(--color-three, rgba(52, 152, 219, 0.2)) 20% 24%);
+  background-size: 240px 240px;
+  /* 与动画位移量对齐 */
+  background-repeat: repeat;
+  will-change: transform;
+  /* 使用 transform 来滚动背景，通常比 background-position 更平滑 */
+  transform: translateY(0);
+  animation: slide var(--footer-scroll-duration, 20s) linear infinite;
+}
+
+/* 反向滚动：给 .footer 加上 reverse 类即可让背景向相反方向滚动 */
+.footer.reverse::before {
+  animation-direction: reverse;
+}
+
+/* 如果需要暂停动画，可以加 .paused */
+.footer.paused::before {
+  animation-play-state: paused;
+}
+
+@keyframes slide {
+
+  /* 将伪元素向上移动一个 background-size 的高度，配合 repeating-linear-gradient 可实现无缝滚动 */
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-240px);
+  }
+}
