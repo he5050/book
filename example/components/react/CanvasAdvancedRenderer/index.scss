@@ -1,0 +1,284 @@
+.canvas-advanced-renderer {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .demo-controls {
+    margin-bottom: 20px;
+
+    .demo-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 8px;
+
+      button {
+        padding: 8px 16px;
+        border: none;
+        background: #f3f4f6;
+        color: #6b7280;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #e5e7eb;
+          color: #374151;
+        }
+
+        &.active {
+          background: #3b82f6;
+          color: white;
+        }
+      }
+    }
+
+    .config-panel {
+      background: #f9fafb;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+
+      h4 {
+        margin: 0 0 12px 0;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .config-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+
+        label {
+          min-width: 80px;
+          font-size: 12px;
+          color: #6b7280;
+          font-weight: 500;
+        }
+
+        input, textarea {
+          flex: 1;
+          padding: 6px 8px;
+          border: 1px solid #d1d5db;
+          border-radius: 4px;
+          font-size: 12px;
+          background: white;
+
+          &:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+          }
+        }
+
+        textarea {
+          min-height: 60px;
+          resize: vertical;
+          font-family: monospace;
+        }
+
+        input[type="color"] {
+          width: 40px;
+          height: 30px;
+          padding: 2px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        input[type="number"] {
+          max-width: 80px;
+        }
+      }
+    }
+  }
+
+  .canvas-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+
+    .render-canvas {
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .canvas-advanced-renderer {
+    padding: 16px;
+
+    .demo-controls {
+      .demo-tabs {
+        flex-wrap: wrap;
+        gap: 6px;
+
+        button {
+          padding: 6px 12px;
+          font-size: 12px;
+        }
+      }
+
+      .config-panel {
+        padding: 12px;
+
+        .config-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px;
+
+          label {
+            min-width: auto;
+            font-size: 11px;
+          }
+
+          input, textarea {
+            width: 100%;
+            font-size: 11px;
+          }
+        }
+      }
+    }
+
+    .canvas-container {
+      padding: 16px;
+
+      .render-canvas {
+        max-width: 100%;
+        height: auto;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+      }
+    }
+  }
+}
+
+// 深色模式支持
+@media (prefers-color-scheme: dark) {
+  .canvas-advanced-renderer {
+    background: #1f2937;
+    color: #f9fafb;
+
+    .demo-controls {
+      .demo-tabs {
+        border-bottom-color: #374151;
+
+        button {
+          background: #374151;
+          color: #d1d5db;
+
+          &:hover {
+            background: #4b5563;
+            color: #f3f4f6;
+          }
+
+          &.active {
+            background: #3b82f6;
+            color: white;
+          }
+        }
+      }
+
+      .config-panel {
+        background: #111827;
+        border-color: #374151;
+
+        h4 {
+          color: #f3f4f6;
+        }
+
+        .config-item {
+          label {
+            color: #d1d5db;
+          }
+
+          input, textarea {
+            background: #1f2937;
+            border-color: #4b5563;
+            color: #f3f4f6;
+
+            &:focus {
+              border-color: #3b82f6;
+              box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            }
+          }
+        }
+      }
+    }
+
+    .canvas-container {
+      background: #111827;
+      border-color: #374151;
+
+      .render-canvas {
+        border-color: #4b5563;
+      }
+    }
+  }
+}
+
+// 动画效果
+.canvas-advanced-renderer {
+  .demo-tabs button {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .config-panel {
+    transition: all 0.3s ease;
+  }
+
+  .render-canvas {
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// 加载状态
+.canvas-advanced-renderer {
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #6b7280;
+    font-size: 14px;
+
+    &::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 2px solid #e5e7eb;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
