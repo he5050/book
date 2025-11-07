@@ -116,30 +116,72 @@ const CopyFunctionality: React.FC<CopyFunctionalityProps> = ({
   // 复制HTML内容
   const copyHtml = useCallback(async (html: string): Promise<boolean> => {
     try {
-      const blob = new Blob([html], { type: 'text/html' });
-      const data = [new ClipboardItem({ 'text/html': blob })];
+      // 同时复制HTML和纯文本格式，提高兼容性
+      const htmlBlob = new Blob([html], { type: 'text/html' });
+      const textBlob = new Blob([html.replace(/<[^>]*>/g, '')], { type: 'text/plain' });
+      
+      const data = [new ClipboardItem({ 
+        'text/html': htmlBlob,
+        'text/plain': textBlob
+      })];
+      
       await navigator.clipboard.write(data);
       return true;
     } catch (err) {
       console.error('复制HTML失败：', err);
-      return false;
+      // 降级到纯文本复制
+      try {
+        await navigator.clipboard.writeText(html.replace(/<[^>]*>/g, ''));
+        return true;
+      } catch (fallbackErr) {
+        console.error('降级复制也失败：', fallbackErr);
+        return false;
+      }
     }
   }, []);
 
   // 复制图片
   const copyImage = useCallback(async (): Promise<boolean> => {
     try {
-      // 使用一个示例图片URL
-      const imageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzRhOTBlMiIvPgogIDx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW1hZ2U8L3RleHQ+Cjwvc3ZnPg==';
+      // 创建一个简单的Canvas图片
+      const canvas = document.createElement('canvas');
+      canvas.width = 200;
+      canvas.height = 100;
+      const ctx = canvas.getContext('2d');
       
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      await navigator.clipboard.write([
-        new ClipboardItem({ [blob.type]: blob })
-      ]);
-      return true;
+      if (!ctx) {
+        throw new Error('无法获取Canvas上下文');
+      }
+      
+      // 绘制一个简单的图片
+      ctx.fillStyle = '#4a90e2';
+      ctx.fillRect(0, 0, 200, 100);
+      ctx.fillStyle = 'white';
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('复制的图片示例', 100, 55);
+      
+      // 转换为Blob
+      return new Promise((resolve) => {
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            resolve(false);
+            return;
+          }
+          
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            resolve(true);
+          } catch (err) {
+            console.error('复制图片失败：', err);
+            resolve(false);
+          }
+        }, 'image/png');
+      });
     } catch (err) {
-      console.error('复制图片失败：', err);
+      console.error('生成图片失败：', err);
       return false;
     }
   }, []);
@@ -185,12 +227,17 @@ const CopyFunctionality: React.FC<CopyFunctionalityProps> = ({
             return;
           }
           
-          if (config.supportHtml) {
+          if (config.supportHtml && config.supportImage) {
+            // 同时支持HTML和图片时，优先复制HTML
+            const html = `<b style="color: red">${config.text}</b>`;
+            success = await copyHtml(html);
+          } else if (config.supportHtml) {
             const html = `<b style="color: red">${config.text}</b>`;
             success = await copyHtml(html);
           } else if (config.supportImage) {
             success = await copyImage();
           } else {
+            // 如果都没选择，默认复制文本
             success = await copyTextModern(config.text);
           }
           break;
@@ -317,7 +364,8 @@ const CopyFunctionality: React.FC<CopyFunctionalityProps> = ({
             onClick={handleCopy}
             disabled={!config.text.trim()}
           >
-            {config.method === 'rich' && config.supportImage ? '复制图片' : '复制内容'}
+            {config.method === 'rich' && config.supportImage && !config.supportHtml ? '复制图片' : 
+             config.method === 'rich' && config.supportHtml ? '复制HTML' : '复制内容'}
           </button>
         </div>
 
