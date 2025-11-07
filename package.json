@@ -13,6 +13,7 @@
 		"@types/react-copy-to-clipboard": "^5.0.7",
 		"@types/react-syntax-highlighter": "^15.5.13",
 		"@zumer/snapdom": "^1.9.11",
+		"canvaskit-wasm": "^0.40.0",
 		"clsx": "^2.1.1",
 		"echarts": "^6.0.0",
 		"geojson-vt": "^4.0.2",
