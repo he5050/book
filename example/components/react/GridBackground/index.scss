@@ -1,0 +1,260 @@
+.grid-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  
+  // 基础样式
+  &.gradient {
+    background-repeat: repeat;
+    background-position: 0 0;
+  }
+  
+  &.image {
+    background-repeat: repeat;
+    background-position: left top;
+  }
+  
+  // 动画效果
+  &.animated {
+    animation: gridMove 20s linear infinite;
+    
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+  
+  // 确保子元素正确显示
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// 格子移动动画
+@keyframes gridMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}
+
+// 响应式动画调整
+@media (max-width: 767px) {
+  @keyframes gridMove {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 20px 20px;
+    }
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  @keyframes gridMove {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 30px 30px;
+    }
+  }
+}
+
+// 演示容器样式
+.grid-background-demo {
+  max-width: 600px;
+  margin: 0 auto;
+  
+  .demo-container {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    
+    .demo-header {
+      background: #f9fafb;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    .demo-content {
+      position: relative;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      .demo-text {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        font-weight: 500;
+        color: #374151;
+        text-align: center;
+        backdrop-filter: blur(4px);
+      }
+    }
+  }
+  
+  .controls-panel {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    
+    .control-group {
+      margin-bottom: 16px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+        color: #374151;
+        font-size: 14px;
+      }
+      
+      input[type="range"] {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #e5e7eb;
+        outline: none;
+        -webkit-appearance: none;
+        
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #3b82f6;
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        &::-moz-range-thumb {
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #3b82f6;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+      }
+      
+      input[type="color"] {
+        width: 50px;
+        height: 32px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        cursor: pointer;
+        background: none;
+        
+        &::-webkit-color-swatch-wrapper {
+          padding: 0;
+        }
+        
+        &::-webkit-color-swatch {
+          border: none;
+          border-radius: 3px;
+        }
+      }
+      
+      select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        background: white;
+        font-size: 14px;
+        color: #374151;
+        
+        &:focus {
+          outline: none;
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+      }
+      
+      .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+          accent-color: #3b82f6;
+        }
+        
+        label {
+          margin: 0;
+          cursor: pointer;
+        }
+      }
+      
+      .value-display {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 2px 6px;
+        background: #e5e7eb;
+        border-radius: 3px;
+        font-size: 12px;
+        color: #6b7280;
+        font-family: monospace;
+      }
+    }
+    
+    .control-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      
+      @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+  
+  .method-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    
+    .tab {
+      flex: 1;
+      padding: 12px 16px;
+      background: #f9fafb;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      color: #6b7280;
+      transition: all 0.2s ease;
+      
+      &.active {
+        background: #3b82f6;
+        color: white;
+      }
+      
+      &:hover:not(.active) {
+        background: #f3f4f6;
+        color: #374151;
+      }
+    }
+  }
+}
