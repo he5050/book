@@ -1,0 +1,130 @@
+.voice-alert {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fafafa;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.voice-control-panel {
+  background: white;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border: 1px solid #ddd;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.control-item label {
+  width: 60px;
+  font-weight: bold;
+}
+
+.control-item input[type="range"] {
+  flex: 1;
+  margin: 0 8px;
+}
+
+.alert-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+.alert-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  background: white;
+  border-left: 4px solid #ccc;
+}
+
+.alert-item.error {
+  border-left-color: #f44336;
+  background: #ffebee;
+}
+
+.alert-item.warning {
+  border-left-color: #ff9800;
+  background: #fff3e0;
+}
+
+.alert-item.info {
+  border-left-color: #2196f3;
+  background: #e3f2fd;
+}
+
+.alert-item.success {
+  border-left-color: #4caf50;
+  background: #e8f5e8;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-time {
+  font-size: 12px;
+  color: #666;
+  margin-right: 8px;
+}
+
+.alert-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 4px;
+  padding: 4px;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.control-buttons button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.control-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.browser-warning {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+  padding: 12px;
+  border-radius: 4px;
+  margin-top: 16px;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+  }
+}
