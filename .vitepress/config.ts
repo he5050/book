@@ -107,7 +107,7 @@ export default withMermaid(
 			build: {
 				rollupOptions: {
 					// 构建时将这些文件夹排除在打包外
-					external: ['**/other-demo/**']
+					external: ['**/other-demo/**', '模板.md']
 				}
 			}
 		},
